@@ -24,6 +24,11 @@ const router = Router();
 router.post(
     "/register",
     upload.single("avatar"),
+      (req, res, next) => {
+    console.log("BODY:", req.body);
+    console.log("FILE:", req.file);
+    next();
+  },
     validateRequiredFields([
         "fullName",
         "username",

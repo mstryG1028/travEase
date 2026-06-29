@@ -1,0 +1,42 @@
+@import "./colors.css";
+
+@import "tailwindcss";
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+
+    background:var(--background);
+
+    color:var(--text-primary);
+
+    font-family:Inter,sans-serif;
+
+}
+
+a{
+    text-decoration:none;
+    color:inherit;
+}
+
+button{
+
+    cursor:pointer;
+
+    border:none;
+}
+
+img{
+
+    display:block;
+
+    width:100%;
+}

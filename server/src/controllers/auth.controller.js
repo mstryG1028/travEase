@@ -56,7 +56,7 @@ export const registerUser = AsyncHandler(async (req, res, next) => {
   };
 
  
-
+console.log(req.file);
   if (req.file) {
     console.log(req.file);
     let uploaded = await uploadOnCloudinary(req.file.path);

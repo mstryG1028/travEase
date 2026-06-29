@@ -98,7 +98,7 @@ class ListingService {
   async getListing(id) {
     const listing = await listingRepository
       .findById(id)
-      .populate("owner", "fullName avatar");
+      
 
     if (!listing) {
       throw new ApiError(404, "Listing Not Found");
