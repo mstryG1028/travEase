@@ -14,27 +14,25 @@ import ApiFeatures from "../../utils/ApiFeatures.js";
 
 import {
   uploadOnCloudinary,
-  deleteFromCloudinary,
+ 
 } from "../../utils/cloudinary.js";
 
 class ListingService {
- 
   // ==========================
   // CREATE LISTING
   // ==========================
-  async createListing(body, files, ownerId) {
-    let images = [];
+ async createListing(body, file, ownerId) {   
+  let image = null;
 
-    if (files?.length) {
-      for (const file of files) {
-        const uploaded = await uploadOnCloudinary(file.path);
-
-        images.push({
-          url: uploaded.secure_url,
-          public_id: uploaded.public_id,
-        });
-      }
+  if (file) {
+    const uploaded = await uploadOnCloudinary(file.path);
+    if (uploaded) {
+      image = {
+        url: uploaded.secure_url,
+        public_id: uploaded.public_id,
+      };
     }
+  }
 
     // Generate unique slug
     const slug = `${slugify(body.title, {
@@ -46,7 +44,7 @@ class ListingService {
       ...body,
       owner: ownerId,
       slug,
-      images,
+      image,
       views: 0,
       favorites: 0,
       trendingScore: 0,
@@ -142,7 +140,6 @@ class ListingService {
 
     return listing;
   }
-
 
   // ==========================
   // DELETE LISTING
@@ -264,14 +261,14 @@ class ListingService {
   // ==========================
   // Trending LISTINGS
   // ==========================
-async trendingListings() {
-  return await Listing.find()
-    .populate("owner", "fullName avatar")
-    .sort({
-      trendingScore: -1,
-    })
-    .limit(10);
-}
+  async trendingListings() {
+    return await Listing.find()
+      .populate("owner", "fullName avatar")
+      .sort({
+        trendingScore: -1,
+      })
+      .limit(10);
+  }
 
   // ==========================
   // NEARBY LISTINGS

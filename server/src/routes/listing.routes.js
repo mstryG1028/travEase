@@ -9,7 +9,6 @@ import {
   nearbyListings,
   incrementViews,
   updateFavorites,
-  
 } from "../controllers/listing.controller.js";
 
 import { verifyJWT, authorizeRoles, upload } from "../middlewares/index.js";
@@ -19,21 +18,15 @@ const router = Router();
 router
   .route("/")
 
-  .get(getAllListings)
+  .get(getAllListings);
 
-  .post(
-    verifyJWT,
-
-    authorizeRoles("owner"),
-
-    upload.array(
-      "images",
-
-      10,
-    ),
-
-    createListing,
-  );
+router.post(
+  "/create",
+  verifyJWT,
+  authorizeRoles("owner"),
+  upload.single("image"),
+  createListing,
+);
 
 router.get(
   "/nearby",

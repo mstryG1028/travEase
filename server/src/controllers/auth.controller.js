@@ -11,7 +11,7 @@ import cookieOptions from "../utils/cookieOptions.js";
 
 import {
   uploadOnCloudinary,
-  deleteFromCloudinary,
+  
 } from "../utils/cloudinary.js";
 const options = {
   httpOnly: true,
@@ -22,7 +22,7 @@ const options = {
 // ==========================
 // Register User
 // ==========================
-export const registerUser = AsyncHandler(async (req, res,next) => {
+export const registerUser = AsyncHandler(async (req, res, next) => {
   const {
     fullName,
 
@@ -55,8 +55,11 @@ export const registerUser = AsyncHandler(async (req, res,next) => {
     public_id: "",
   };
 
+ 
+
   if (req.file) {
-    const uploaded = await uploadOnCloudinary(req.file.path);
+    console.log(req.file);
+    let uploaded = await uploadOnCloudinary(req.file.path);
 
     if (uploaded) {
       avatar = {
@@ -101,12 +104,8 @@ export const registerUser = AsyncHandler(async (req, res,next) => {
 // ==========================
 // Login
 // ==========================
-export const loginUser = AsyncHandler(async (req, res,next) => {
-  const {
-    email,
-
-    password,
-  } = req.body;
+export const loginUser = AsyncHandler(async (req, res, next) => {
+  const { email, password } = req.body;
 
   const user = await User.findOne({
     $or: [

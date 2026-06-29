@@ -69,31 +69,29 @@ const listingSchema = new mongoose.Schema(
       type: String,
     },
 
-    location: {
-      type: {
+    // location: {
+    //   type: {
+    //     type: String,
+    //     enum: ["Point"],
+    //     default: "Point",
+    //   },
+    //   coordinates: {
+    //     type: [Number], // [longitude, latitude]
+    //     required: true,
+    //   },
+    // },
+
+    // Image
+    image: {
+      url: {
         type: String,
-        enum: ["Point"],
-        default: "Point",
+        default: "",
       },
-      coordinates: {
-        type: [Number], // [longitude, latitude]
-        required: true,
+      public_id: {
+        type: String,
+        default: "",
       },
     },
-
-    // Images
-    images: [
-      {
-        url: {
-          type: String,
-          required: true,
-        },
-        public_id: {
-          type: String,
-          required: true,
-        },
-      },
-    ],
 
     // Capacity
     guests: {
@@ -248,7 +246,6 @@ listingSchema.index({
 
   country: "text",
 });
-
 
 listingSchema.index({
   city: 1,

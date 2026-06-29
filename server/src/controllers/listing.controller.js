@@ -1,5 +1,3 @@
-
-
 import listingService from "../services/listing/listing.services.js";
 
 import { AsyncHandler, sendResponse } from "../utils/index.js";
@@ -8,7 +6,7 @@ export const createListing = AsyncHandler(async (req, res) => {
   const listing = await listingService.createListing(
     req.body,
 
-    req.files,
+    req.file,
 
     req.user._id,
   );

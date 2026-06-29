@@ -57,7 +57,7 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: ["user", "owner", "admin"],
-      default: "user",
+      default: "owner",
     },
 
     isVerified: {

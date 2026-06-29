@@ -4,7 +4,7 @@ import { Booking } from "../../models/index.js";
 
 import {
   uploadOnCloudinary,
-  deleteFromCloudinary,
+
 } from "../../utils/cloudinary.js";
 
 import ApiError from "../../utils/ApiError.js";

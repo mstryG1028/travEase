@@ -1,57 +1,59 @@
+
+
+
 // import multer from "multer";
 
-// const storage = multer.diskStorage({});
+// // const upload=multer({dest:"uploads"});// ye fn  store to kar deta hai hai uploads me (local server)
+// //  but hum usko read nhi kar sakte to uska koi use nhi rha
 
-// const fileFilter = (req, file, cb) => {
 
-//     if (file.mimetype.startsWith("image")) {
+// //isliye always use this 
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, './public/temp')// null describe there is no err
+//   },
+//   filename: function (req, file, cb) {
+//     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+//     cb(null, file.fieldname  + uniqueSuffix) // here also
+//     console.log(file.fieldname  + uniqueSuffix)
+//     //return cb(null,`${file.originalname}`); // bhi likh sakte hai but filename override ho jaayega
+//   }
+// })
 
-//         cb(null, true);
+// const upload = multer({ storage: storage })
 
-//     } else {
+// export {upload};
 
-//         cb(new Error("Only image files are allowed"), false);
 
-//     }
 
-// };
 
-// export const upload = multer({
 
-//     storage,
 
-//     fileFilter,
+// // NOTE: this is not used in this just for info
 
-//     limits: {
-
-//         fileSize: 5 * 1024 * 1024
-
-//     }
-
-// });
+// // app.post("/upload", upload.single("name"), (req, res) => {
+// //   // name same hona chaiye jo input field ejs me diya hai
+// //   console.log(req.body); // ye null dega kyunki koi text data nhi hai ye file ko store nhi karta
+// //   console.log(req.file); // isliye iska use karna padta hai file ke liye
+// //   return res.redirect("/");
+// // });
 
 
 import multer from "multer";
+import path from "path";
 
 const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./public/temp");
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname);
 
-    destination(req, file, cb) {
-
-        cb(null, "./public/temp");
-
-    },
-
-    filename(req, file, cb) {
-
-        cb(
-            null,
-            `${Date.now()}-${file.originalname}`
-        );
-
-    }
-
+    cb(null, file.fieldname + "-" + uniqueSuffix + ext);
+  },
 });
 
-export const upload = multer({
-    storage
-});
+const upload = multer({ storage });
+
+export { upload };
