@@ -118,12 +118,10 @@ bookingSchema.index({
   checkOut: 1,
 });
 
-bookingSchema.pre("save", function (next) {
+bookingSchema.pre("save", function () {
   if (!this.bookingId) {
     this.bookingId = "BK" + Date.now() + Math.floor(Math.random() * 1000);
   }
-
-  next();
 });
 
 export const Booking = mongoose.model(

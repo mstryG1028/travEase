@@ -10,7 +10,11 @@ import {
   ownerDashboard,
 } from "../controllers/booking.controller.js";
 
-import { verifyJWT, authorizeRoles, validateRequiredFields } from "../middlewares/index.js";
+import {
+  verifyJWT,
+  authorizeRoles,
+  validate,
+} from "../middlewares/index.js";
 
 import { bookingValidator } from "../validators/index.js";
 
@@ -23,7 +27,7 @@ router.post(
 
   authorizeRoles("user"),
 
-  validateRequiredFields(bookingValidator),
+  validate(bookingValidator),
 
   createBooking,
 );

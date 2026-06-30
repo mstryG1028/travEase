@@ -9,10 +9,7 @@ import {
 
 import cookieOptions from "../utils/cookieOptions.js";
 
-import {
-  uploadOnCloudinary,
-  
-} from "../utils/cloudinary.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 const options = {
   httpOnly: true,
   secure: false, // true in production (HTTPS)
@@ -55,8 +52,7 @@ export const registerUser = AsyncHandler(async (req, res, next) => {
     public_id: "",
   };
 
- 
-console.log(req.file);
+  console.log(req.file);
   if (req.file) {
     console.log(req.file);
     let uploaded = await uploadOnCloudinary(req.file.path);
@@ -70,6 +66,8 @@ console.log(req.file);
     }
   }
 
+  console.log("req.body:", req.body);
+  console.log("Role received:", req.body.role);
   const user = await User.create({
     fullName,
 

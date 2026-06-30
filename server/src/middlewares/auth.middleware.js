@@ -6,52 +6,34 @@ import AsyncHandler from "../utils/AsyncHandler.js";
 
 import ApiError from "../utils/ApiError.js";
 
-export const verifyJWT = AsyncHandler(
+export const verifyJWT = AsyncHandler(async (req, res, next) => {
+  const token =
+    req.cookies?.accessToken ||
+    req.header("Authorization")?.replace("Bearer ", "");
 
-async (req,res,next)=>{
+  if (!token) {
+    throw new ApiError(401, "Unauthorized");
+  }
 
-const token=
+  const decoded = jwt.verify(
+    token,
 
-req.cookies?.accessToken ||
+    process.env.ACCESS_TOKEN_SECRET,
+  );
 
-req.header("Authorization")?.replace("Bearer ","");
+  const user = await User.findById(decoded._id)
 
-if(!token){
+    .select("-password -refreshToken");
 
-throw new ApiError(401,"Unauthorized");
+  if (!user) {
+    throw new ApiError(
+      401,
 
-}
+      "Invalid Access Token",
+    );
+  }
 
-const decoded=
+  req.user = user;
 
-jwt.verify(
-
-token,
-
-process.env.ACCESS_TOKEN_SECRET
-
-);
-
-const user=
-
-await User.findById(decoded._id)
-
-.select("-password -refreshToken");
-
-if(!user){
-
-throw new ApiError(
-
-401,
-
-"Invalid Access Token"
-
-);
-
-}
-
-req.user=user;
-
-next();
-
+  next();
 });

@@ -26,6 +26,7 @@ import { BOOKING_STATUS } from "../../constants/booking.constants.js";
 // ===================================================
 
 export async function createBooking(data, user) {
+ 
   const session = await mongoose.startSession();
 
   try {
@@ -72,12 +73,20 @@ export async function createBooking(data, user) {
     // ==========================================
     // Create Booking
     // ==========================================
+    console.log("========== BOOKING DEBUG ==========");
+console.log("User:", user);
+console.log("Listing:", listing);
+console.log("Listing.owner:", listing.owner);
+console.log("Listing.owner._id:", listing.owner?._id);
 
+const ownerId = listing.owner?._id || listing.owner;
+console.log("Computed ownerId:", ownerId);
+console.log("==================================");
     const booking = await bookingRepository.create(
       {
         guest: user._id,
 
-        owner: listing.owner,
+        owner: listing.owner?._id || listing.owner,
 
         listing: listing._id,
 
