@@ -23,7 +23,7 @@ export async function createReview(data, user) {
     );
   }
 
-  if (booking.bookingStatus !== "Completed") {
+  if (booking.bookingStatus !== "Confirmed") {
     throw new ApiError(
       400,
 

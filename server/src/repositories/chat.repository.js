@@ -1,19 +1,34 @@
-import { Message } from "../models/index.js";
+import { Chat } from "../models/index.js";
 
-class MessageRepository {
+class ChatRepository {
   async create(data) {
-    return await Message.create(data);
+    return await Chat.create(data);
   }
 
   async find(query = {}) {
-    return await Message.find(query)
-      .populate("sender", "fullName avatar")
-      .sort({ createdAt: 1 });
+    return await Chat.find(query)
+      .populate("guest", "fullName avatar")
+      .populate("owner", "fullName avatar")
+      .populate("listing", "title image")
+      .sort({ lastMessageAt: -1 });
   }
 
-  async updateMany(filter, data) {
-    return await Message.updateMany(filter, data);
+  async findById(id) {
+    return await Chat.findById(id)
+      .populate("guest", "fullName avatar")
+      .populate("owner", "fullName avatar")
+      .populate("listing", "title image");
+  }
+
+  async findByBooking(bookingId) {
+    return await Chat.findOne({
+      booking: bookingId,
+    });
+  }
+
+  async save(chat) {
+    return await chat.save();
   }
 }
 
-export default new MessageRepository();
+export default new ChatRepository();

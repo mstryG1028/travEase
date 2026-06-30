@@ -31,7 +31,7 @@ export async function ownerDashboard(ownerId) {
 
     .slice(0, 5);
 
-  return {
+  return { // some updates needed
     totalRevenue,
 
     totalBookings,

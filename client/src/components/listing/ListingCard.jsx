@@ -19,16 +19,10 @@ function ListingCard({ listing }) {
       hover:-translate-y-2
     "
     >
-      <ListingImage
-        image={listing.image?.url}
-        favorite={false}
-      />
-
+      <ListingImage image={listing.image?.url} listingId={listing._id} />
       <div className="p-6">
         <div className="flex justify-between items-center">
-          <h2 className="font-bold text-2xl">
-            {listing.title}
-          </h2>
+          <h2 className="font-bold text-2xl">{listing.title}</h2>
 
           <div className="flex items-center gap-1">
             <FaStar className="text-yellow-500" />
@@ -39,20 +33,12 @@ function ListingCard({ listing }) {
 
         <p className="flex items-center gap-2 text-gray-500 mt-3">
           <FaMapMarkerAlt />
-
           {listing.city}, {listing.state}
         </p>
 
         <p className="mt-3">
           Hosted by
-
-          <strong>
-
-            {" "}
-
-            {listing.owner.fullName}
-
-          </strong>
+          <strong> {listing.owner.fullName}</strong>
         </p>
 
         <ListingBadges
@@ -61,9 +47,7 @@ function ListingCard({ listing }) {
           weather={null}
         />
 
-        <ListingFooter
-          price={listing.currentPrice}
-        />
+        <ListingFooter price={listing.currentPrice} />
 
         <Link
           to={`/listings/${listing._id}`}

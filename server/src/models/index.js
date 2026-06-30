@@ -10,7 +10,7 @@ export { ListingAnalytics } from "./ListingAnalytics.model.js";
 export { ListingPricing } from "./ListingPricing.model.js";
 
 export { ListingAI } from "./ListingAI.model.js";
-
+export { Favorite } from "./favorite.model.js";
 export { ListingWeather } from "./ListingWeather.model.js";
 export { Flashback } from "./Flashback.model.js";
 export { Availability } from "./Availability.model.js";

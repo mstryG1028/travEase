@@ -1,5 +1,4 @@
-import FavoriteButton from "./FavoriteButton";
-
+import FavoriteButton from "../favorite/FavoriteButton";
 function ListingImage({
   image,
 
@@ -25,8 +24,7 @@ hover:scale-110
 duration-500
 "
       />
-
-      <FavoriteButton isFavorite={favorite} />
+      <FavoriteButton listingId={listingId} initialFavorite={false} />{" "}
     </div>
   );
 }

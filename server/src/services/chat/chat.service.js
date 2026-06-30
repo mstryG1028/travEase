@@ -1,89 +1,77 @@
-import conversationRepository from "../../repositories/conversation.repository.js";
 import chatRepository from "../../repositories/chat.repository.js";
+import messageRepository from "../../repositories/message.repository.js";
+import { getIO } from "../../socket/index.js";
 
 import ApiError from "../../utils/ApiError.js";
 
-// ===========================================
-// Get/Create Conversation
-// ===========================================
+// =====================================
+// Get My Chats
+// =====================================
 
-export async function getConversation(user1, user2) {
-  let conversation = await conversationRepository.findOne({
-    participants: {
-      $all: [user1, user2],
-    },
+export async function myConversations(userId) {
+  return await chatRepository.find({
+    $or: [{ guest: userId }, { owner: userId }],
   });
-
-  if (!conversation) {
-    conversation = await conversationRepository.create({
-      participants: [user1, user2],
-      lastMessage: "",
-    });
-  }
-
-  return conversation;
 }
 
-// ===========================================
+// =====================================
+// Get Messages
+// =====================================
+
+export async function getMessages(chatId) {
+  return await messageRepository.find({
+    chat: chatId,
+  });
+}
+
+// =====================================
 // Send Message
-// ===========================================
+// =====================================
 
-export async function sendMessage(sender, receiver, message) {
-  const conversation = await getConversation(sender, receiver);
+export async function sendMessage(chatId, senderId, text) {
+  const chat = await chatRepository.findById(chatId);
 
-  const chat = await chatRepository.create({
-    conversation: conversation._id,
+  if (!chat) {
+    throw new ApiError(404, "Chat not found");
+  }
 
-    sender,
+  const receiver =
+    chat.guest.toString() === senderId.toString() ? chat.owner : chat.guest;
+
+  const message = await messageRepository.create({
+    chat: chatId,
+
+    sender: senderId,
 
     receiver,
 
-    message,
-
-    isRead: false,
+    text,
   });
 
-  conversation.lastMessage = message;
-  conversation.lastMessageAt = new Date();
+  getIO().to(chatId.toString()).emit("new-message", message);
+  chat.lastMessage = text;
 
-  await conversation.save();
-  await chat.populate("sender", "fullName avatar");
-  
-  return chat;
+  chat.lastMessageAt = new Date();
+
+  if (receiver.toString() === chat.owner.toString()) {
+    chat.unreadByOwner++;
+  } else {
+    chat.unreadByGuest++;
+  }
+
+  await chatRepository.save(chat);
+
+  return await message.populate("sender receiver", "fullName avatar");
 }
 
-// ===========================================
-// Conversation List
-// ===========================================
-
-export async function myConversations(userId) {
-  return await Conversation.find({
-    participants: userId,
-  })
-    .populate("participants", "fullName avatar")
-    .sort({
-      updatedAt: -1,
-    });
-}
-
-// ===========================================
-// Chat History
-// ===========================================
-
-export async function getMessages(conversationId) {
-  return await chatRepository.find({
-    conversation: conversationId,
-  });
-}
-
-// ===========================================
+// =====================================
 // Read Messages
-// ===========================================
+// =====================================
 
-export async function markMessagesRead(conversationId, userId) {
-  await chatRepository.updateMany(
+export async function markMessagesRead(chatId, userId) {
+  await messageRepository.updateMany(
     {
-      conversation: conversationId,
+      chat: chatId,
 
       receiver: userId,
 
@@ -94,15 +82,27 @@ export async function markMessagesRead(conversationId, userId) {
     },
   );
 
+  const chat = await chatRepository.findById(chatId);
+
+  if (!chat) return;
+
+  if (chat.guest.toString() === userId.toString()) {
+    chat.unreadByGuest = 0;
+  } else {
+    chat.unreadByOwner = 0;
+  }
+
+  await chatRepository.save(chat);
+
   return true;
 }
 
-// ===========================================
+// =====================================
 // Delete Message
-// ===========================================
+// =====================================
 
 export async function deleteMessage(messageId, userId) {
-  const message = await chatRepository.findById(messageId);
+  const message = await messageRepository.findById(messageId);
 
   if (!message) {
     throw new ApiError(404, "Message not found");
@@ -112,7 +112,7 @@ export async function deleteMessage(messageId, userId) {
     throw new ApiError(403, "Unauthorized");
   }
 
-  await message.deleteOne();
+  await messageRepository.delete(message);
 
   return true;
 }
