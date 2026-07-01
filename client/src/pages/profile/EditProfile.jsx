@@ -42,11 +42,7 @@ function EditProfile() {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    if (
-      !form.fullName ||
-      !form.username ||
-      !form.email
-    ) {
+    if (!form.fullName || !form.username || !form.email) {
       return toast.error("Please fill all required fields");
     }
 
@@ -59,10 +55,7 @@ function EditProfile() {
 
       navigate("/profile");
     } catch (err) {
-      toast.error(
-        err.response?.data?.message ||
-          "Failed to update profile",
-      );
+      toast.error(err.response?.data?.message || "Failed to update profile");
     } finally {
       setSaving(false);
     }
@@ -74,20 +67,14 @@ function EditProfile() {
 
   return (
     <section className="max-w-2xl mx-auto py-10 px-5">
-
-      <h1 className="text-3xl font-bold mb-8">
-        Edit Profile
-      </h1>
+      <h1 className="text-3xl font-bold mb-8">Edit Profile</h1>
 
       <form
         onSubmit={handleSubmit}
         className="space-y-5 bg-white shadow rounded-2xl p-8"
       >
-
         <div>
-          <label className="block mb-2 font-medium">
-            Full Name
-          </label>
+          <label className="block mb-2 font-medium">Full Name</label>
 
           <input
             type="text"
@@ -99,9 +86,7 @@ function EditProfile() {
         </div>
 
         <div>
-          <label className="block mb-2 font-medium">
-            Username
-          </label>
+          <label className="block mb-2 font-medium">Username</label>
 
           <input
             type="text"
@@ -113,9 +98,7 @@ function EditProfile() {
         </div>
 
         <div>
-          <label className="block mb-2 font-medium">
-            Email
-          </label>
+          <label className="block mb-2 font-medium">Email</label>
 
           <input
             type="email"
@@ -127,9 +110,7 @@ function EditProfile() {
         </div>
 
         <div>
-          <label className="block mb-2 font-medium">
-            Phone
-          </label>
+          <label className="block mb-2 font-medium">Phone</label>
 
           <input
             type="text"
@@ -156,9 +137,7 @@ function EditProfile() {
         >
           {saving ? "Saving..." : "Save Changes"}
         </button>
-
       </form>
-
     </section>
   );
 }

@@ -2,17 +2,10 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 
-import {
-  addFavorite,
-  removeFavorite,
-} from "../../services/favorite.service";
+import { addFavorite, removeFavorite } from "../../services/favorite.service";
 
-function FavoriteButton({
-  listingId,
-  initialFavorite = false,
-}) {
-  const [favorite, setFavorite] =
-    useState(initialFavorite);
+function FavoriteButton({ listingId, initialFavorite = false }) {
+  const [favorite, setFavorite] = useState(initialFavorite);
 
   async function toggleFavorite(e) {
     e.preventDefault();
@@ -31,10 +24,7 @@ function FavoriteButton({
 
       setFavorite(!favorite);
     } catch (err) {
-      toast.error(
-        err.response?.data?.message ||
-          "Something went wrong",
-      );
+      toast.error(err.response?.data?.message || "Something went wrong");
     }
   }
 

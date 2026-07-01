@@ -1,6 +1,6 @@
 import Loader from "../../components/ui/Loader";
 
-import StatCard from "../../components/dashboard/StatCard";
+import StatCard from "../../components/dashboard/StateCard";
 
 import useDashboard from "../../hooks/useDashboard";
 

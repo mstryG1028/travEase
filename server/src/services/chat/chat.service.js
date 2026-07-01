@@ -1,6 +1,6 @@
 import chatRepository from "../../repositories/chat.repository.js";
 import messageRepository from "../../repositories/message.repository.js";
-import { getIO } from "../../socket/index.js";
+import { getIO } from "../../socket/socket.js";
 
 import ApiError from "../../utils/ApiError.js";
 

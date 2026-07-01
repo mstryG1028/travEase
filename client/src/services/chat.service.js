@@ -1,41 +1,41 @@
-import api from "../api/axios";
+// import api from "../api/axios";
 
-// =====================================
-// Get All Chats
-// =====================================
+// // =====================================
+// // Get All Chats
+// // =====================================
 
-export const getConversations = () => {
-  return api.get("/chat/conversations");
-};
+// export const getConversations = () => {
+//   return api.get("/chat/conversations");
+// };
 
-// =====================================
-// Get Messages of One Chat
-// =====================================
+// // =====================================
+// // Get Messages of One Chat
+// // =====================================
 
-export const getMessages = (chatId) => {
-  return api.get(`/chat/messages/${chatId}`);
-};
+// export const getMessages = (chatId) => {
+//   return api.get(`/chat/messages/${chatId}`);
+// };
 
-// =====================================
-// Send Message
-// =====================================
+// // =====================================
+// // Send Message
+// // =====================================
 
-export const sendMessage = (data) => {
-  return api.post("/chat/message", data);
-};
+// export const sendMessage = (data) => {
+//   return api.post("/chat/message", data);
+// };
 
-// =====================================
-// Mark Messages as Read
-// =====================================
+// // =====================================
+// // Mark Messages as Read
+// // =====================================
 
-export const markMessagesRead = (chatId) => {
-  return api.patch(`/chat/conversation/${chatId}/read`);
-};
+// export const markMessagesRead = (chatId) => {
+//   return api.patch(`/chat/conversation/${chatId}/read`);
+// };
 
-// =====================================
-// Delete Message
-// =====================================
+// // =====================================
+// // Delete Message
+// // =====================================
 
-export const deleteMessage = (messageId) => {
-  return api.delete(`/chat/message/${messageId}`);
-};
+// export const deleteMessage = (messageId) => {
+//   return api.delete(`/chat/message/${messageId}`);
+// };

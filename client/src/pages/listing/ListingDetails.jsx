@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { FaMapMarkerAlt, FaStar } from "react-icons/fa";
-import BookingForm from "../../components/booking/BookingForm";
+import  BookingForm  from "../../components/booking/BookingForm";
 import ReviewSection from "../../components/review/ReviewSection";
 
 import * as listingService from "../../services/listing.service";

@@ -1,45 +1,25 @@
 import ApiError from "../utils/ApiError.js";
 
-export const validateRequiredFields=(fields)=>{
+export const validateRequiredFields = (fields) => {
+  return (req, res, next) => {
+    const missing = [];
 
-return(req,res,next)=>{
+    fields.forEach((field) => {
+      if (req.body[field] === undefined || req.body[field] === "") {
+        missing.push(field);
+      }
+    });
 
-const missing=[];
+    if (missing.length) {
+      return next(
+        new ApiError(
+          400,
 
-fields.forEach(field=>{
+          `Missing fields : ${missing.join(", ")}`,
+        ),
+      );
+    }
 
-if(
-
-req.body[field]===undefined ||
-
-req.body[field]===""
-
-){
-
-missing.push(field);
-
-}
-
-});
-
-if(missing.length){
-
-return next(
-
-new ApiError(
-
-400,
-
-`Missing fields : ${missing.join(", ")}`
-
-)
-
-);
-
-}
-
-next();
-
-};
-
+    next();
+  };
 };

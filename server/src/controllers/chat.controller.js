@@ -20,3 +20,19 @@ export const deleteMessage = AsyncHandler(async (req, res) => {
 
   return sendResponse(res, 200, null, "Message deleted");
 });
+
+export const sendMessage = AsyncHandler(async (req, res) => {
+  const data = await chatService.sendMessage(
+    req.body.chat,
+    req.user._id,
+    req.body.text,
+  );
+
+  return sendResponse(res, 201, data, "Message Sent");
+});
+
+export const markMessagesRead = AsyncHandler(async (req, res) => {
+  await chatService.markMessagesRead(req.params.id, req.user._id);
+
+  return sendResponse(res, 200, null, "Messages Read");
+});

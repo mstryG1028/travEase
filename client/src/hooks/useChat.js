@@ -72,10 +72,7 @@ function useChat() {
         text,
       });
 
-      setMessages((prev) => [
-        ...prev,
-        res.data.data,
-      ]);
+      setMessages((prev) => [...prev, res.data.data]);
     } catch (error) {
       console.error(error);
     }

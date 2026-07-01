@@ -7,6 +7,8 @@ import Wishlist from "../pages/favorite/Wishlist";
 import Profile from "../pages/profile/Profile";
 import EditProfile from "../pages/profile/EditProfile";
 import ChangePassword from "../pages/profile/ChangePassword";
+import Dashboard from "../pages/dashboard/Dashboard";
+import ProtectedRoute from "./ProtectedRoute";
 function Home() {
   return <h1 className="text-5xl text-center mt-32">Home</h1>;
 }
@@ -19,6 +21,14 @@ function AppRoutes() {
         element={
           <MainLayout>
             <Home />
+          </MainLayout>
+        }
+      />
+      <Route
+        path="/listings"
+        element={
+          <MainLayout>
+            <Listings />
           </MainLayout>
         }
       />
@@ -47,14 +57,7 @@ function AppRoutes() {
           </MainLayout>
         }
       />
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        }
-      />
+
       <Route
         path="/wishlist"
         element={
@@ -92,6 +95,16 @@ function AppRoutes() {
           <ProtectedRoute>
             <MainLayout>
               <ChangePassword />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <Dashboard />
             </MainLayout>
           </ProtectedRoute>
         }

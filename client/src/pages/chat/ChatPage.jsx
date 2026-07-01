@@ -51,7 +51,7 @@ function ChatPage() {
     if (!text.trim()) return;
 
     await send(text);
-    socket.emit("read", selectedChat._id);
+   // socket.emit("read", selectedChat._id);
 
     setText("");
   }
