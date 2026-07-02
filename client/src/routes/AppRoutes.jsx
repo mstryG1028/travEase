@@ -1,19 +1,23 @@
 import { Routes, Route } from "react-router-dom";
-import Login from "../pages/auth/Login";
+
 import Home from "../pages/home/Home";
+import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
-import MainLayout from "../layouts/MainLayout";
 import ListingDetails from "../pages/listing/ListingDetails";
 import Wishlist from "../pages/favorite/Wishlist";
 import Profile from "../pages/profile/Profile";
 import EditProfile from "../pages/profile/EditProfile";
 import ChangePassword from "../pages/profile/ChangePassword";
 import Dashboard from "../pages/dashboard/Dashboard";
+import PublicRoute from "./PublicRoute";
+import MainLayout from "../layouts/MainLayout";
 import ProtectedRoute from "./ProtectedRoute";
 
 function AppRoutes() {
   return (
     <Routes>
+      {/* Public Routes */}
+
       <Route
         path="/"
         element={
@@ -31,23 +35,30 @@ function AppRoutes() {
           </MainLayout>
         }
       />
+
       <Route
         path="/login"
         element={
-          <MainLayout>
-            <Login />
-          </MainLayout>
+          <PublicRoute>
+            <MainLayout>
+              <Login />
+            </MainLayout>
+          </PublicRoute>
         }
       />
 
       <Route
         path="/register"
         element={
-          <MainLayout>
-            <Register />
-          </MainLayout>
+          <PublicRoute>
+            <MainLayout>
+              <Register />
+            </MainLayout>
+          </PublicRoute>
         }
       />
+
+      {/* Protected Routes */}
 
       <Route
         path="/wishlist"
@@ -59,6 +70,7 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/profile"
         element={
@@ -69,6 +81,7 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/profile/edit"
         element={
@@ -90,10 +103,13 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
+      {/* Owner Only */}
+
       <Route
         path="/dashboard"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={["owner"]}>
             <MainLayout>
               <Dashboard />
             </MainLayout>

@@ -84,19 +84,24 @@ export const registerUser = AsyncHandler(async (req, res, next) => {
     avatar,
   });
 
-  const createdUser = await User.findById(user._id)
+  const { accessToken, refreshToken } =
+    await generateAccessAndRefreshToken(user);
 
-    .select("-password -refreshToken");
-
-  return sendResponse(
-    res,
-
-    201,
-
-    createdUser,
-
-    "Registration Successful",
+  const createdUser = await User.findById(user._id).select(
+    "-password -refreshToken",
   );
+
+  return res
+    .status(201)
+    .cookie("accessToken", accessToken, cookieOptions)
+    .cookie("refreshToken", refreshToken, cookieOptions)
+    .json({
+      success: true,
+      data: createdUser,
+      accessToken,
+      refreshToken,
+      message: "Registration Successful",
+    });
 });
 
 // ==========================

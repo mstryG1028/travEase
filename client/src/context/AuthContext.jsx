@@ -26,15 +26,23 @@ export function AuthProvider({ children }) {
   }
 
   async function login(values) {
-    const response = await authService.login(values);
+    await authService.login(values);
+
+    const response = await authService.getCurrentUser();
 
     setUser(response.data.data);
+
+    return response.data.data;
   }
 
   async function register(values) {
-    const response = await authService.register(values);
+    await authService.register(values);
+
+    const response = await authService.getCurrentUser();
 
     setUser(response.data.data);
+
+    return response.data.data;
   }
 
   async function logout() {
@@ -42,7 +50,7 @@ export function AuthProvider({ children }) {
 
     setUser(null);
   }
-
+  
   return (
     <AuthContext.Provider
       value={{
