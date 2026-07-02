@@ -1,25 +1,14 @@
+import { Link } from "react-router-dom";
 import { useState } from "react";
 
-import { Link } from "react-router-dom";
-
-import { FaBars } from "react-icons/fa";
+import { FaBars, FaSearch } from "react-icons/fa";
 
 import { MdTravelExplore } from "react-icons/md";
 
-import { IoNotificationsOutline } from "react-icons/io5";
-
-import { BsChatDots } from "react-icons/bs";
-
-import CustomNavLink from "../ui/NavLink";
-
 import MobileMenu from "../ui/MobileMenu";
-
-import UserDropdown from "../ui/UserDropdown";
 
 function Navbar() {
   const [open, setOpen] = useState(false);
-
-  const isLoggedIn = false;
 
   return (
     <>
@@ -28,132 +17,156 @@ function Navbar() {
         sticky
         top-0
         z-50
-        backdrop-blur-lg
-        bg-white/80
+        bg-white/90
+        backdrop-blur-xl
         border-b
         border-[var(--border)]
-      "
+        shadow-sm
+        "
       >
         <div
           className="
           max-w-7xl
           mx-auto
-          px-6
           h-20
+          px-6
           flex
-          justify-between
           items-center
-        "
+          justify-between
+          "
         >
-          {/* Logo */}
+          {/* LEFT */}
 
-          <Link to="/" className="flex items-center gap-2">
-            <MdTravelExplore className="text-4xl text-[var(--primary)]" />
-
-            <span
+          <Link to="/" className="flex items-center gap-3">
+            <div
               className="
-              text-3xl
-              font-bold
-              bg-gradient-to-r
-              from-[var(--primary)]
-              to-[var(--secondary)]
-              bg-clip-text
-              text-transparent
-            "
+              w-10
+              h-10
+              rounded-full
+              bg-[var(--primary)]
+              flex
+              items-center
+              justify-center
+              text-white
+              "
             >
-              TravEase
-            </span>
+              <MdTravelExplore size={22} />
+            </div>
+
+            <div>
+              <h2 className="font-bold text-xl">TravEase</h2>
+
+              <p
+                className="
+                text-xs
+                text-gray-500
+                "
+              >
+                Explore
+              </p>
+            </div>
           </Link>
 
-          {/* Desktop Menu */}
+          {/* SEARCH */}
 
           <div
             className="
             hidden
             md:flex
-            gap-8
-          "
+            items-center
+            w-[420px]
+            border
+            border-gray-200
+            rounded-full
+            overflow-hidden
+            shadow-sm
+            "
           >
-            <CustomNavLink to="/">Home</CustomNavLink>
+            <input
+              type="text"
+              placeholder="Search..."
+              className="
+              flex-1
+              px-5
+              py-3
+              outline-none
+              "
+            />
 
-            <CustomNavLink to="/listings">Explore</CustomNavLink>
-
-            <CustomNavLink to="/about">About</CustomNavLink>
-
-            <CustomNavLink to="/contact">Contact</CustomNavLink>
-          </div>
-
-          {/* Right */}
-
-          <div className="flex items-center gap-4">
-            {isLoggedIn ? (
-              <>
-                <button className="relative">
-                  <IoNotificationsOutline className="text-2xl" />
-
-                  <span
-                    className="
-                    absolute
-                    -top-2
-                    -right-2
-                    bg-red-500
-                    text-white
-                    text-xs
-                    rounded-full
-                    px-2
-                  "
-                  >
-                    3
-                  </span>
-                </button>
-
-                <BsChatDots className="text-2xl" />
-
-                <UserDropdown />
-              </>
-            ) : (
-              <>
-                <Link
-                  to="/login"
-                  className="
-                  hidden
-                  md:block
-                  border
-                  border-[var(--primary)]
-                  text-[var(--primary)]
-                  px-5
-                  py-2
-                  rounded-xl
-                  hover:bg-[var(--primary)]
-                  hover:text-white
-                  duration-300
-                "
-                >
-                  Login
-                </Link>
-
-                <Link
-                  to="/register"
-                  className="
-                  hidden
-                  md:block
-                  bg-[var(--primary)]
-                  text-white
-                  px-5
-                  py-2
-                  rounded-xl
-                  hover:bg-[var(--primary-dark)]
-                "
-                >
-                  Sign Up
-                </Link>
-              </>
-            )}
-
-            <button className="md:hidden" onClick={() => setOpen(!open)}>
-              <FaBars className="text-2xl" />
+            <button
+              className="
+              h-full
+              px-6
+              bg-[var(--primary)]
+              text-white
+              hover:bg-[var(--primary-dark)]
+              duration-300
+              "
+            >
+              <FaSearch />
             </button>
           </div>
+
+          {/* RIGHT */}
+
+          <div
+            className="
+            hidden
+            md:flex
+            items-center
+            gap-6
+            "
+          >
+            <Link
+              to="/host"
+              className="
+              font-medium
+              hover:text-[var(--primary)]
+              "
+            >
+              Become a host
+            </Link>
+
+            <Link
+              to="/register"
+              className="
+              hover:text-[var(--primary)]
+              "
+            >
+              Sign Up
+            </Link>
+
+            <Link
+              to="/login"
+              className="
+              hover:text-[var(--primary)]
+              "
+            >
+              Log in
+            </Link>
+
+            <button
+              className="
+              w-11
+              h-11
+              rounded-full
+              border
+              flex
+              justify-center
+              items-center
+              hover:shadow-lg
+              "
+              onClick={() => setOpen(!open)}
+            >
+              <FaBars />
+            </button>
+          </div>
+
+          {/* MOBILE */}
+
+          <button className="md:hidden" onClick={() => setOpen(!open)}>
+            <FaBars size={22} />
+          </button>
         </div>
 
         <MobileMenu open={open} />

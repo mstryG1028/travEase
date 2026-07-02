@@ -1,81 +1,96 @@
 import {
-  FaUmbrellaBeach,
+  FaFire,
+  FaBed,
   FaMountain,
   FaHotel,
-  FaCampground,
   FaHome,
+  FaCampground,
   FaWater,
   FaSnowflake,
+  FaUmbrellaBeach,
+  FaTree,
+  FaLandmark,
 } from "react-icons/fa";
 
 const categories = [
-  {
-    title: "Beach",
-    icon: <FaUmbrellaBeach />,
-  },
-
-  {
-    title: "Mountain",
-    icon: <FaMountain />,
-  },
-
-  {
-    title: "Hotel",
-    icon: <FaHotel />,
-  },
-
-  {
-    title: "Villa",
-    icon: <FaHome />,
-  },
-
-  {
-    title: "Camping",
-    icon: <FaCampground />,
-  },
-
-  {
-    title: "Lake",
-    icon: <FaWater />,
-  },
-
-  {
-    title: "Snow",
-    icon: <FaSnowflake />,
-  },
+  { name: "Trending", icon: FaFire },
+  { name: "Rooms", icon: FaBed },
+  { name: "Hotels", icon: FaHotel },
+  { name: "Mountains", icon: FaMountain },
+  { name: "Villas", icon: FaHome },
+  { name: "Camping", icon: FaCampground },
+  { name: "Lake", icon: FaWater },
+  { name: "Snow", icon: FaSnowflake },
+  { name: "Beach", icon: FaUmbrellaBeach },
+  { name: "Tree House", icon: FaTree },
+  { name: "Historical", icon: FaLandmark },
 ];
 
 function CategorySection() {
   return (
-    <section className="max-w-7xl mx-auto py-20 px-6">
-      <h2 className="text-4xl font-bold">Explore By Category</h2>
+    <section className="bg-white border-b border-[var(--border)]">
+      <div
+        className="
+        max-w-7xl
+        mx-auto
+        flex
+        items-center
+        overflow-x-auto
+        scrollbar-hide
+        px-4
+        "
+      >
+        {categories.map((item) => {
+          const Icon = item.icon;
 
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-6 mt-10">
-        {categories.map((category) => (
-          <div
-            key={category.title}
-            className="
-bg-white
-rounded-2xl
-shadow
-hover:shadow-xl
-duration-300
-cursor-pointer
-p-8
-flex
-flex-col
-items-center
-gap-4
-hover:-translate-y-2
-"
-          >
-            <div className="text-5xl text-[var(--primary)]">
-              {category.icon}
-            </div>
+          return (
+            <button
+              key={item.name}
+              className="
+              group
+              flex
+              flex-col
+              items-center
+              justify-center
+              shrink-0
 
-            <h3 className="font-semibold">{category.title}</h3>
-          </div>
-        ))}
+              h-24
+              w-28
+
+              border-b-2
+              border-transparent
+
+              transition-all
+              duration-300
+
+              hover:border-black
+              hover:bg-gray-50
+              "
+            >
+              <Icon
+                size={22}
+                className="
+                text-gray-500
+                group-hover:text-black
+                group-hover:-translate-y-1
+                duration-300
+                "
+              />
+
+              <span
+                className="
+                mt-2
+                text-sm
+                font-medium
+                text-gray-500
+                group-hover:text-black
+                "
+              >
+                {item.name}
+              </span>
+            </button>
+          );
+        })}
       </div>
     </section>
   );

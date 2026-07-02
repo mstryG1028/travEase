@@ -1,30 +1,42 @@
 import FavoriteButton from "../favorite/FavoriteButton";
-function ListingImage({
-  image,
 
-  favorite,
-}) {
+function ListingImage({ image, listingId }) {
   return (
     <div
       className="
-relative
-overflow-hidden
-rounded-t-3xl
-h-64
-"
+      relative
+      overflow-hidden
+      rounded-3xl
+      h-72
+      "
     >
       <img
-        src={image}
-        alt="listing"
+        src={
+          image ||
+          "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=900"
+        }
+        alt=""
         className="
-h-full
-w-full
-object-cover
-hover:scale-110
-duration-500
-"
+        w-full
+        h-full
+        object-cover
+
+        transition-all
+        duration-500
+
+        group-hover:scale-105
+        "
       />
-      <FavoriteButton listingId={listingId} initialFavorite={false} />{" "}
+
+      <div
+        className="
+        absolute
+        top-4
+        right-4
+        "
+      >
+        <FavoriteButton listingId={listingId} initialFavorite={false} />
+      </div>
     </div>
   );
 }

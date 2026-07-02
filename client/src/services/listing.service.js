@@ -6,7 +6,7 @@ export const getAllListings = (params = {}) => {
   });
 };
 
-export const getListing = (id) => {
+export const getListingById = (id) => {
   return api.get(`/listings/${id}`);
 };
 

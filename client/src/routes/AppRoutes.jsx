@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Login from "../pages/auth/Login";
+import Home from "../pages/home/Home";
 import Register from "../pages/auth/Register";
 import MainLayout from "../layouts/MainLayout";
 import ListingDetails from "../pages/listing/ListingDetails";
@@ -9,9 +10,6 @@ import EditProfile from "../pages/profile/EditProfile";
 import ChangePassword from "../pages/profile/ChangePassword";
 import Dashboard from "../pages/dashboard/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
-function Home() {
-  return <h1 className="text-5xl text-center mt-32">Home</h1>;
-}
 
 function AppRoutes() {
   return (
@@ -24,14 +22,7 @@ function AppRoutes() {
           </MainLayout>
         }
       />
-      <Route
-        path="/listings"
-        element={
-          <MainLayout>
-            <Listings />
-          </MainLayout>
-        }
-      />
+
       <Route
         path="/listings/:id"
         element={

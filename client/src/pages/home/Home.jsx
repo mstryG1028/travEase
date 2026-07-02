@@ -10,9 +10,9 @@ import Loader from "../../components/ui/Loader";
 import * as listingService from "../../services/listing.service";
 
 function Home() {
-  const [listings, setListings] = useState([]);
-
   const [loading, setLoading] = useState(true);
+
+  const [listings, setListings] = useState([]);
 
   useEffect(() => {
     fetchListings();
@@ -20,11 +20,11 @@ function Home() {
 
   async function fetchListings() {
     try {
-      const response = await listingService.getAllListings();
+      const res = await listingService.getAllListings();
 
-      setListings(response.data.data||[]);
-    } catch (error) {
-      console.error(error);
+      setListings(res.data.data || []);
+    } catch (err) {
+      console.log(err);
     } finally {
       setLoading(false);
     }
@@ -36,22 +36,24 @@ function Home() {
 
   return (
     <>
-      <Hero />
-
       <CategorySection />
 
-      <section className="max-w-7xl mx-auto px-6 py-20">
-        <h2 className="text-4xl font-bold mb-10">Explore Listings</h2>
-
-        {listings.length === 0 ? (
-          <h2>No Listings Found</h2>
-        ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {listings.map((listing) => (
-              <ListingCard key={listing._id} listing={listing} />
-            ))}
-          </div>
-        )}
+      <section className="max-w-7xl mx-auto px-6 py-12">
+        <h2 className="text-3xl font-bold mb-8">Explore stays</h2>
+        <div
+          className="grid
+grid-cols-1
+sm:grid-cols-2
+lg:grid-cols-3
+xl:grid-cols-4
+gap-8
+"
+        >
+          
+          {listings.map((listing) => (
+            <ListingCard key={listing._id} listing={listing} />
+          ))}
+        </div>
       </section>
     </>
   );
