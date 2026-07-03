@@ -12,7 +12,8 @@ import Dashboard from "../pages/dashboard/Dashboard";
 import PublicRoute from "./PublicRoute";
 import MainLayout from "../layouts/MainLayout";
 import ProtectedRoute from "./ProtectedRoute";
-
+import BookingDetails from "../pages/booking/BookingDetails";
+import MyBookings from "../pages/booking/MyBookings";
 function AppRoutes() {
   return (
     <Routes>
@@ -33,6 +34,26 @@ function AppRoutes() {
           <MainLayout>
             <ListingDetails />
           </MainLayout>
+        }
+      />
+      <Route
+        path="/bookings/:id"
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <BookingDetails />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/my-bookings"
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <MyBookings />
+            </MainLayout>
+          </ProtectedRoute>
         }
       />
 

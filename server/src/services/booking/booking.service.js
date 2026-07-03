@@ -48,7 +48,9 @@ export async function createBooking(data, user) {
     const overlap = await bookingRepository.exists({
       listing: listing._id,
 
-      bookingStatus: BOOKING_STATUS.CONFIRMED,
+      bookingStatus: {
+        $in: [BOOKING_STATUS.PENDING, BOOKING_STATUS.CONFIRMED],
+      },
 
       checkIn: {
         $lt: new Date(data.checkOut),
@@ -108,7 +110,7 @@ export async function createBooking(data, user) {
     await Chat.create({
       booking: booking._id,
       listing: listing._id,
-      guest: guest._id,
+      guest: user._id,
       owner: listing.owner,
     });
 
@@ -181,9 +183,32 @@ export async function createBooking(data, user) {
 // ===================================================
 
 export async function myBookings(userId) {
-  return await bookingRepository.find({
+  return await Booking.find({
     guest: userId,
-  });
+  })
+    .populate("listing", "title images city state currentPrice contactPerson")
+    .populate("owner", "fullName phone email")
+    .sort({
+      createdAt: -1,
+    })
+    .lean();
+}
+
+export async function bookingDetails(id) {
+  const booking = await Booking.findById(id)
+    .populate(
+      "listing",
+      "title images address city state currentPrice contactPerson",
+    )
+    .populate("guest", "fullName email phone")
+    .populate("owner", "fullName email phone")
+    .lean();
+
+  if (!booking) {
+    throw new ApiError(404, "Booking not found");
+  }
+
+  return booking;
 }
 
 // ===================================================
@@ -317,13 +342,24 @@ export async function completeBooking(id) {
 export async function availability(listingId, month, year) {
   const bookings = await bookingRepository.find({
     listing: listingId,
-    bookingStatus: BOOKING_STATUS.CONFIRMED,
+    bookingStatus: {
+      $in: [BOOKING_STATUS.PENDING, BOOKING_STATUS.CONFIRMED],
+    },
   });
 
-  return bookings.map((booking) => ({
-    checkIn: booking.checkIn,
-    checkOut: booking.checkOut,
-  }));
+  const blockedDates = [];
+
+  bookings.forEach((booking) => {
+    let current = new Date(booking.checkIn);
+
+    while (current <= booking.checkOut) {
+      blockedDates.push(current.toISOString().split("T")[0]);
+
+      current.setDate(current.getDate() + 1);
+    }
+  });
+
+  return blockedDates;
 }
 
 // ===================================================

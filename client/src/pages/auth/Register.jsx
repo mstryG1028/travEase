@@ -201,8 +201,8 @@ function Register() {
           className="w-full border rounded-xl px-4 py-3"
         >
           <option value="owner">Owner</option>
-          <option value="manager">Manager</option>
-          <option value="staff">Staff</option>
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
         </select>
 
         {/* Button */}

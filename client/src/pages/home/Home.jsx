@@ -29,35 +29,10 @@ function Home() {
 
   return (
     <div className="bg-[#f7f7f7]">
-      <div className="max-w-7xl mx-auto px-8 py-10">
+      <div className="max-w-7xl mx-auto  py-1">
         <CategorySection />
 
         <section className="mt-16">
-          <div className="flex justify-between items-center mb-10">
-            <div>
-              <h2 className="text-3xl font-bold text-[#222]">Explore Stays</h2>
-
-              <p className="text-gray-500 mt-2">
-                Discover unique homes carefully selected for you.
-              </p>
-            </div>
-
-            <button
-              className="
-              px-5
-              py-3
-              rounded-xl
-              border
-              border-gray-300
-              bg-white
-              hover:shadow-lg
-              duration-300
-              "
-            >
-              View All
-            </button>
-          </div>
-
           {listings.length === 0 ? (
             <h2>No Listings Found</h2>
           ) : (

@@ -34,6 +34,14 @@ export const myBookings = AsyncHandler(async (req, res) => {
   );
 });
 
+export const bookingDetails = AsyncHandler(async (req, res) => {
+  console.log("Controller Hit");
+  console.log("ID:", req.params.id);
+  const booking = await bookingService.bookingDetails(req.params.id);
+
+  return sendResponse(res, 200, booking, "Booking Details");
+});
+
 export const ownerBookings = AsyncHandler(async (req, res) => {
   const bookings = await bookingService.ownerBookings(req.user._id);
 

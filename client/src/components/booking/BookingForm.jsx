@@ -1,20 +1,43 @@
-import { useState } from "react";
-import { createBooking } from "../../services/booking.service";
+import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
+
+import BookingCalendar from "./BookingCalendar";
+import BookingSuccessModal from "./BookingSuccessModal";
+
+import {
+  createBooking,
+  getUnavailableDates,
+} from "../../services/booking.service";
 
 function BookingForm({ listing }) {
-  const [form, setForm] = useState({
-    checkIn: "",
-    checkOut: "",
-    guests: 1,
-  });
+  const [checkIn, setCheckIn] = useState(null);
+  const [checkOut, setCheckOut] = useState(null);
+  const [guests, setGuests] = useState(1);
 
   const [loading, setLoading] = useState(false);
+  const [booking, setBooking] = useState(null);
+
+  const [blockedDates, setBlockedDates] = useState([]);
+
+  useEffect(() => {
+    if (listing?._id) {
+      loadUnavailableDates();
+    }
+  }, [listing]);
+
+  async function loadUnavailableDates() {
+    try {
+      const res = await getUnavailableDates(listing._id);
+
+      // Backend returns ["2025-08-01","2025-08-02"...]
+      setBlockedDates((res.data.data || []).map((date) => new Date(date)));
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   function calculateNights() {
-    if (!form.checkIn || !form.checkOut) return 0;
-
-    const checkIn = new Date(form.checkIn);
-    const checkOut = new Date(form.checkOut);
+    if (!checkIn || !checkOut) return 0;
 
     return Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
   }
@@ -22,10 +45,16 @@ function BookingForm({ listing }) {
   async function handleBooking(e) {
     e.preventDefault();
 
+    if (!checkIn || !checkOut) {
+      toast.error("Please select dates");
+      return;
+    }
+
     const totalNights = calculateNights();
 
     if (totalNights <= 0) {
-      return alert("Select valid dates");
+      toast.error("Invalid dates selected");
+      return;
     }
 
     const taxes = 500;
@@ -38,11 +67,11 @@ function BookingForm({ listing }) {
     try {
       setLoading(true);
 
-      await createBooking({
+      const res = await createBooking({
         listing: listing._id,
-        checkIn: form.checkIn,
-        checkOut: form.checkOut,
-        guests: Number(form.guests),
+        checkIn: checkIn.toISOString(),
+        checkOut: checkOut.toISOString(),
+        guests: Number(guests),
         totalNights,
         taxes,
         serviceFee,
@@ -50,86 +79,68 @@ function BookingForm({ listing }) {
         totalAmount,
       });
 
-      alert("Booking Created Successfully");
+      toast.success("Booking Successful 🎉");
+
+      setBooking(res.data.data);
+
+      await loadUnavailableDates();
+
+      setCheckIn(null);
+      setCheckOut(null);
+      setGuests(1);
     } catch (err) {
-      alert(err.response?.data?.message || "Booking Failed");
+      toast.error(err.response?.data?.message || "Booking Failed");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <form
-      onSubmit={handleBooking}
-      className="w-full max-w-sm border rounded-2xl p-6 shadow space-y-4"
-    >
-      <h2 className="text-2xl font-bold">Reserve</h2>
+    <>
+      <form
+        onSubmit={handleBooking}
+        className="w-full max-w-sm rounded-2xl border p-6 shadow space-y-5"
+      >
+        <h2 className="text-2xl font-bold">Reserve</h2>
 
-      <div>
-        <label>Check In</label>
-
-        <input
-          type="date"
-          className="input w-full"
-          value={form.checkIn}
-          onChange={(e) =>
-            setForm({
-              ...form,
-              checkIn: e.target.value,
-            })
-          }
-          required
+        <BookingCalendar
+          checkIn={checkIn}
+          checkOut={checkOut}
+          setCheckIn={setCheckIn}
+          setCheckOut={setCheckOut}
+          blockedDates={blockedDates}
         />
-      </div>
 
-      <div>
-        <label>Check Out</label>
+        <div>
+          <label className="block mb-2 font-medium">Guests</label>
 
-        <input
-          type="date"
-          className="input w-full"
-          value={form.checkOut}
-          onChange={(e) =>
-            setForm({
-              ...form,
-              checkOut: e.target.value,
-            })
-          }
-          required
+          <input
+            type="number"
+            min="1"
+            max={listing.guests}
+            value={guests}
+            onChange={(e) => setGuests(e.target.value)}
+            className="input w-full"
+          />
+        </div>
+
+        <div className="text-lg font-semibold">
+          ₹ {listing.currentPrice} / night
+        </div>
+
+        <button type="submit" disabled={loading} className="btn-primary w-full">
+          {loading ? "Booking..." : "Reserve"}
+        </button>
+      </form>
+
+      {booking && (
+        <BookingSuccessModal
+          booking={booking}
+          onClose={() => setBooking(null)}
         />
-      </div>
-
-      <div>
-        <label>Guests</label>
-
-        <input
-          type="number"
-          min="1"
-          max={listing.guests}
-          className="input w-full"
-          value={form.guests}
-          onChange={(e) =>
-            setForm({
-              ...form,
-              guests: e.target.value,
-            })
-          }
-        />
-      </div>
-
-      <div className="font-semibold">₹ {listing.currentPrice} / night</div>
-
-      <button type="submit" disabled={loading} className="btn-primary w-full">
-        {loading ? "Booking..." : "Reserve"}
-      </button>
-    </form>
+      )}
+    </>
   );
 }
-
-export function BookingFormWrapper(props) {
-  return <BookingForm {...props} />;
-}
-
-export { BookingForm };
 
 export default BookingForm;

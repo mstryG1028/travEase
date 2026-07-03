@@ -24,6 +24,8 @@ const categories = [
   { name: "Beach", icon: FaUmbrellaBeach },
   { name: "Tree House", icon: FaTree },
   { name: "Historical", icon: FaLandmark },
+  
+ 
 ];
 
 function CategorySection() {
@@ -31,13 +33,13 @@ function CategorySection() {
     <section className="bg-white border-b border-[var(--border)]">
       <div
         className="
-        max-w-7xl
+        max-w-8xl
         mx-auto
         flex
         items-center
-        overflow-x-auto
-        scrollbar-hide
-        px-4
+       
+        flex-wrap
+        
         "
       >
         {categories.map((item) => {
@@ -54,8 +56,8 @@ function CategorySection() {
               justify-center
               shrink-0
 
-              h-24
-              w-28
+              h-25
+              w-25
 
               border-b-2
               border-transparent
@@ -79,7 +81,7 @@ function CategorySection() {
 
               <span
                 className="
-                mt-2
+                mt-1
                 text-sm
                 font-medium
                 text-gray-500
