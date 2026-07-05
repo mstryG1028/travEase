@@ -2,16 +2,36 @@ import { FaStar } from "react-icons/fa";
 
 function ReviewCard({ review }) {
   return (
-    <div className="bg-white rounded-2xl shadow p-5">
+    <div
+      className="
+        bg-surface
+        rounded-2xl
+        shadow-theme
+        border
+        border-theme
+        p-5
+        transition-theme
+      "
+    >
       <div className="flex items-center gap-4">
         <img
           src={review.user?.avatar?.url || "https://placehold.co/60x60"}
           alt={review.user?.fullName}
-          className="w-14 h-14 rounded-full object-cover"
+          className="
+            w-14
+            h-14
+            rounded-full
+            object-cover
+            border-2
+            border-theme
+            bg-surface-2
+          "
         />
 
         <div>
-          <h3 className="font-semibold">{review.user?.fullName}</h3>
+          <h3 className="font-semibold text-primary">
+            {review.user?.fullName}
+          </h3>
 
           <div className="flex items-center gap-1 mt-1">
             {[...Array(review.rating)].map((_, i) => (
@@ -21,9 +41,9 @@ function ReviewCard({ review }) {
         </div>
       </div>
 
-      <p className="mt-5 text-gray-600">{review.comment}</p>
+      <p className="mt-5 text-secondary">{review.comment}</p>
 
-      <p className="text-sm text-gray-400 mt-4">
+      <p className="mt-4 text-sm text-light">
         {new Date(review.createdAt).toLocaleDateString()}
       </p>
     </div>

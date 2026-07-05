@@ -4,10 +4,11 @@ function ListingImage({ image, listingId }) {
   return (
     <div
       className="
-      relative
-      overflow-hidden
-      rounded-3xl
-      h-72
+        relative
+        h-72
+        overflow-hidden
+        rounded-3xl
+        bg-surface-2
       "
     >
       <img
@@ -17,24 +18,16 @@ function ListingImage({ image, listingId }) {
         }
         alt=""
         className="
-        w-50%
-        h-full
-        object-cover
-
-        transition-all
-        duration-500
-
-        group-hover:scale-105
+          w-full
+          h-full
+          object-cover
+          transition-transform
+          duration-500
+          group-hover:scale-105
         "
       />
 
-      <div
-        className="
-        absolute
-        top-4
-        right-4
-        "
-      >
+      <div className="absolute top-4 right-4">
         <FavoriteButton listingId={listingId} initialFavorite={false} />
       </div>
     </div>

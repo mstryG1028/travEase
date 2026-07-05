@@ -1,8 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
-import { FaBars } from "react-icons/fa";
 import { useState } from "react";
 
+import { FaBars } from "react-icons/fa";
+import { FiSearch } from "react-icons/fi";
+
 import useAuth from "../../hooks/useAuth";
+
 import HamburgerMenu from "../navbar/HamburgerMenu";
 
 function Navbar() {
@@ -22,37 +25,48 @@ function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-white border-b shadow-sm">
+    <nav className="sticky top-0 z-50 bg-surface border-b border-theme shadow-theme transition-theme">
       <div className="max-w-7xl mx-auto h-20 px-6 flex items-center justify-between">
-        {/* Logo */}
-        <Link to="/" className="text-2xl font-bold text-[var(--primary)]">
+        {/* ================= Logo ================= */}
+
+        <Link to="/" className="text-2xl font-bold text-brand">
           TravEase
         </Link>
 
-        {/* Search */}
+        {/* ================= Search ================= */}
+
         <div className="hidden md:block">
-          <input
-            type="text"
-            placeholder="Search destinations..."
-            className="border rounded-full px-5 py-2 w-80 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-          />
+          <div className="relative w-[420px]">
+            <input
+              type="text"
+              placeholder="Search destinations..."
+              className="input-theme rounded-full pr-12 text-sm"
+            />
+
+            <FiSearch
+              size={18}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-secondary pointer-events-none"
+            />
+          </div>
         </div>
 
-        {/* Right Section */}
+        {/* ================= Right ================= */}
+
         <div className="flex items-center gap-5">
           {/* Guest */}
+
           {!user && (
             <>
               <Link
                 to="/login"
-                className="font-medium hover:text-[var(--primary)] transition"
+                className=" text-theme hover:text-brand transition-theme"
               >
                 Login
               </Link>
 
               <Link
                 to="/register"
-                className="font-medium hover:text-[var(--primary)] transition"
+                className=" text-theme hover:text-brand transition-theme"
               >
                 Sign Up
               </Link>
@@ -60,18 +74,19 @@ function Navbar() {
           )}
 
           {/* User */}
+
           {user?.role === "user" && (
             <>
               <Link
                 to="/become-host"
-                className="font-medium hover:text-[var(--primary)] transition"
+                className=" text-theme hover:text-brand transition-theme"
               >
                 Become a Host
               </Link>
 
               <button
                 onClick={handleLogout}
-                className="font-medium hover:text-red-500 transition"
+                className=" text-theme hover:text-red-500 transition-theme"
               >
                 Logout
               </button>
@@ -79,28 +94,39 @@ function Navbar() {
           )}
 
           {/* Owner */}
+
           {user?.role === "owner" && (
             <>
               <Link
                 to="/dashboard"
-                className="font-medium hover:text-[var(--primary)] transition"
+                className=" text-theme hover:text-brand transition-theme"
               >
                 Dashboard
               </Link>
 
               <button
                 onClick={handleLogout}
-                className="font-medium hover:text-red-500 transition"
+                className=" text-theme hover:text-red-500 transition-theme"
               >
                 Logout
               </button>
             </>
           )}
 
-          {/* Hamburger */}
+          {/* ================= Hamburger ================= */}
+
           <button
             onClick={() => setOpen(!open)}
-            className="border rounded-full p-3 hover:bg-gray-100 transition"
+            className="
+              p-3
+              rounded-full
+              border
+              border-theme
+              bg-surface
+               text-theme
+              hover-surface
+              transition-theme
+            "
           >
             <FaBars />
           </button>

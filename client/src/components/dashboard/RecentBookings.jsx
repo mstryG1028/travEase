@@ -1,26 +1,30 @@
 function RecentBookings({ bookings = [] }) {
   return (
-    <div className="bg-white rounded-3xl shadow p-6">
-      <h2 className="text-2xl font-bold mb-6">Recent Bookings</h2>
+    <div className="dashboard-card">
+      <h2 className="mb-6 text-2xl font-bold text-theme">Recent Bookings</h2>
 
       {bookings.length === 0 ? (
-        <p>No Bookings Yet</p>
+        <p className="text-muted">No Bookings Yet</p>
       ) : (
         <div className="space-y-5">
           {bookings.map((booking) => (
             <div
               key={booking._id}
-              className="flex justify-between border-b pb-3"
+              className="flex items-center justify-between border-b border-theme pb-3"
             >
               <div>
-                <h3 className="font-semibold">{booking.listing.title}</h3>
+                <h3 className="font-semibold text-theme">
+                  {booking.listing.title}
+                </h3>
 
-                <p className="text-sm text-gray-500">
+                <p className="mt-1 text-sm text-muted">
                   {booking.guest.fullName}
                 </p>
               </div>
 
-              <span className="font-bold">₹ {booking.totalAmount}</span>
+              <span className="font-bold text-theme">
+                ₹ {booking.totalAmount}
+              </span>
             </div>
           ))}
         </div>

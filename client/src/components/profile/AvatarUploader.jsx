@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
+
 import { successToast, errorToast } from "../../utils/toast";
 import { updateAvatar, deleteAvatar } from "../../services/profile.service";
 
@@ -22,7 +23,7 @@ function AvatarUploader({ profile, reloadProfile }) {
 
       await updateAvatar(formData);
 
-      successToast("Property listed successfully.");
+      successToast("Avatar updated successfully.");
 
       reloadProfile();
     } catch (err) {
@@ -33,20 +34,18 @@ function AvatarUploader({ profile, reloadProfile }) {
   }
 
   async function handleDelete() {
-    if (!window.confirm("Delete avatar?")) {
-      return;
-    }
+    if (!window.confirm("Delete avatar?")) return;
 
     try {
       setLoading(true);
 
       await deleteAvatar();
 
-      toast.success("Avatar Deleted");
+      successToast("Avatar deleted successfully.");
 
       reloadProfile();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Delete Failed");
+      errorToast(err.response?.data?.message || "Delete Failed");
     } finally {
       setLoading(false);
     }
@@ -56,16 +55,17 @@ function AvatarUploader({ profile, reloadProfile }) {
     <div className="text-center">
       <img
         src={profile.avatar?.url}
-        alt=""
+        alt="Avatar"
         className="
           w-36
           h-36
+          mx-auto
           rounded-full
           object-cover
-          mx-auto
           border-4
-          border-white
-          shadow-lg
+          border-theme
+          shadow-theme
+          bg-surface-2
         "
       />
 
@@ -83,20 +83,15 @@ function AvatarUploader({ profile, reloadProfile }) {
           disabled={loading}
           className="btn-primary"
         >
-          Upload
+          {loading ? "Uploading..." : "Upload"}
         </button>
 
         <button
           onClick={handleDelete}
           disabled={loading}
-          className="
-            bg-red-500
-            text-white
-            px-5
-            rounded-xl
-          "
+          className="btn-danger"
         >
-          Delete
+          {loading ? "Deleting..." : "Delete"}
         </button>
       </div>
     </div>

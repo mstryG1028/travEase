@@ -1,31 +1,24 @@
 function Button({
   children,
-
   type = "button",
-
   variant = "primary",
-
   size = "md",
-
   fullWidth = false,
-
   disabled = false,
-
   loading = false,
-
   onClick,
 }) {
   const variants = {
-    primary: "bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)]",
+    primary: "bg-primary text-white hover:opacity-90",
 
-    secondary: "bg-[var(--secondary)] text-white",
+    secondary: "bg-[var(--secondary)] text-white hover:opacity-90",
 
     outline:
-      "border border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white",
+      "border border-primary text-brand hover:bg-primary hover:text-white",
 
-    danger: "bg-[var(--danger)] text-white",
+    danger: "bg-[var(--danger)] text-white hover:opacity-90",
 
-    ghost: "hover:bg-gray-100",
+    ghost: "bg-transparent text-theme hover-surface",
   };
 
   const sizes = {
@@ -42,14 +35,14 @@ function Button({
       disabled={disabled || loading}
       onClick={onClick}
       className={`
-                rounded-xl
-                transition-all
-                duration-300
-                font-medium
-                ${variants[variant]}
-                ${sizes[size]}
-                ${fullWidth ? "w-full" : ""}
-            `}
+        rounded-xl
+        font-medium
+        transition-theme
+        ${variants[variant]}
+        ${sizes[size]}
+        ${fullWidth ? "w-full" : ""}
+        ${disabled || loading ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}
+      `}
     >
       {loading ? "Loading..." : children}
     </button>

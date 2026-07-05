@@ -1,24 +1,17 @@
-function Select({
-  label,
-
-  options = [],
-
-  ...props
-}) {
+function Select({ label, options = [], error, className = "", ...props }) {
   return (
     <div className="flex flex-col gap-2">
-      {label && <label>{label}</label>}
+      {label && <label className="font-medium text-theme">{label}</label>}
 
-      <select
-        {...props}
-        className="border border-[var(--border)] rounded-xl p-3"
-      >
+      <select {...props} className={`select-theme ${className}`}>
         {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>
         ))}
       </select>
+
+      {error && <span className="text-sm text-[var(--danger)]">{error}</span>}
     </div>
   );
 }

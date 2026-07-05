@@ -1,77 +1,76 @@
 import { useEffect, useState } from "react";
+
 import { successToast, errorToast } from "../../utils/toast";
+
 import { getMyBookings, cancelBooking } from "../../services/booking.service";
 
 import Loader from "../../components/ui/Loader";
+import BookingCard from "../../components/booking/BookingCard";
 
 function MyBookings() {
   const [bookings, setBookings] = useState([]);
-
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchBookings();
   }, []);
 
-  const fetchBookings = async () => {
+  async function fetchBookings() {
     try {
       const response = await getMyBookings();
 
       setBookings(response.data.data || []);
-    } catch (error) {
+    } catch (err) {
       errorToast("Unable to fetch bookings");
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  const handleCancel = async (id) => {
+  async function handleCancel(id) {
     try {
       await cancelBooking(id);
 
       successToast("Booking Cancelled");
 
       fetchBookings();
-    } catch (error) {
+    } catch (err) {
       errorToast("Cancellation Failed");
     }
-  };
+  }
 
   if (loading) return <Loader />;
 
   return (
-    <section className="max-w-6xl mx-auto py-10 px-5">
-      <h1 className="text-4xl font-bold mb-8">My Bookings</h1>
-<h1>Hello</h1>
-      <div className="space-y-6">
-        {bookings.map((booking) => (
-          <div key={booking._id} className="bg-white rounded-2xl shadow p-6">
-            <h2 className="text-2xl font-semibold">{booking.listing?.title}</h2>
+    <section className="container-theme py-10">
+      <h1 className="mb-8 text-4xl font-bold text-theme">My Bookings</h1>
 
-            <p>
-              {new Date(booking.checkIn).toLocaleDateString()} →{" "}
-              {new Date(booking.checkOut).toLocaleDateString()}
-            </p>
+      {bookings.length === 0 ? (
+        <div className="card-theme p-10 text-center">
+          <h2 className="text-2xl font-semibold text-theme">No Bookings Yet</h2>
 
-            <p>Guests : {booking.guests}</p>
+          <p className="mt-2 text-muted">Your bookings will appear here.</p>
+        </div>
+      ) : (
+        <div className="grid gap-8">
+          {bookings.map((booking) => (
+            <div key={booking._id} className="space-y-4">
+              <BookingCard booking={booking} />
 
-            <p>
-              Status :<strong> {booking.bookingStatus}</strong>
-            </p>
-
-            <p className="font-bold mt-2">₹{booking.totalAmount}</p>
-
-            {booking.bookingStatus !== "Cancelled" && (
-              <button
-                onClick={() => handleCancel(booking._id)}
-                className="mt-4 bg-red-500 text-white px-5 py-2 rounded-lg"
-              >
-                Cancel Booking
-              </button>
-            )}
-          </div>
-        ))}
-      </div>
+              {booking.bookingStatus !== "CANCELLED" && (
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => handleCancel(booking._id)}
+                    className="btn-danger"
+                  >
+                    Cancel Booking
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

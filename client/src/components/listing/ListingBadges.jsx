@@ -1,26 +1,38 @@
-function ListingBadges({
-  trending,
-
-  ai,
-
-  weather,
-}) {
+function ListingBadges({ trending, ai, weather }) {
   return (
     <div className="flex flex-wrap gap-2 mt-4">
       {trending && (
-        <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm">
+        <span
+          className="px-3 py-1 rounded-full text-sm font-medium"
+          style={{
+            background: "var(--warning-light)",
+            color: "var(--warning)",
+          }}
+        >
           🏆 Trending
         </span>
       )}
 
       {ai && (
-        <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
+        <span
+          className="px-3 py-1 rounded-full text-sm font-medium"
+          style={{
+            background: "var(--success-light)",
+            color: "var(--success)",
+          }}
+        >
           🤖 AI Pick
         </span>
       )}
 
       {weather && (
-        <span className="bg-sky-100 text-sky-700 px-3 py-1 rounded-full text-sm">
+        <span
+          className="px-3 py-1 rounded-full text-sm font-medium"
+          style={{
+            background: "var(--info-light)",
+            color: "var(--info)",
+          }}
+        >
           🌤 {weather}
         </span>
       )}

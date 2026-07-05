@@ -4,31 +4,44 @@ function SearchBar() {
   return (
     <div
       className="
-      bg-white
-      rounded-full
-      shadow-xl
-      flex
-      items-center
-      overflow-hidden
-      max-w-4xl
-      mx-auto
+        bg-surface
+        rounded-full
+        shadow-theme
+        border
+        border-theme
+        flex
+        items-center
+        overflow-hidden
+        max-w-4xl
+        mx-auto
+        transition-theme
       "
     >
       <input
+        type="text"
         placeholder="Search destinations..."
-        className="flex-1 px-6 py-5 outline-none"
+        className="
+          flex-1
+          px-6
+          py-5
+          bg-transparent
+          text-primary
+          placeholder:text-light
+          outline-none
+        "
       />
 
       <button
         className="
-        bg-rose-500
-        text-white
-        px-8
-        py-5
-        flex
-        items-center
-        gap-2
-        hover:bg-rose-600
+          bg-primary
+          text-white
+          px-8
+          py-5
+          flex
+          items-center
+          gap-2
+          transition-theme
+          hover:opacity-90
         "
       >
         <IoSearch />

@@ -2,53 +2,58 @@ function ProfileCard({ profile }) {
   return (
     <div
       className="
-        bg-white
+        bg-surface
         rounded-3xl
-        shadow
+        shadow-theme
+        border
+        border-theme
         p-8
+        transition-theme
       "
     >
       <img
         src={profile.avatar?.url}
-        alt=""
+        alt={profile.fullName}
         className="
-        w-32
-        h-32
-        rounded-full
-        object-cover
-        mx-auto
-      "
+          w-32
+          h-32
+          mx-auto
+          rounded-full
+          object-cover
+          border-4
+          border-theme
+          bg-surface-2
+        "
       />
 
       <h2
         className="
-        text-2xl
-        font-bold
-        text-center
-        mt-5
-      "
+          text-2xl
+          font-bold
+          text-center
+          text-primary
+          mt-5
+        "
       >
         {profile.fullName}
       </h2>
 
       <p
         className="
-        text-center
-        text-gray-500
-      "
+          text-center
+          text-secondary
+          mt-2
+        "
       >
         {profile.email}
       </p>
 
       <button
         className="
-        w-full
-        mt-6
-        bg-[var(--primary)]
-        text-white
-        rounded-xl
-        py-3
-      "
+          btn-primary
+          w-full
+          mt-6
+        "
       >
         Edit Profile
       </button>

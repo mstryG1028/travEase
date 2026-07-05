@@ -8,35 +8,31 @@ function ListingCard({ listing }) {
     <Link
       to={`/listings/${listing._id}`}
       className="
-      group
-      block
-      bg-white
-      rounded-[26px]
-      border
-      border-gray-100
-      overflow-hidden
-
-      shadow-[0_8px_30px_rgba(15,23,42,0.08)]
-
-      hover:shadow-[0_18px_45px_rgba(15,23,42,0.15)]
-
-      hover:-translate-y-2
-
-      duration-500
+        group
+        block
+        bg-surface
+        rounded-[26px]
+        border
+        border-theme
+        overflow-hidden
+        shadow-theme
+        hover:shadow-theme-lg
+        hover:-translate-y-2
+        transition-theme
       "
     >
       <ListingImage image={listing.image?.url} listingId={listing._id} />
 
       <div className="px-5 py-5">
-        {/* Rating */}
+        {/* Header */}
 
-        <div className="flex justify-between items-start">
+        <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-slate-900 line-clamp-1">
+            <h2 className="text-xl font-semibold text-theme line-clamp-1">
               {listing.title}
             </h2>
 
-            <p className="flex items-center gap-2 text-gray-500 mt-2">
+            <p className="mt-2 flex items-center gap-2 muted">
               <FaMapMarkerAlt className="text-xs" />
               {listing.city}, {listing.state}
             </p>
@@ -45,7 +41,7 @@ function ListingCard({ listing }) {
           <div className="flex items-center gap-1">
             <FaStar className="text-yellow-400 text-sm" />
 
-            <span className="font-semibold">
+            <span className="font-semibold text-theme">
               {listing.averageRating?.toFixed(1) || "New"}
             </span>
           </div>
@@ -53,46 +49,39 @@ function ListingCard({ listing }) {
 
         {/* Host */}
 
-        <p className="mt-3 text-gray-500">
+        <p className="mt-3 muted">
           Hosted by{" "}
-          <span className="text-slate-700 font-medium">
+          <span className="font-medium text-theme">
             {listing.owner?.fullName || "Unknown"}
           </span>
         </p>
 
         {/* Divider */}
 
-        <div className="h-px bg-gray-100 my-5" />
+        <div className="my-5 h-px border-theme border-t" />
 
         {/* Footer */}
 
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-slate-900">
+            <h2 className="text-2xl font-bold text-theme">
               ₹{listing.currentPrice}
             </h2>
 
-            <p className="text-sm text-gray-500">per night</p>
+            <p className="text-sm muted">per night</p>
           </div>
 
           <button
             className="
-            px-5
-            py-2.5
-
-            rounded-full
-
-            bg-[var(--primary)]
-
-            text-white
-
-            text-sm
-
-            font-semibold
-
-            hover:scale-105
-
-            duration-300
+              bg-primary
+              px-5
+              py-2.5
+              rounded-full
+              text-white
+              text-sm
+              font-semibold
+              transition-theme
+              hover:opacity-90
             "
           >
             Book

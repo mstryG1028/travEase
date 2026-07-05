@@ -1,20 +1,26 @@
 function RecentReviews({ reviews = [] }) {
   return (
-    <div className="bg-white rounded-3xl shadow p-6">
-      <h2 className="text-2xl font-bold mb-6">Latest Reviews</h2>
+    <div className="dashboard-card">
+      <h2 className="mb-6 text-2xl font-bold text-theme">Latest Reviews</h2>
 
       {reviews.length === 0 ? (
-        <p>No Reviews</p>
+        <p className="text-muted">No Reviews</p>
       ) : (
-        reviews.map((review) => (
-          <div key={review._id} className="border-b py-4">
-            <h3 className="font-semibold">{review.user.fullName}</h3>
+        <div className="space-y-4">
+          {reviews.map((review) => (
+            <div key={review._id} className="divider-bottom py-4">
+              <h3 className="font-semibold text-theme">
+                {review.user.fullName}
+              </h3>
 
-            <p className="text-yellow-500">⭐ {review.rating}</p>
+              <p className="mt-1 text-yellow-500 font-medium">
+                ⭐ {review.rating}
+              </p>
 
-            <p className="text-gray-600 mt-2">{review.comment}</p>
-          </div>
-        ))
+              <p className="mt-2 text-muted">{review.comment}</p>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

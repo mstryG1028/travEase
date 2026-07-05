@@ -2,25 +2,28 @@ import { Link } from "react-router-dom";
 
 function QuickActions() {
   return (
-    <div className="bg-white rounded-3xl shadow p-6">
-      <h2 className="font-bold text-xl mb-5">Quick Actions</h2>
+    <div className="dashboard-card">
+      <h2 className="mb-5 text-xl font-bold text-theme">Quick Actions</h2>
 
       <div className="space-y-4">
         <Link
           to="/listings/create"
-          className="btn-primary w-full block text-center"
+          className="btn-primary w-full block text-center py-3"
         >
           Add Listing
         </Link>
 
         <Link
           to="/owner/listings"
-          className="btn-secondary w-full block text-center"
+          className="btn-outline w-full block text-center py-3"
         >
           My Listings
         </Link>
 
-        <Link to="/bookings" className="btn-secondary w-full block text-center">
+        <Link
+          to="/bookings"
+          className="btn-outline w-full block text-center py-3"
+        >
           View Bookings
         </Link>
       </div>

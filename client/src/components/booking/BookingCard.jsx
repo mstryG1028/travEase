@@ -8,8 +8,14 @@ import {
 } from "react-icons/fa";
 
 function BookingCard({ booking }) {
+  const statusClass = {
+    COMPLETED: "bg-[var(--success)]",
+    PENDING: "bg-[var(--warning)]",
+    CANCELLED: "bg-[var(--danger)]",
+  };
+
   return (
-    <div className="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100">
+    <div className="card-theme overflow-hidden">
       {/* Image */}
 
       <div className="relative">
@@ -19,35 +25,30 @@ function BookingCard({ booking }) {
             "https://placehold.co/600x400?text=No+Image"
           }
           alt={booking.listing.title}
-          className="w-full h-60 object-cover"
+          className="h-60 w-full object-cover"
         />
 
-        <div className="absolute top-4 right-4">
-          <span
-            className={`px-4 py-2 rounded-full text-sm font-semibold text-white
-            ${
-              booking.bookingStatus === "COMPLETED"
-                ? "bg-green-500"
-                : booking.bookingStatus === "PENDING"
-                  ? "bg-yellow-500"
-                  : "bg-red-500"
-            }`}
-          >
-            {booking.bookingStatus}
-          </span>
-        </div>
+        <span
+          className={`absolute right-4 top-4 rounded-full px-4 py-2 text-sm font-semibold text-white ${
+            statusClass[booking.bookingStatus] || "bg-[var(--text-secondary)]"
+          }`}
+        >
+          {booking.bookingStatus}
+        </span>
       </div>
 
       {/* Content */}
 
-      <div className="p-6 space-y-5">
+      <div className="card-padding space-y-5">
+        {/* Title */}
+
         <div>
-          <h2 className="text-2xl font-bold text-[var(--text-primary)]">
+          <h2 className="text-2xl font-bold text-theme">
             {booking.listing.title}
           </h2>
 
-          <p className="flex items-center gap-2 text-gray-500 mt-2">
-            <FaMapMarkerAlt className="text-[var(--primary)]" />
+          <p className="mt-2 flex items-center gap-2 text-muted">
+            <FaMapMarkerAlt className="text-brand" />
             {booking.listing.city}, {booking.listing.state}
           </p>
         </div>
@@ -55,71 +56,67 @@ function BookingCard({ booking }) {
         {/* Booking Details */}
 
         <div className="grid grid-cols-2 gap-4 text-sm">
-          <div className="bg-gray-50 rounded-xl p-3">
-            <p className="text-gray-500 flex items-center gap-2">
-              <FaCalendarAlt />
-              Check In
-            </p>
+          <InfoBox
+            icon={<FaCalendarAlt />}
+            title="Check In"
+            value={new Date(booking.checkIn).toLocaleDateString()}
+          />
 
-            <p className="font-semibold mt-1">
-              {new Date(booking.checkIn).toLocaleDateString()}
-            </p>
-          </div>
+          <InfoBox
+            icon={<FaCalendarAlt />}
+            title="Check Out"
+            value={new Date(booking.checkOut).toLocaleDateString()}
+          />
 
-          <div className="bg-gray-50 rounded-xl p-3">
-            <p className="text-gray-500 flex items-center gap-2">
-              <FaCalendarAlt />
-              Check Out
-            </p>
+          <InfoBox icon={<FaUsers />} title="Guests" value={booking.guests} />
 
-            <p className="font-semibold mt-1">
-              {new Date(booking.checkOut).toLocaleDateString()}
-            </p>
-          </div>
-
-          <div className="bg-gray-50 rounded-xl p-3">
-            <p className="text-gray-500 flex items-center gap-2">
-              <FaUsers />
-              Guests
-            </p>
-
-            <p className="font-semibold mt-1">{booking.guests}</p>
-          </div>
-
-          <div className="bg-gray-50 rounded-xl p-3">
-            <p className="text-gray-500">Total Amount</p>
-
-            <p className="font-bold text-[var(--primary)] mt-1">
-              ₹{booking.totalAmount}
-            </p>
-          </div>
+          <InfoBox
+            title="Total Amount"
+            value={`₹${booking.totalAmount}`}
+            valueClass="text-brand font-bold"
+          />
         </div>
 
         {/* Contact */}
 
-        <div className="border rounded-2xl p-4 bg-[var(--background)]">
-          <h3 className="font-semibold mb-3">Host Contact</h3>
+        <div className="rounded-theme border border-theme bg-theme p-4">
+          <h3 className="mb-3 font-semibold text-theme">Host Contact</h3>
 
           <div className="space-y-2 text-sm">
-            <p className="flex items-center gap-2">
-              <FaUser className="text-[var(--primary)]" />
+            <p className="flex items-center gap-2 text-theme">
+              <FaUser className="text-brand" />
               {booking.contactPerson?.name}
             </p>
 
-            <p className="flex items-center gap-2">
-              <FaPhone className="text-[var(--primary)]" />
+            <p className="flex items-center gap-2 text-theme">
+              <FaPhone className="text-brand" />
               {booking.contactPerson?.phone}
             </p>
           </div>
         </div>
 
-        <Link
-          to={`/bookings/${booking._id}`}
-          className="block text-center bg-[var(--primary)] hover:bg-red-700 transition text-white font-semibold rounded-xl py-3"
-        >
+        <Link to={`/bookings/${booking._id}`} className="btn-primary w-full">
           View Booking Details
         </Link>
       </div>
+    </div>
+  );
+}
+
+function InfoBox({
+  icon,
+  title,
+  value,
+  valueClass = "text-theme font-semibold",
+}) {
+  return (
+    <div className="rounded-theme bg-surface-2 p-3">
+      <p className="flex items-center gap-2 text-sm text-muted">
+        {icon}
+        {title}
+      </p>
+
+      <p className={`mt-1 ${valueClass}`}>{value}</p>
     </div>
   );
 }

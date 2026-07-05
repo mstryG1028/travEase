@@ -1,15 +1,10 @@
 function PopularDestinations() {
   const places = [
     "🏖 Goa",
-
     "🏔 Manali",
-
     "🌊 Maldives",
-
     "🏕 Rishikesh",
-
     "🏜 Jaisalmer",
-
     "🌲 Ooty",
   ];
 
@@ -19,15 +14,18 @@ function PopularDestinations() {
         <button
           key={place}
           className="
-px-5
-py-3
-rounded-full
-bg-white
-shadow
-hover:bg-[var(--primary)]
-hover:text-white
-duration-300
-"
+            px-5
+            py-3
+            rounded-full
+            bg-surface
+            text-primary
+            shadow-theme-sm
+            border
+            border-theme
+            transition-theme
+            hover:bg-primary
+            hover:text-white
+          "
         >
           {place}
         </button>

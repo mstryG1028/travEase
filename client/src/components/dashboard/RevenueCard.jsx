@@ -1,9 +1,9 @@
 function RevenueCard({ revenue }) {
   return (
-    <div className="bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] rounded-3xl p-8 text-white">
+    <div className="rounded-theme p-8 text-white shadow-theme-lg bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)]">
       <p className="text-lg opacity-80">Total Revenue</p>
 
-      <h2 className="text-5xl font-bold mt-4">₹ {revenue.toLocaleString()}</h2>
+      <h2 className="mt-4 text-5xl font-bold">₹ {revenue.toLocaleString()}</h2>
     </div>
   );
 }

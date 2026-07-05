@@ -4,16 +4,16 @@ function ListingFooter({ price }) {
   return (
     <div
       className="
-flex
-justify-between
-items-center
-mt-6
-"
+        flex
+        justify-between
+        items-center
+        mt-6
+      "
     >
       <div>
-        <h2 className="text-2xl font-bold">₹{price}</h2>
+        <h2 className="text-2xl font-bold text-primary">₹{price}</h2>
 
-        <p className="text-gray-500">per night</p>
+        <p className="text-secondary">per night</p>
       </div>
 
       <Button>Book Now</Button>

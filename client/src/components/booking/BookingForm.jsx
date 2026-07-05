@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { successToast, errorToast } from "../../utils/toast";
 import BookingCalendar from "./BookingCalendar";
 import BookingSuccessModal from "./BookingSuccessModal";
-
+import Button from "../ui/Button";
 import {
   createBooking,
   getUnavailableDates,
@@ -98,11 +98,10 @@ function BookingForm({ listing }) {
     <>
       <form onSubmit={handleBooking} className="space-y-6">
         <div>
-          <h2 className="text-2xl font-bold text-[var(--text-primary)]">
-            Reserve your stay
-          </h2>
+          <h2 className="text-2xl font-bold text-theme">Reserve your stay</h2>
 
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="mt-1 text-sm text-muted">
+            {" "}
             Select your travel dates and number of guests.
           </p>
         </div>
@@ -118,7 +117,7 @@ function BookingForm({ listing }) {
         {/* Guests */}
 
         <div>
-          <label className="block font-semibold mb-2">Guests</label>
+          <label className="mb-2 block font-semibold text-theme">Guests</label>
 
           <input
             type="number"
@@ -127,10 +126,11 @@ function BookingForm({ listing }) {
             placeholder={`1 - ${listing.guests} Guests`}
             value={guests}
             onChange={(e) => setGuests(e.target.value)}
-            className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-[var(--primary)] focus:ring-2 focus:ring-red-100 transition"
+            className="input-theme"
           />
 
-          <p className="text-xs text-gray-500 mt-2">
+          <p className="mt-2 text-xs text-muted">
+            {" "}
             Maximum {listing.guests} guests allowed.
           </p>
         </div>
@@ -138,10 +138,10 @@ function BookingForm({ listing }) {
         {/* Price Details */}
 
         {checkIn && checkOut && calculateNights() > 0 && (
-          <div className="rounded-2xl bg-gray-50 border p-5 space-y-3">
+          <div className="price-card space-y-3">
             <h3 className="font-semibold text-lg">Price Details</h3>
 
-            <div className="flex justify-between text-gray-600">
+            <div className="flex justify-between text-muted">
               <span>
                 ₹{listing.currentPrice} × {calculateNights()} night(s)
               </span>
@@ -149,13 +149,13 @@ function BookingForm({ listing }) {
               <span>₹{listing.currentPrice * calculateNights()}</span>
             </div>
 
-            <div className="flex justify-between text-gray-600">
+            <div className="flex justify-between text-muted">
               <span>Taxes</span>
 
               <span>₹500</span>
             </div>
 
-            <div className="flex justify-between text-gray-600">
+            <div className="flex justify-between text-muted">
               <span>Service Fee</span>
 
               <span>₹200</span>
@@ -163,7 +163,7 @@ function BookingForm({ listing }) {
 
             <hr />
 
-            <div className="flex justify-between text-lg font-bold">
+            <div className="flex justify-between text-lg font-bold text-theme">
               <span>Total</span>
 
               <span>
@@ -175,21 +175,20 @@ function BookingForm({ listing }) {
 
         {/* Info */}
 
-        <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
-          <p className="text-sm text-orange-700">
+        <div className="alert-warning rounded-theme p-4">
+          {" "}
+          <p className="text-sm">
+            {" "}
             🎉 Free cancellation within 24 hours after booking.
           </p>
         </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-[var(--primary)] hover:opacity-90 transition text-white font-semibold py-4 rounded-xl shadow-lg"
-        >
-          {loading ? "Booking..." : "Reserve Now"}
-        </button>
+        <Button type="submit" fullWidth loading={loading}>
+          Reserve Now
+        </Button>
 
-        <p className="text-center text-xs text-gray-500">
+        <p className="text-center text-xs text-muted">
+          {" "}
           🔒 Secure booking • No hidden charges
         </p>
       </form>

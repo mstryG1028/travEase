@@ -1,5 +1,4 @@
 import { User, Heart, Calendar, Home, Star, Lock } from "lucide-react";
-
 import { Link } from "react-router-dom";
 
 function ProfileMenu() {
@@ -9,31 +8,26 @@ function ProfileMenu() {
       text: "Edit Profile",
       link: "/profile/edit",
     },
-
     {
       icon: Calendar,
       text: "My Bookings",
       link: "/bookings",
     },
-
     {
       icon: Heart,
       text: "Wishlist",
       link: "/wishlist",
     },
-
     {
       icon: Home,
       text: "My Listings",
       link: "/owner/listings",
     },
-
     {
       icon: Star,
       text: "My Reviews",
       link: "/reviews/me",
     },
-
     {
       icon: Lock,
       text: "Change Password",
@@ -44,28 +38,33 @@ function ProfileMenu() {
   return (
     <div
       className="
-      bg-white
-      rounded-3xl
-      shadow
-      p-6
+        bg-surface
+        rounded-3xl
+        shadow-theme
+        border
+        border-theme
+        p-6
+        transition-theme
       "
     >
-      {menus.map((item) => (
+      {menus.map((item, index) => (
         <Link
           key={item.text}
           to={item.link}
-          className="
+          className={`
             flex
             items-center
             gap-4
             py-4
-            border-b
-            hover:text-[var(--primary)]
-            "
+            text-primary
+            hover:text-brand
+            transition-theme
+            ${index !== menus.length - 1 ? "border-b border-theme" : ""}
+          `}
         >
-          <item.icon />
+          <item.icon size={20} />
 
-          {item.text}
+          <span>{item.text}</span>
         </Link>
       ))}
     </div>

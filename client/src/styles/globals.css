@@ -1,36 +1,581 @@
 @import "tailwindcss";
-@import "./colors.css";
 @import "./theme.css";
 
+/* ==========================================================
+                        GLOBAL
+========================================================== */
+
+body {
+  min-height: 100vh;
+
+  font-family: "Inter", sans-serif;
+
+  background: var(--background);
+  color: var(--text-primary);
+
+  transition: var(--transition);
+}
+
+/* ==========================================================
+                    BACKGROUND
+========================================================== */
+
+.bg-theme {
+  background: var(--background);
+}
+
+.bg-surface {
+  background: var(--surface);
+}
+
+.bg-surface-2 {
+  background: var(--surface-2);
+}
+
+.bg-primary {
+  background: var(--primary);
+}
+
+/* ==========================================================
+                    TEXT
+========================================================== */
+
+.text-theme {
+  color: var(--text-primary);
+}
+
+.text-muted {
+  color: var(--text-secondary);
+}
+
+.text-placeholder {
+  color: var(--text-light);
+}
+
+.text-brand {
+  color: var(--primary);
+}
+
+/* ==========================================================
+                    BORDER
+========================================================== */
+
+.border-theme {
+  border-color: var(--border);
+}
+
+.border-primary {
+  border-color: var(--primary);
+}
+
+/* ==========================================================
+                    SHADOW
+========================================================== */
+
+.shadow-theme-sm {
+  box-shadow: var(--shadow-sm);
+}
+
+.shadow-theme {
+  box-shadow: var(--shadow);
+}
+
+.shadow-theme-lg {
+  box-shadow: var(--shadow-lg);
+}
+
+/* ==========================================================
+                    TRANSITION
+========================================================== */
+
+.transition-theme {
+  transition: var(--transition);
+}
+
+/* ==========================================================
+                    HOVER
+========================================================== */
+
+.hover-surface:hover {
+  background: var(--surface-hover);
+}
+
+/* ==========================================================
+                    LINKS
+========================================================== */
+
+.link-theme {
+  color: var(--text-primary);
+  transition: var(--transition);
+}
+
+.link-theme:hover {
+  color: var(--primary);
+}
+/* ==========================================================
+                    STATUS COLORS
+========================================================== */
+
+.text-success {
+  color: var(--success);
+}
+
+.text-warning {
+  color: var(--warning);
+}
+
+.text-danger {
+  color: var(--danger);
+}
+
+.text-info {
+  color: var(--secondary);
+}
+
+/* ==========================================================
+                    GRADIENTS
+========================================================== */
+
+.gradient-primary {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+
+  color: white;
+}
+
+/* ==========================================================
+                    ICON BUTTON
+========================================================== */
+
+.icon-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 12px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 9999px;
+
+  background: var(--surface);
+
+  color: var(--text-primary);
+
+  cursor: pointer;
+
+  transition: var(--transition);
+}
+
+.icon-btn:hover {
+  background: var(--surface-hover);
+}
+
+/* ==========================================================
+                    CARD
+========================================================== */
+
+.card-theme {
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow);
+
+  transition: var(--transition);
+}
+
+.card-theme:hover {
+  box-shadow: var(--shadow-lg);
+
+  transform: translateY(-6px);
+}
+
+/* ==========================================================
+                        BUTTONS
+========================================================== */
+
+.btn-primary,
+.btn-outline,
+.btn-danger {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 12px 20px;
+
+  border-radius: var(--radius-md);
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: var(--transition);
+}
+
+/* Primary */
+
+.btn-primary {
+  background: var(--primary);
+
+  color: white;
+
+  border: none;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+}
+
+/* Outline */
+
+.btn-outline {
+  background: var(--surface);
+
+  color: var(--primary);
+
+  border: 1px solid var(--primary);
+}
+
+.btn-outline:hover {
+  background: var(--primary);
+
+  color: white;
+}
+
+/* Danger */
+
+.btn-danger {
+  background: var(--danger);
+
+  color: white;
+
+  border: none;
+}
+
+.btn-danger:hover {
+  opacity: 0.9;
+}
+
+/* Disabled */
+
+.btn-primary:disabled,
+.btn-outline:disabled,
+.btn-danger:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+
+  pointer-events: none;
+}
+/* ==========================================================
+                    FORM CONTROLS
+========================================================== */
+
+.input-theme,
+.textarea-theme,
+.select-theme {
+  width: 100%;
+
+  padding: 12px;
+
+  border: 1px solid var(--border);
+
+  border-radius: var(--radius-md);
+
+  background: var(--surface);
+
+  color: var(--text-primary);
+
+  transition: var(--transition);
+}
+
+.input-theme::placeholder,
+.textarea-theme::placeholder {
+  color: var(--text-light);
+}
+
+.input-theme:focus,
+.textarea-theme:focus,
+.select-theme:focus {
+  outline: none;
+
+  border-color: var(--primary);
+
+  box-shadow: 0 0 0 3px rgba(238, 49, 15, 0.15);
+}
+
+.textarea-theme {
+  resize: vertical;
+
+  min-height: 120px;
+}
+
+/* ==========================================================
+                    DIVIDER
+========================================================== */
+
+.divider-theme {
+  border: none;
+
+  border-top: 1px solid var(--border);
+}
+
+.divider-bottom {
+  border-bottom: 1px solid var(--border);
+}
+/* ==========================================================
+                    COMMON SPACING
+========================================================== */
+
+.card-padding {
+  padding: 24px;
+}
+
+.rounded-theme {
+  border-radius: var(--radius-lg);
+}
+/* ==========================================================
+                    CONTAINER
+========================================================== */
+
+.container-theme {
+  max-width: 1200px;
+
+  margin: 0 auto;
+
+  padding-inline: 20px;
+}
+
+/* ==========================================================
+                    LAYOUT
+========================================================== */
+
+.page-container {
+  max-width: 1280px;
+
+  margin: auto;
+
+  padding-inline: 24px;
+}
+
+.section-space {
+  padding-block: 64px;
+}
+
+/* ==========================================================
+                    DASHBOARD CARD
+========================================================== */
+
+.dashboard-card {
+  padding: 24px;
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow);
+
+  transition: var(--transition);
+}
+
+.dashboard-card:hover {
+  box-shadow: var(--shadow-lg);
+
+  transform: translateY(-4px);
+}
+
+/* ==========================================================
+                    REACT DATE PICKER
+========================================================== */
+
 .react-datepicker {
-  border: none !important;
-  border-radius: 18px !important;
+  border: 1px solid var(--border) !important;
+
+  border-radius: var(--radius-lg) !important;
+
   overflow: hidden;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12) !important;
+
+  background: var(--surface) !important;
+
+  color: var(--text-primary) !important;
+
+  box-shadow: var(--shadow-lg) !important;
 }
 
 .react-datepicker__header {
   background: var(--primary) !important;
+
   border-bottom: none !important;
 }
 
 .react-datepicker__current-month,
 .react-datepicker__day-name {
   color: white !important;
+
   font-weight: 600;
+}
+
+.react-datepicker__day {
+  color: var(--text-primary) !important;
+}
+
+.react-datepicker__day:hover {
+  background: var(--surface-hover) !important;
+
+  border-radius: 50%;
 }
 
 .react-datepicker__day--selected,
 .react-datepicker__day--keyboard-selected {
   background: var(--primary) !important;
-  border-radius: 50%;
-}
 
-.react-datepicker__day:hover {
-  background: rgba(238, 49, 15, 0.15);
+  color: white !important;
+
   border-radius: 50%;
 }
 
 .react-datepicker__day--disabled {
-  color: #c4c4c4 !important;
+  color: var(--text-light) !important;
+}
+
+.react-datepicker__navigation-icon::before {
+  border-color: white !important;
+}
+
+/* ==========================================================
+                    INPUT WITH ICON
+========================================================== */
+
+.input-icon {
+  position: relative;
+}
+
+.input-icon svg {
+  position: absolute;
+
+  left: 16px;
+
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  color: var(--text-secondary);
+
+  pointer-events: none;
+}
+
+/* ==========================================================
+                    INFO BOX
+========================================================== */
+
+.info-box {
+  padding: 12px;
+
+  border-radius: var(--radius-md);
+
+  background: var(--surface-2);
+
+  transition: var(--transition);
+}
+
+.info-box:hover {
+  background: var(--surface-hover);
+}
+
+/* ==========================================================
+                    ALERTS
+========================================================== */
+
+.alert-success {
+  background: var(--success-light);
+  color: var(--success);
+  border: 1px solid var(--success);
+}
+
+.alert-warning {
+  background: var(--warning-light);
+  color: var(--warning);
+  border: 1px solid var(--warning);
+}
+
+.alert-danger {
+  background: rgba(239, 68, 68, 0.08);
+  color: var(--danger);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* ==========================================================
+                    PRICE CARD
+========================================================== */
+
+.price-card {
+  background: var(--surface-2);
+
+  border: 1px solid var(--border);
+
+  border-radius: var(--radius-lg);
+
+  padding: 20px;
+}
+
+/* ==========================================================
+                        FOOTER
+========================================================== */
+
+.footer-theme {
+  background: var(--footer-bg);
+
+  color: var(--footer-text);
+}
+
+.footer-muted {
+  color: var(--footer-muted);
+}
+
+.footer-link {
+  color: var(--footer-muted);
+
+  transition: var(--transition);
+
+  cursor: pointer;
+}
+
+.footer-link:hover {
+  color: white;
+}
+
+.footer-icon {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 40px;
+
+  height: 40px;
+
+  border-radius: 9999px;
+
+  background: var(--footer-icon);
+
+  transition: var(--transition);
+
+  cursor: pointer;
+}
+
+.footer-icon:hover {
+  background: var(--footer-icon-hover);
+}
+
+.footer-divider {
+  border-color: var(--footer-border);
 }

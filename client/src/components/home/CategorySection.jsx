@@ -24,75 +24,62 @@ const categories = [
   { name: "Beach", icon: FaUmbrellaBeach },
   { name: "Tree House", icon: FaTree },
   { name: "Historical", icon: FaLandmark },
-  
- 
 ];
 
 function CategorySection() {
   return (
-    <section className="bg-white border-b border-[var(--border)]">
-      <div
-        className="
-        max-w-8xl
-        mx-auto
-        flex
-        items-center
-       
-        flex-wrap
-        
-        "
-      >
-        {categories.map((item) => {
-          const Icon = item.icon;
+    <section className="bg-surface border-b border-theme sticky top-19 z-40 transition-theme">
+      <div className="flex overflow-x-auto scrollbar-hide px-2 md:px-6">
+        <div className="flex w-full min-w-max md:min-w-0">
+          {categories.map((item) => {
+            const Icon = item.icon;
 
-          return (
-            <button
-              key={item.name}
-              className="
-              group
-              flex
-              flex-col
-              items-center
-              justify-center
-              shrink-0
-
-              h-25
-              w-25
-
-              border-b-2
-              border-transparent
-
-              transition-all
-              duration-300
-
-              hover:border-black
-              hover:bg-gray-50
-              "
-            >
-              <Icon
-                size={22}
+            return (
+              <button
+                key={item.name}
                 className="
-                text-gray-500
-                group-hover:text-black
-                group-hover:-translate-y-1
-                duration-300
-                "
-              />
-
-              <span
-                className="
-                mt-1
-                text-sm
-                font-medium
-                text-gray-500
-                group-hover:text-black
+                  group
+                  flex-1
+                  min-w-[90px]
+                  h-20
+                  flex
+                  flex-col
+                  items-center
+                  justify-center
+                  gap-1
+                  border-b-2
+                  border-transparent
+                  transition-theme
+                  hover:border-primary
+                  hover:text-brand
                 "
               >
-                {item.name}
-              </span>
-            </button>
-          );
-        })}
+                <Icon
+                  size={20}
+                  className="
+                    text-secondary
+                    transition-theme
+                    group-hover:text-brand
+                    group-hover:scale-110
+                  "
+                />
+
+                <span
+                  className="
+                    text-xs
+                    font-medium
+                    text-secondary
+                    whitespace-nowrap
+                    transition-theme
+                    group-hover:text-brand
+                  "
+                >
+                  {item.name}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

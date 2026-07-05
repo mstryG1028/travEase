@@ -13,10 +13,10 @@ function BookingSuccessModal({ booking, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-      <div className="w-full max-w-lg overflow-hidden rounded-3xl bg-white shadow-2xl animate-[fadeIn_.3s_ease]">
+      <div className="w-full max-w-lg overflow-hidden rounded-theme-lg bg-surface shadow-theme-lg animate-[fadeIn_.3s_ease]">
         {/* Header */}
 
-        <div className="bg-gradient-to-r from-[var(--primary)] to-red-500 p-8 text-center text-white">
+        <div className="gradient-primary p-8 text-center">
           <FaCheckCircle className="mx-auto text-6xl" />
 
           <h2 className="mt-4 text-3xl font-bold">Booking Confirmed!</h2>
@@ -29,97 +29,105 @@ function BookingSuccessModal({ booking, onClose }) {
         {/* Body */}
 
         <div className="space-y-5 p-7">
-          <div className="rounded-2xl bg-[var(--background)] p-5 border">
-            <div className="flex items-center justify-between py-2">
-              <div className="flex items-center gap-2 text-gray-500">
-                <FaReceipt className="text-[var(--primary)]" />
-                Booking ID
-              </div>
+          {/* Booking Details */}
 
-              <span className="font-semibold">{booking.bookingId}</span>
-            </div>
+          <div className="price-card">
+            <InfoRow
+              icon={<FaReceipt className="text-brand" />}
+              label="Booking ID"
+              value={booking.bookingId}
+            />
 
-            <hr className="my-2" />
+            <hr className="my-2 border-theme" />
 
-            <div className="flex items-center justify-between py-2">
-              <div className="flex items-center gap-2 text-gray-500">
-                <FaCalendarAlt className="text-[var(--primary)]" />
-                Check In
-              </div>
+            <InfoRow
+              icon={<FaCalendarAlt className="text-brand" />}
+              label="Check In"
+              value={new Date(booking.checkIn).toLocaleDateString()}
+            />
 
-              <span className="font-medium">
-                {new Date(booking.checkIn).toLocaleDateString()}
-              </span>
-            </div>
+            <InfoRow
+              icon={<FaCalendarAlt className="text-brand" />}
+              label="Check Out"
+              value={new Date(booking.checkOut).toLocaleDateString()}
+            />
 
-            <div className="flex items-center justify-between py-2">
-              <div className="flex items-center gap-2 text-gray-500">
-                <FaCalendarAlt className="text-[var(--primary)]" />
-                Check Out
-              </div>
+            <hr className="my-2 border-theme" />
 
-              <span className="font-medium">
-                {new Date(booking.checkOut).toLocaleDateString()}
-              </span>
-            </div>
-
-            <hr className="my-2" />
-
-            <div className="flex items-center justify-between py-2">
-              <div className="flex items-center gap-2 text-gray-500">
-                <FaMoneyBillWave className="text-green-600" />
-                Total Paid
-              </div>
-
-              <span className="text-2xl font-bold text-[var(--primary)]">
-                ₹ {booking.totalAmount}
-              </span>
-            </div>
+            <InfoRow
+              icon={<FaMoneyBillWave className="text-success" />}
+              label="Total Paid"
+              value={`₹ ${booking.totalAmount}`}
+              valueClass="text-brand text-2xl font-bold"
+            />
           </div>
 
           {/* Host */}
 
-          <div className="rounded-2xl border p-5 bg-white">
-            <h3 className="mb-4 text-lg font-semibold">Host Contact</h3>
+          <div className="card-theme p-5">
+            <h3 className="mb-4 text-lg font-semibold text-theme">
+              Host Contact
+            </h3>
 
             <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
-                  <FaUserTie className="text-[var(--primary)]" />
-                </div>
+              <HostItem
+                icon={<FaUserTie />}
+                text={booking.contactPerson?.name}
+              />
 
-                <span>{booking.contactPerson?.name}</span>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
-                  <FaPhoneAlt className="text-[var(--primary)]" />
-                </div>
-
-                <span>{booking.contactPerson?.phone}</span>
-              </div>
+              <HostItem
+                icon={<FaPhoneAlt />}
+                text={booking.contactPerson?.phone}
+              />
             </div>
           </div>
 
           {/* Buttons */}
 
-          <div className="flex gap-4 pt-2">
-            <button
-              onClick={onClose}
-              className="flex-1 rounded-xl border border-gray-300 py-3 font-medium transition hover:bg-gray-100"
-            >
+          <div className="flex gap-4">
+            <button onClick={onClose} className="btn-outline flex-1">
               Close
             </button>
 
             <Link
               to={`/bookings/${booking._id}`}
-              className="flex-1 rounded-xl bg-[var(--primary)] py-3 text-center font-semibold text-white transition hover:scale-[1.02] hover:shadow-lg"
+              className="btn-primary flex-1 text-center"
             >
               View Booking
             </Link>
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function InfoRow({
+  icon,
+  label,
+  value,
+  valueClass = "font-medium text-theme",
+}) {
+  return (
+    <div className="flex items-center justify-between py-2">
+      <div className="flex items-center gap-2 text-muted">
+        {icon}
+        {label}
+      </div>
+
+      <span className={valueClass}>{value}</span>
+    </div>
+  );
+}
+
+function HostItem({ icon, text }) {
+  return (
+    <div className="flex items-center gap-3">
+      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-2">
+        <span className="text-brand">{icon}</span>
+      </div>
+
+      <span className="text-theme">{text}</span>
     </div>
   );
 }
