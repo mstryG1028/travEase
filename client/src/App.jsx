@@ -4,7 +4,7 @@ import useAuth from "./hooks/useAuth";
 
 import Loader from "./components/ui/Loader";
 import AppRoutes from "./routes/AppRoutes";
-
+import { Toaster } from "react-hot-toast";
 import socket from "./socket/socket";
 
 function App() {
@@ -33,7 +33,25 @@ function App() {
     return <Loader />;
   }
 
-  return <AppRoutes />;
+  return (
+    <>
+      <AppRoutes />
+      <Toaster
+        position="top-center"
+        gutter={10}
+        toastOptions={{
+          duration: 3000,
+          style: {
+            width: "90vw",
+            maxWidth: "480px",
+            padding: "16px 20px",
+            fontSize: "15px",
+            borderRadius: "12px",
+          },
+        }}
+      />
+    </>
+  );
 }
 
 export default App;

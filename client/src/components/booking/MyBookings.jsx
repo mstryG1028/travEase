@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-
+import { successToast, errorToast } from "../../utils/toast";
 import { getMyBookings, cancelBooking } from "../../services/booking.service";
 
 import Loader from "../../components/ui/Loader";
@@ -20,7 +19,7 @@ function MyBookings() {
 
       setBookings(response.data.data || []);
     } catch (error) {
-      toast.error("Unable to fetch bookings");
+      errorToast("Unable to fetch bookings");
     } finally {
       setLoading(false);
     }
@@ -30,11 +29,11 @@ function MyBookings() {
     try {
       await cancelBooking(id);
 
-      toast.success("Booking Cancelled");
+      successToast("Booking Cancelled");
 
       fetchBookings();
     } catch (error) {
-      toast.error("Cancellation Failed");
+      errorToast("Cancellation Failed");
     }
   };
 
@@ -43,7 +42,7 @@ function MyBookings() {
   return (
     <section className="max-w-6xl mx-auto py-10 px-5">
       <h1 className="text-4xl font-bold mb-8">My Bookings</h1>
-
+<h1>Hello</h1>
       <div className="space-y-6">
         {bookings.map((booking) => (
           <div key={booking._id} className="bg-white rounded-2xl shadow p-6">

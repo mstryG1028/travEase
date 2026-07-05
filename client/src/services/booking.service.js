@@ -16,19 +16,9 @@ export const getOwnerBookings = () => {
 };
 
 // Single Booking
-export async function bookingDetails(id) {
-  console.log("Service ID:", id);
-
-  const booking = await Booking.findById(id);
-
-  console.log("Booking:", booking);
-
-  if (!booking) {
-    throw new ApiError(404, "Booking not found");
-  }
-
-  return booking;
-}
+export const getBookingDetails = (id) => {
+  return api.get(`/bookings/${id}`);
+};
 
 // Cancel Booking
 export const cancelBooking = (id) => {

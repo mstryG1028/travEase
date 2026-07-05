@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import {
   createListing,
+  createFirstListing,
   getAllListings,
   getSingleListing,
   updateListing,
@@ -10,7 +11,6 @@ import {
   incrementViews,
   updateFavorites,
 } from "../controllers/listing.controller.js";
-
 import { verifyJWT, authorizeRoles, upload } from "../middlewares/index.js";
 
 const router = Router();
@@ -28,6 +28,12 @@ router.post(
   createListing,
 );
 
+router.post(
+  "/become-host",
+  verifyJWT,
+  upload.single("image"),
+  createFirstListing,
+);
 router.get(
   "/nearby",
 

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import toast from "react-hot-toast";
-
+import { successToast, errorToast } from "../../utils/toast";
 import BookingCalendar from "./BookingCalendar";
 import BookingSuccessModal from "./BookingSuccessModal";
 
@@ -46,14 +45,14 @@ function BookingForm({ listing }) {
     e.preventDefault();
 
     if (!checkIn || !checkOut) {
-      toast.error("Please select dates");
+      errorToast("Please select dates");
       return;
     }
 
     const totalNights = calculateNights();
 
     if (totalNights <= 0) {
-      toast.error("Invalid dates selected");
+      errorToast("Invalid dates selected");
       return;
     }
 
@@ -79,7 +78,7 @@ function BookingForm({ listing }) {
         totalAmount,
       });
 
-      toast.success("Booking Successful 🎉");
+      successToast("Property listed successfully.");
 
       setBooking(res.data.data);
 
@@ -89,7 +88,7 @@ function BookingForm({ listing }) {
       setCheckOut(null);
       setGuests(1);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Booking Failed");
+      errorToast(err.response?.data?.message || "Booking Failed");
     } finally {
       setLoading(false);
     }
@@ -97,11 +96,16 @@ function BookingForm({ listing }) {
 
   return (
     <>
-      <form
-        onSubmit={handleBooking}
-        className="w-full max-w-sm rounded-2xl border p-6 shadow space-y-5"
-      >
-        <h2 className="text-2xl font-bold">Reserve</h2>
+      <form onSubmit={handleBooking} className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-bold text-[var(--text-primary)]">
+            Reserve your stay
+          </h2>
+
+          <p className="text-sm text-gray-500 mt-1">
+            Select your travel dates and number of guests.
+          </p>
+        </div>
 
         <BookingCalendar
           checkIn={checkIn}
@@ -111,26 +115,83 @@ function BookingForm({ listing }) {
           blockedDates={blockedDates}
         />
 
+        {/* Guests */}
+
         <div>
-          <label className="block mb-2 font-medium">Guests</label>
+          <label className="block font-semibold mb-2">Guests</label>
 
           <input
             type="number"
             min="1"
             max={listing.guests}
+            placeholder={`1 - ${listing.guests} Guests`}
             value={guests}
             onChange={(e) => setGuests(e.target.value)}
-            className="input w-full"
+            className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-[var(--primary)] focus:ring-2 focus:ring-red-100 transition"
           />
+
+          <p className="text-xs text-gray-500 mt-2">
+            Maximum {listing.guests} guests allowed.
+          </p>
         </div>
 
-        <div className="text-lg font-semibold">
-          ₹ {listing.currentPrice} / night
+        {/* Price Details */}
+
+        {checkIn && checkOut && calculateNights() > 0 && (
+          <div className="rounded-2xl bg-gray-50 border p-5 space-y-3">
+            <h3 className="font-semibold text-lg">Price Details</h3>
+
+            <div className="flex justify-between text-gray-600">
+              <span>
+                ₹{listing.currentPrice} × {calculateNights()} night(s)
+              </span>
+
+              <span>₹{listing.currentPrice * calculateNights()}</span>
+            </div>
+
+            <div className="flex justify-between text-gray-600">
+              <span>Taxes</span>
+
+              <span>₹500</span>
+            </div>
+
+            <div className="flex justify-between text-gray-600">
+              <span>Service Fee</span>
+
+              <span>₹200</span>
+            </div>
+
+            <hr />
+
+            <div className="flex justify-between text-lg font-bold">
+              <span>Total</span>
+
+              <span>
+                ₹{listing.currentPrice * calculateNights() + 500 + 200}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Info */}
+
+        <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
+          <p className="text-sm text-orange-700">
+            🎉 Free cancellation within 24 hours after booking.
+          </p>
         </div>
 
-        <button type="submit" disabled={loading} className="btn-primary w-full">
-          {loading ? "Booking..." : "Reserve"}
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-[var(--primary)] hover:opacity-90 transition text-white font-semibold py-4 rounded-xl shadow-lg"
+        >
+          {loading ? "Booking..." : "Reserve Now"}
         </button>
+
+        <p className="text-center text-xs text-gray-500">
+          🔒 Secure booking • No hidden charges
+        </p>
       </form>
 
       {booking && (

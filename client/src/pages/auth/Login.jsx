@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
-import toast from "react-hot-toast";
 
+import { successToast, errorToast } from "../../utils/toast";
 import useAuth from "../../hooks/useAuth";
 import AuthLayout from "../../layouts/AuthLayout";
 import Input from "../../components/ui/Input";
@@ -24,7 +24,7 @@ function Login() {
     try {
       const loggedInUser = await login(values);
 
-      toast.success("Welcome Back 👋");
+      successToast("Welcome Back !!");
 
       if (loggedInUser?.role === "owner") {
         navigate("/dashboard");
@@ -32,7 +32,7 @@ function Login() {
         navigate("/");
       }
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Login Failed");
+      errorToast(error?.response?.data?.message || "Login Failed");
     }
   }
 

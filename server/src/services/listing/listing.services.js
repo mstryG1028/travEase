@@ -7,6 +7,7 @@ import {
   ListingPricing,
   ListingAI,
   ListingWeather,
+  User,
 } from "../../models/index.js";
 
 import ApiError from "../../utils/ApiError.js";
@@ -21,18 +22,18 @@ class ListingService {
   // ==========================
   // CREATE LISTING
   // ==========================
- async createListing(body, file, ownerId) {   
-  let image = null;
+  async createListing(body, file, ownerId) {
+    let image = null;
 
-  if (file) {
-    const uploaded = await uploadOnCloudinary(file.path);
-    if (uploaded) {
-      image = {
-        url: uploaded.secure_url,
-        public_id: uploaded.public_id,
-      };
+    if (file) {
+      const uploaded = await uploadOnCloudinary(file.path);
+      if (uploaded) {
+        image = {
+          url: uploaded.secure_url,
+          public_id: uploaded.public_id,
+        };
+      }
     }
-  }
 
     // Generate unique slug
     const slug = `${slugify(body.title, {
@@ -74,6 +75,76 @@ class ListingService {
 
     return listing;
   }
+  // ==========================
+  // BECOME HOST (First Listing)
+  // ==========================
+  async createFirstListing(body, file, userId) {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+
+    let image = null;
+
+    if (file) {
+      const uploaded = await uploadOnCloudinary(file.path);
+
+      if (uploaded) {
+        image = {
+          url: uploaded.secure_url,
+          public_id: uploaded.public_id,
+        };
+      }
+    }
+
+    const slug = `${slugify(body.title, {
+      lower: true,
+      strict: true,
+    })}-${Date.now()}`;
+
+    let contactPerson = body.contactPerson;
+
+    if (typeof contactPerson === "string") {
+      contactPerson = JSON.parse(contactPerson);
+    }
+
+    const listing = await listingRepository.create({
+      ...body,
+      contactPerson,
+      owner: userId,
+      slug,
+      image,
+      views: 0,
+      favorites: 0,
+      trendingScore: 0,
+    });
+
+    await ListingAnalytics.create({
+      listing: listing._id,
+    });
+
+    await ListingPricing.create({
+      listing: listing._id,
+      basePrice: listing.basePrice,
+      currentPrice: listing.currentPrice,
+    });
+
+    await ListingAI.create({
+      listing: listing._id,
+    });
+
+    await ListingWeather.create({
+      listing: listing._id,
+    });
+
+    if (user.role === "user") {
+      user.role = "owner";
+      await user.save();
+    }
+
+    return listing;
+  }
 
   // ==========================
   // GET ALL LISTINGS
@@ -96,9 +167,7 @@ class ListingService {
   // GET SINGLE LISTING
   // ==========================
   async getListing(id) {
-    const listing = await listingRepository
-      .findById(id)
-      
+    const listing = await listingRepository.findById(id);
 
     if (!listing) {
       throw new ApiError(404, "Listing Not Found");

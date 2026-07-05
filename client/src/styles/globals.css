@@ -2,4 +2,35 @@
 @import "./colors.css";
 @import "./theme.css";
 
+.react-datepicker {
+  border: none !important;
+  border-radius: 18px !important;
+  overflow: hidden;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12) !important;
+}
 
+.react-datepicker__header {
+  background: var(--primary) !important;
+  border-bottom: none !important;
+}
+
+.react-datepicker__current-month,
+.react-datepicker__day-name {
+  color: white !important;
+  font-weight: 600;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background: var(--primary) !important;
+  border-radius: 50%;
+}
+
+.react-datepicker__day:hover {
+  background: rgba(238, 49, 15, 0.15);
+  border-radius: 50%;
+}
+
+.react-datepicker__day--disabled {
+  color: #c4c4c4 !important;
+}

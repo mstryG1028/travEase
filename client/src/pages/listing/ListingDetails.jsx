@@ -117,27 +117,74 @@ function ListingDetails() {
                 ))}
               </div>
             </div>
-
-            {/* Reviews */}
-            <div className="bg-white rounded-2xl shadow p-6">
-              <h2 className="text-2xl font-bold mb-6">Reviews</h2>
-
-              <ReviewSection listingId={listing._id} bookingId={null} />
-            </div>
           </div>
 
           {/* Right */}
           <div>
-            <div className="sticky top-24 bg-white rounded-3xl shadow-xl border p-6">
-              <div className="mb-6">
-                <h2 className="text-4xl font-bold text-[var(--primary)]">
-                  ₹{listing.currentPrice}
-                </h2>
+            <div className="sticky top-24 bg-white rounded-3xl shadow-2xl border border-gray-200 ">
+              {/* Header */}
+              <div className="bg-gradient-to-r from-[var(--primary)] to-[#ff6b4a] text-white p-6">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h2 className="text-4xl font-bold">
+                      ₹{listing.currentPrice}
+                    </h2>
 
-                <p className="text-gray-500">per night</p>
+                    <p className="text-sm text-white/80">per night</p>
+                  </div>
+
+                  <div className="bg-white text-yellow-500 px-3 py-2 rounded-xl shadow">
+                    ⭐ {listing.averageRating?.toFixed(1) || "4.8"}
+                  </div>
+                </div>
+
+                {listing.basePrice > listing.currentPrice && (
+                  <p className="mt-3 text-sm">
+                    <span className="line-through opacity-80">
+                      ₹{listing.basePrice}
+                    </span>
+
+                    <span className="ml-2 font-semibold">
+                      Save ₹{listing.basePrice - listing.currentPrice}
+                    </span>
+                  </p>
+                )}
               </div>
 
-              <BookingForm listing={listing} />
+              {/* Features */}
+              <div className="px-6 pt-5 flex flex-wrap gap-2">
+                <span className="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full">
+                  ✓ Free Cancellation
+                </span>
+
+                <span className="bg-blue-100 text-blue-700 text-xs px-3 py-1 rounded-full">
+                  ⚡ Instant Booking
+                </span>
+
+                <span className="bg-orange-100 text-orange-700 text-xs px-3 py-1 rounded-full">
+                  🔒 Secure Payment
+                </span>
+              </div>
+
+              {/* Booking Form */}
+              <div className="p-6">
+                <BookingForm listing={listing} />
+              </div>
+
+              {/* Footer */}
+              <div className="border-t bg-gray-50 px-6 py-4 text-sm text-gray-600">
+                <div className="flex justify-between mb-2">
+                  <span>✔ No hidden charges</span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span>Need help?</span>
+
+                  <button className="text-[var(--primary)] font-semibold hover:underline">
+                    Contact Host
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

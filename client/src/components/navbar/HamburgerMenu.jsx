@@ -53,7 +53,7 @@ function HamburgerMenu({ user, close }) {
           </Link>
 
           <Link
-            to="/bookings"
+            to="/my-bookings"
             onClick={close}
             className="block px-5 py-3 hover:bg-gray-100"
           >
@@ -107,7 +107,7 @@ function HamburgerMenu({ user, close }) {
           </Link>
 
           <Link
-            to="/bookings"
+            to="/my-bookings"
             onClick={close}
             className="block px-5 py-3 hover:bg-gray-100"
           >

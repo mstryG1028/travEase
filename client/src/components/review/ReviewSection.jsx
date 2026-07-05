@@ -13,11 +13,13 @@ function ReviewSection({ listingId, bookingId }) {
     <section className="mt-16">
       <h2 className="text-3xl font-bold mb-8">Reviews ({reviews.length})</h2>
 
-      <ReviewForm
-        bookingId={bookingId}
-        listingId={listingId}
-        refreshReviews={fetchReviews}
-      />
+      {bookingId && (
+        <ReviewForm
+          bookingId={bookingId}
+          listingId={listingId}
+          refreshReviews={fetchReviews}
+        />
+      )}
 
       <div className="mt-10 space-y-6">
         {reviews.length === 0 ? (

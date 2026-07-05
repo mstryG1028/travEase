@@ -19,7 +19,7 @@ import {
 
 import * as notificationService from "../notification/notification.service.js";
 
-import { BOOKING_STATUS } from "../../constants/booking.constants.js";
+import { BOOKING_STATUS,PAYMENT_STATUS } from "../../constants/booking.constants.js";
 
 // ===================================================
 // Create Booking
@@ -103,7 +103,8 @@ export async function createBooking(data, user) {
 
         contactPerson: listing.contactPerson,
 
-        bookingStatus: BOOKING_STATUS.PENDING,
+        bookingStatus: BOOKING_STATUS.COMPLETED,
+        paymentStatus: PAYMENT_STATUS.PENDING,
       },
       session,
     );
@@ -186,7 +187,7 @@ export async function myBookings(userId) {
   return await Booking.find({
     guest: userId,
   })
-    .populate("listing", "title images city state currentPrice contactPerson")
+    .populate("listing", "title image city state currentPrice contactPerson")
     .populate("owner", "fullName phone email")
     .sort({
       createdAt: -1,
@@ -198,7 +199,7 @@ export async function bookingDetails(id) {
   const booking = await Booking.findById(id)
     .populate(
       "listing",
-      "title images address city state currentPrice contactPerson",
+      "title image address city state currentPrice contactPerson",
     )
     .populate("guest", "fullName email phone")
     .populate("owner", "fullName email phone")

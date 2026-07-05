@@ -8,13 +8,10 @@ import {
   completeBooking,
   availability,
   ownerDashboard,
+  bookingDetails,
 } from "../controllers/booking.controller.js";
 
-import {
-  verifyJWT,
-  authorizeRoles,
-  validate,
-} from "../middlewares/index.js";
+import { verifyJWT, authorizeRoles, validate } from "../middlewares/index.js";
 
 import { bookingValidator } from "../validators/index.js";
 
@@ -60,6 +57,9 @@ router.get(
   ownerDashboard,
 );
 
+router.get("/availability", availability);
+router.get("/:id", verifyJWT, bookingDetails);
+
 router.patch(
   "/cancel/:id",
 
@@ -76,12 +76,6 @@ router.patch(
   authorizeRoles("owner"),
 
   completeBooking,
-);
-
-router.get(
-  "/availability",
-
-  availability,
 );
 
 export default router;

@@ -15,8 +15,6 @@ router.post(
 
   verifyJWT,
 
-  authorizeRoles("user"),
-
   createReview,
 );
 

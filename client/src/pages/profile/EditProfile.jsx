@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
 
 import Loader from "../../components/ui/Loader";
-
+import { successToast, errorToast } from "../../utils/toast";
 import useProfile from "../../hooks/useProfile";
 import { updateProfile } from "../../services/profile.service";
 
@@ -43,7 +42,7 @@ function EditProfile() {
     e.preventDefault();
 
     if (!form.fullName || !form.username || !form.email) {
-      return toast.error("Please fill all required fields");
+      return errorToast("Please fill all required fields");
     }
 
     try {
@@ -51,7 +50,12 @@ function EditProfile() {
 
       await updateProfile(form);
 
-      toast.success("Profile Updated Successfully");
+      try {
+        await createListing(formData);
+        successToast("Property listed successfully.");
+      } catch (error) {
+        errorToast(error);
+      }
 
       navigate("/profile");
     } catch (err) {

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
-
+import { successToast, errorToast } from "../../utils/toast";
 import { changePassword } from "../../services/profile.service";
 
 function ChangePassword() {
@@ -22,7 +22,12 @@ function ChangePassword() {
     try {
       await changePassword(form);
 
-      toast.success("Password Changed");
+      try {
+        await createListing(formData);
+        successToast("Property listed successfully.");
+      } catch (error) {
+        errorToast(error);
+      }
 
       setForm({
         oldPassword: "",

@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
-
+import { successToast, errorToast } from "../../utils/toast";
 import { updateAvatar, deleteAvatar } from "../../services/profile.service";
 
 function AvatarUploader({ profile, reloadProfile }) {
@@ -22,11 +22,11 @@ function AvatarUploader({ profile, reloadProfile }) {
 
       await updateAvatar(formData);
 
-      toast.success("Avatar Updated");
+      successToast("Property listed successfully.");
 
       reloadProfile();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Upload Failed");
+      errorToast(err.response?.data?.message || "Upload Failed");
     } finally {
       setLoading(false);
     }

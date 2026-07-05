@@ -3,10 +3,19 @@ import reviewRepository from "../../repositories/review.repository.js";
 import { Booking, ListingAnalytics } from "../../models/index.js";
 
 import ApiError from "../../utils/ApiError.js";
-
+import {
+  BOOKING_STATUS,
+  PAYMENT_STATUS,
+} from "../../constants/booking.constants.js";
 export async function createReview(data, user) {
+  console.log("Request Body:", data);
+  console.log("Booking ID:", data.booking);
+  console.log("Logged User:", user._id);
+  console.log("Incoming Data:", data);
+
   const booking = await Booking.findById(data.booking);
 
+  console.log("Booking Found:", booking);
   if (!booking) {
     throw new ApiError(
       404,
@@ -23,7 +32,7 @@ export async function createReview(data, user) {
     );
   }
 
-  if (booking.bookingStatus !== "Confirmed") {
+  if (booking.bookingStatus !== BOOKING_STATUS.COMPLETED) {
     throw new ApiError(
       400,
 

@@ -14,6 +14,7 @@ import MainLayout from "../layouts/MainLayout";
 import ProtectedRoute from "./ProtectedRoute";
 import BookingDetails from "../pages/booking/BookingDetails";
 import MyBookings from "../pages/booking/MyBookings";
+import CreateListing from "../pages/listing/CreateListing";
 function AppRoutes() {
   return (
     <Routes>
@@ -25,6 +26,16 @@ function AppRoutes() {
           <MainLayout>
             <Home />
           </MainLayout>
+        }
+      />
+      <Route
+        path="/become-host"
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <CreateListing />
+            </MainLayout>
+          </ProtectedRoute>
         }
       />
 

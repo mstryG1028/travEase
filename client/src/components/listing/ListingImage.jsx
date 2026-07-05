@@ -17,7 +17,7 @@ function ListingImage({ image, listingId }) {
         }
         alt=""
         className="
-        w-full
+        w-50%
         h-full
         object-cover
 

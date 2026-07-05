@@ -2,8 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
 import { useState } from "react";
-import toast from "react-hot-toast";
-
+import { successToast, errorToast } from "../../utils/toast";
 import AuthLayout from "../../layouts/AuthLayout";
 import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
@@ -43,11 +42,11 @@ function Register() {
 
       await registerUser(formData);
 
-      toast.success("Welcome to TravEase 🎉");
+      successToast("Welcome to TravEase!!");
 
       navigate("/");
     } catch (error) {
-      toast.error(
+      errorToast(
         error?.response?.data?.message ||
           error?.response?.data?.error ||
           "Registration Failed",

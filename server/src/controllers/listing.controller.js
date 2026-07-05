@@ -22,6 +22,21 @@ export const createListing = AsyncHandler(async (req, res) => {
   );
 });
 
+export const createFirstListing = AsyncHandler(async (req, res) => {
+  const listing = await listingService.createFirstListing(
+    req.body,
+    req.file,
+    req.user._id,
+  );
+
+  return sendResponse(
+    res,
+    201,
+    listing,
+    "Congratulations! You are now a host.",
+  );
+});
+
 export const getAllListings = AsyncHandler(async (req, res) => {
   const listings = await listingService.getAllListings(req.query);
 

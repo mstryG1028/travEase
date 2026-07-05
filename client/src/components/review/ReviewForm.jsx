@@ -1,5 +1,5 @@
 import { useState } from "react";
-import toast from "react-hot-toast";
+import { successToast, errorToast } from "../../utils/toast";
 
 import { createReview } from "../../services/review.service";
 
@@ -23,14 +23,14 @@ function ReviewForm({ bookingId, listingId, refreshReviews }) {
         comment,
       });
 
-      toast.success("Review Added");
+      successToast("Review Added");
 
       setComment("");
       setRating(5);
 
       refreshReviews();
     } catch (error) {
-      toast.error(error.response?.data?.message || "Unable to add review");
+      errorToast(error.response?.data?.message || "Unable to add review");
     } finally {
       setLoading(false);
     }
