@@ -128,9 +128,7 @@ function AppRoutes() {
         path="/wishlist"
         element={
           <ProtectedRoute>
-            <MainLayout>
-              <Wishlist />
-            </MainLayout>
+            <Wishlist />
           </ProtectedRoute>
         }
       />

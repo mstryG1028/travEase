@@ -1,18 +1,22 @@
 import api from "../api/axios";
 
-export const getWishlist = () => {
-  const token = localStorage.getItem("token");
-  if (!token) return Promise.resolve({ data: { data: [] } });
+// Get all wishlist items
+export async function getWishlist() {
+  const { data } = await api.get("/favorites");
+  return data.data;
+}
 
-  return api.get("/favorites");
-};
-
-export const addFavorite = (listingId) => {
-  return api.post("/favorites", {
+// Add listing to wishlist
+export async function addToWishlist(listingId) {
+  const { data } = await api.post("/favorites", {
     listing: listingId,
   });
-};
 
-export const removeFavorite = (listingId) => {
-  return api.delete(`/favorites/${listingId}`);
-};
+  return data;
+}
+
+// Remove listing from wishlist
+export async function removeFromWishlist(listingId) {
+  const { data } = await api.delete(`/favorites/${listingId}`);
+  return data;
+}

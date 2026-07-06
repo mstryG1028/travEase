@@ -1,10 +1,11 @@
+import { useState } from "react";
+
 import { Link, useNavigate } from "react-router-dom";
 import { FaMapMarkerAlt, FaStar } from "react-icons/fa";
 
 import Button from "../ui/Button";
 import ListingImage from "./ListingImage";
 import WishlistButton from "./WishlistButton";
-import { useState } from "react";
 import ConfirmModal from "../ui/ConfirmModal";
 import { deleteListing } from "../../services/listing.service";
 import { successToast, errorToast } from "../../utils/toast";
@@ -52,9 +53,9 @@ function ListingCard({ listing, isOwner = false, onDelete }) {
         {/* Image */}
         <div className="relative">
           <ListingImage image={listing.image?.url} listingId={listing._id} />
-
-          {!isOwner && <WishlistButton listingId={listing._id} />}
+          <WishlistButton listingId={listing._id} />
         </div>
+        
 
         {/* Content */}
         <div className="px-5 py-5">

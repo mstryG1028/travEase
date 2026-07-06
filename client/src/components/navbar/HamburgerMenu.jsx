@@ -44,8 +44,7 @@ function HamburgerMenu({ user, close }) {
 
           <Link
             to="/wishlist"
-            onClick={close}
-            className="block px-5 py-3 hover-surface transition-theme"
+            className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition"
           >
             Wishlist
           </Link>
@@ -87,6 +86,12 @@ function HamburgerMenu({ user, close }) {
             className="block px-5 py-3 hover-surface transition-theme"
           >
             My Profile
+          </Link>
+          <Link
+            to="/wishlist"
+            className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition"
+          >
+            Wishlist
           </Link>
 
           <hr className="border-theme" />
