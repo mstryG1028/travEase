@@ -31,8 +31,9 @@ function ListingDetails() {
   if (loading) return <Loader />;
 
   if (!listing) return <h1>Listing Not Found</h1>;
+
   return (
-    <section className="bg-gray-50 min-h-screen py-10">
+    <section className="bg-[var(--background)] min-h-screen py-10 text-[var(--text-primary)] transition-colors">
       <div className="max-w-7xl mx-auto px-5">
         {/* Hero Image */}
         <div className="overflow-hidden rounded-3xl shadow-xl">
@@ -46,19 +47,20 @@ function ListingDetails() {
         {/* Title */}
         <div className="flex flex-col md:flex-row md:justify-between md:items-center mt-8">
           <div>
-            <h1 className="text-4xl font-bold text-gray-800">
+            <h1 className="text-4xl font-bold text-[var(--text-primary)]">
               {listing.title}
             </h1>
 
-            <p className="flex items-center gap-2 mt-3 text-gray-500">
-              <FaMapMarkerAlt className="text-red-500" />
+            <p className="flex items-center gap-2 mt-3 text-[var(--text-secondary)]">
+              <FaMapMarkerAlt className="text-[var(--primary)]" />
               {listing.address}, {listing.city}, {listing.state}
             </p>
           </div>
 
-          <div className="flex items-center gap-2 bg-white shadow px-5 py-3 rounded-xl mt-5 md:mt-0">
+          <div className="flex items-center gap-2 bg-[var(--card)] shadow px-5 py-3 rounded-xl mt-5 md:mt-0 border border-[var(--border)]">
             <FaStar className="text-yellow-500" />
-            <span className="font-semibold">
+
+            <span className="font-semibold text-[var(--text-primary)]">
               {listing.averageRating?.toFixed(1)}
             </span>
           </div>
@@ -69,48 +71,64 @@ function ListingDetails() {
           {/* Left */}
           <div className="lg:col-span-2 space-y-8">
             {/* Description */}
-            <div className="bg-white rounded-2xl shadow p-6">
-              <h2 className="text-2xl font-bold mb-4">Description</h2>
+            <div className="bg-[var(--card)] rounded-2xl shadow p-6 border border-[var(--border)]">
+              <h2 className="text-2xl font-bold mb-4 text-[var(--text-primary)]">
+                Description
+              </h2>
 
-              <p className="text-gray-600 leading-8">{listing.description}</p>
+              <p className="text-[var(--text-secondary)] leading-8">
+                {listing.description}
+              </p>
             </div>
 
             {/* Property Info */}
-            <div className="bg-white rounded-2xl shadow p-6">
-              <h2 className="text-2xl font-bold mb-6">Property Details</h2>
+            <div className="bg-[var(--card)] rounded-2xl shadow p-6 border border-[var(--border)]">
+              <h2 className="text-2xl font-bold mb-6 text-[var(--text-primary)]">
+                Property Details
+              </h2>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-                <div className="border rounded-xl p-5 text-center">
-                  <h3 className="font-bold text-lg">{listing.guests}</h3>
-                  <p className="text-gray-500">Guests</p>
+                <div className="border border-[var(--border)] rounded-xl p-5 text-center">
+                  <h3 className="font-bold text-lg text-[var(--text-primary)]">
+                    {listing.guests}
+                  </h3>
+                  <p className="text-[var(--text-secondary)]">Guests</p>
                 </div>
 
-                <div className="border rounded-xl p-5 text-center">
-                  <h3 className="font-bold text-lg">{listing.bedrooms}</h3>
-                  <p className="text-gray-500">Bedrooms</p>
+                <div className="border border-[var(--border)] rounded-xl p-5 text-center">
+                  <h3 className="font-bold text-lg text-[var(--text-primary)]">
+                    {listing.bedrooms}
+                  </h3>
+                  <p className="text-[var(--text-secondary)]">Bedrooms</p>
                 </div>
 
-                <div className="border rounded-xl p-5 text-center">
-                  <h3 className="font-bold text-lg">{listing.beds}</h3>
-                  <p className="text-gray-500">Beds</p>
+                <div className="border border-[var(--border)] rounded-xl p-5 text-center">
+                  <h3 className="font-bold text-lg text-[var(--text-primary)]">
+                    {listing.beds}
+                  </h3>
+                  <p className="text-[var(--text-secondary)]">Beds</p>
                 </div>
 
-                <div className="border rounded-xl p-5 text-center">
-                  <h3 className="font-bold text-lg">{listing.bathrooms}</h3>
-                  <p className="text-gray-500">Bathrooms</p>
+                <div className="border border-[var(--border)] rounded-xl p-5 text-center">
+                  <h3 className="font-bold text-lg text-[var(--text-primary)]">
+                    {listing.bathrooms}
+                  </h3>
+                  <p className="text-[var(--text-secondary)]">Bathrooms</p>
                 </div>
               </div>
             </div>
 
             {/* Amenities */}
-            <div className="bg-white rounded-2xl shadow p-6">
-              <h2 className="text-2xl font-bold mb-5">Amenities</h2>
+            <div className="bg-[var(--card)] rounded-2xl shadow p-6 border border-[var(--border)]">
+              <h2 className="text-2xl font-bold mb-5 text-[var(--text-primary)]">
+                Amenities
+              </h2>
 
               <div className="flex flex-wrap gap-3">
                 {listing.amenities.map((item) => (
                   <span
                     key={item}
-                    className="bg-blue-50 text-blue-700 px-4 py-2 rounded-full font-medium"
+                    className="bg-[var(--surface)] text-[var(--primary)] px-4 py-2 rounded-full font-medium border border-[var(--border)]"
                   >
                     {item}
                   </span>
@@ -121,9 +139,9 @@ function ListingDetails() {
 
           {/* Right */}
           <div>
-            <div className="sticky top-24 bg-white rounded-3xl shadow-2xl border border-gray-200 ">
+            <div className="sticky top-24 bg-[var(--card)] rounded-3xl shadow-2xl border border-[var(--border)]">
               {/* Header */}
-              <div className="bg-gradient-to-r from-[var(--primary)] to-[#ff6b4a] text-white p-6">
+              <div className="bg-gradient-to-r from-[var(--primary)] to-[#ff6b4a] text-white p-6 rounded-t-3xl">
                 <div className="flex justify-between items-center">
                   <div>
                     <h2 className="text-4xl font-bold">
@@ -172,7 +190,7 @@ function ListingDetails() {
               </div>
 
               {/* Footer */}
-              <div className="border-t bg-gray-50 px-6 py-4 text-sm text-gray-600">
+              <div className="border-t border-[var(--border)] bg-[var(--surface)] px-6 py-4 text-sm text-[var(--text-secondary)]">
                 <div className="flex justify-between mb-2">
                   <span>✔ No hidden charges</span>
                 </div>
@@ -187,6 +205,11 @@ function ListingDetails() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Reviews */}
+        <div className="mt-12">
+          <ReviewSection listingId={listing._id} />
         </div>
       </div>
     </section>

@@ -20,10 +20,18 @@ function useFavorites() {
     }
   }
 
+  // ✅ NEW: remove from UI instantly
+  function removeFromUI(listingId) {
+    setFavorites((prev) =>
+      prev.filter((item) => item.listing._id !== listingId),
+    );
+  }
+
   return {
     favorites,
     loading,
     fetchFavorites,
+    removeFromUI,
   };
 }
 

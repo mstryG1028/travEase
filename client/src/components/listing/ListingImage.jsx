@@ -1,5 +1,3 @@
-import FavoriteButton from "../favorite/FavoriteButton";
-
 function ListingImage({ image, listingId }) {
   return (
     <div
@@ -26,10 +24,6 @@ function ListingImage({ image, listingId }) {
           group-hover:scale-105
         "
       />
-
-      <div className="absolute top-4 right-4">
-        <FavoriteButton listingId={listingId} initialFavorite={false} />
-      </div>
     </div>
   );
 }

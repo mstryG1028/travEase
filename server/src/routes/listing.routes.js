@@ -5,6 +5,7 @@ import {
   createFirstListing,
   getAllListings,
   getSingleListing,
+  getMyListings,
   updateListing,
   deleteListing,
   nearbyListings,
@@ -40,6 +41,7 @@ router.get(
   nearbyListings,
 );
 
+router.get("/my-listings", verifyJWT, authorizeRoles("owner"), getMyListings);
 router
   .route("/:id")
 
@@ -47,9 +49,8 @@ router
 
   .patch(
     verifyJWT,
-
     authorizeRoles("owner"),
-
+    upload.single("image"),
     updateListing,
   )
 

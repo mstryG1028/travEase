@@ -1,6 +1,9 @@
 import api from "../api/axios";
 
 export const getWishlist = () => {
+  const token = localStorage.getItem("token");
+  if (!token) return Promise.resolve({ data: { data: [] } });
+
   return api.get("/favorites");
 };
 

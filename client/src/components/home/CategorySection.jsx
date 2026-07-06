@@ -28,7 +28,7 @@ const categories = [
 
 function CategorySection() {
   return (
-    <section className="bg-surface border-b border-theme sticky top-19 z-40 transition-theme">
+    <section className="bg-surface w-full border-b border-theme sticky top-19 z-40 transition-theme">
       <div className="flex overflow-x-auto scrollbar-hide px-2 md:px-6">
         <div className="flex w-full min-w-max md:min-w-0">
           {categories.map((item) => {

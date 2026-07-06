@@ -2,6 +2,12 @@ import listingService from "../services/listing/listing.services.js";
 
 import { AsyncHandler, sendResponse } from "../utils/index.js";
 
+export const getMyListings = AsyncHandler(async (req, res) => {
+  const listings = await listingService.getMyListings(req.user._id);
+
+  return sendResponse(res, 200, listings);
+});
+
 export const createListing = AsyncHandler(async (req, res) => {
   const listing = await listingService.createListing(
     req.body,
@@ -68,6 +74,7 @@ export const updateListing = AsyncHandler(async (req, res) => {
     req.user._id,
 
     req.body,
+    req.file,
   );
 
   return sendResponse(

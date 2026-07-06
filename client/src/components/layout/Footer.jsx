@@ -12,37 +12,45 @@ function Footer() {
   const socials = [FaFacebookF, FaInstagram, FaTwitter, FaLinkedinIn];
 
   return (
-    <footer className="footer-theme mt-auto">
-      <div className="container-theme py-14">
+    <footer className="bg-[var(--surface)] text-[var(--text-primary)] border-t border-[var(--border)] mt-auto transition-theme">
+      <div className="max-w-7xl mx-auto px-6 py-14">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
-
           <div>
-            <h2 className="text-3xl font-bold text-brand">TravEase</h2>
+            <h2 className="text-3xl font-bold text-[var(--primary)]">
+              TravEase
+            </h2>
 
-            <p className="footer-muted mt-5 leading-7">
+            <p className="mt-5 leading-7 text-[var(--text-secondary)]">
               Discover premium hotels, villas, resorts and unforgettable travel
               experiences across India and around the world.
             </p>
 
             <div className="mt-6 flex gap-4">
               {socials.map((Icon, index) => (
-                <div key={index} className="footer-icon">
-                  <Icon size={16} />
+                <div
+                  key={index}
+                  className="w-9 h-9 flex items-center justify-center rounded-full border border-[var(--border)] bg-[var(--background)] text-[var(--text-secondary)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-theme cursor-pointer"
+                >
+                  <Icon size={14} />
                 </div>
               ))}
             </div>
           </div>
 
           {/* Explore */}
-
           <div>
-            <h3 className="mb-6 text-lg font-semibold">Explore</h3>
+            <h3 className="mb-6 text-lg font-semibold text-[var(--text-primary)]">
+              Explore
+            </h3>
 
-            <ul className="space-y-4">
+            <ul className="space-y-4 text-[var(--text-secondary)]">
               {["Hotels", "Villas", "Resorts", "Homestays", "Apartments"].map(
                 (item) => (
-                  <li key={item} className="footer-link">
+                  <li
+                    key={item}
+                    className="hover:text-[var(--primary)] cursor-pointer transition-theme"
+                  >
                     {item}
                   </li>
                 ),
@@ -51,11 +59,12 @@ function Footer() {
           </div>
 
           {/* Support */}
-
           <div>
-            <h3 className="mb-6 text-lg font-semibold">Support</h3>
+            <h3 className="mb-6 text-lg font-semibold text-[var(--text-primary)]">
+              Support
+            </h3>
 
-            <ul className="space-y-4">
+            <ul className="space-y-4 text-[var(--text-secondary)]">
               {[
                 "Help Center",
                 "Safety Information",
@@ -63,7 +72,10 @@ function Footer() {
                 "Privacy Policy",
                 "Terms & Conditions",
               ].map((item) => (
-                <li key={item} className="footer-link">
+                <li
+                  key={item}
+                  className="hover:text-[var(--primary)] cursor-pointer transition-theme"
+                >
                   {item}
                 </li>
               ))}
@@ -71,36 +83,44 @@ function Footer() {
           </div>
 
           {/* Contact */}
-
           <div>
-            <h3 className="mb-6 text-lg font-semibold">Contact</h3>
+            <h3 className="mb-6 text-lg font-semibold text-[var(--text-primary)]">
+              Contact
+            </h3>
 
-            <div className="space-y-5 footer-muted">
+            <div className="space-y-5 text-[var(--text-secondary)]">
               <p className="flex gap-3">
-                <FaMapMarkerAlt className="text-brand mt-1" />
+                <FaMapMarkerAlt className="text-[var(--primary)] mt-1" />
                 Mumbai, Maharashtra, India
               </p>
 
               <p className="flex gap-3">
-                <FaPhoneAlt className="text-brand" />
+                <FaPhoneAlt className="text-[var(--primary)]" />
                 +91 98765 43210
               </p>
 
               <p className="flex gap-3">
-                <FaEnvelope className="text-brand" />
+                <FaEnvelope className="text-[var(--primary)]" />
                 support@travease.com
               </p>
             </div>
           </div>
         </div>
 
-        <div className="footer-divider mt-12 flex flex-col items-center justify-between gap-4 border-t pt-6 text-sm md:flex-row">
-          <p className="footer-muted">© 2026 TravEase. All Rights Reserved.</p>
+        {/* Bottom */}
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-[var(--border)] pt-6 text-sm md:flex-row text-[var(--text-secondary)]">
+          <p>© 2026 TravEase. All Rights Reserved.</p>
 
           <div className="flex gap-6">
-            <span className="footer-link">Privacy</span>
-            <span className="footer-link">Terms</span>
-            <span className="footer-link">Sitemap</span>
+            <span className="hover:text-[var(--primary)] cursor-pointer transition-theme">
+              Privacy
+            </span>
+            <span className="hover:text-[var(--primary)] cursor-pointer transition-theme">
+              Terms
+            </span>
+            <span className="hover:text-[var(--primary)] cursor-pointer transition-theme">
+              Sitemap
+            </span>
           </div>
         </div>
       </div>

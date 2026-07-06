@@ -1,21 +1,30 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
-import { successToast, errorToast } from "../../utils/toast";
-import { createListing } from "../../services/listing.service";
-
+import Loader from "../../components/ui/Loader";
 import Button from "../../components/ui/Button";
 
-function CreateListing() {
+import { getListingById, updateListing } from "../../services/listing.service";
+
+import { successToast, errorToast } from "../../utils/toast";
+
+import React from "react";
+
+const EditListing = () => {
+  const { id } = useParams();
+
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const [saving, setSaving] = useState(false);
+
   const [image, setImage] = useState(null);
 
   const [form, setForm] = useState({
     title: "",
     description: "",
-    propertyType: "Hotel",
+    propertyType: "",
     address: "",
     city: "",
     state: "",
@@ -26,70 +35,84 @@ function CreateListing() {
     bathrooms: 1,
     basePrice: "",
     currentPrice: "",
-    contactName: "",
-    contactPhone: "",
   });
 
-  const handleChange = (e) => {
+  useEffect(() => {
+    fetchListing();
+  }, []);
+
+  async function fetchListing() {
+    try {
+      const response = await getListingById(id);
+
+      const listing = response.data.data;
+
+      setForm({
+        title: listing.title,
+        description: listing.description,
+        propertyType: listing.propertyType,
+        address: listing.address,
+        city: listing.city,
+        state: listing.state,
+        country: listing.country,
+        guests: listing.guests,
+        bedrooms: listing.bedrooms,
+        beds: listing.beds,
+        bathrooms: listing.bathrooms,
+        basePrice: listing.basePrice,
+        currentPrice: listing.currentPrice,
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function handleChange(e) {
     setForm((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
-  };
+  }
 
-  const submitHandler = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
 
     try {
-      setLoading(true);
+      setSaving(true);
 
       const formData = new FormData();
 
       Object.keys(form).forEach((key) => {
-        if (key === "contactName") return;
-        if (key === "contactPhone") return;
-
         formData.append(key, form[key]);
       });
-
-      formData.append(
-        "contactPerson",
-        JSON.stringify({
-          name: form.contactName,
-          phone: form.contactPhone,
-        }),
-      );
 
       if (image) {
         formData.append("image", image);
       }
 
-      await createListing(formData);
+      await updateListing(id, formData);
 
-      successToast("Property listed successfully.");
+      successToast("Listing Updated");
 
       navigate("/my-listings");
-    } catch (err) {
-      console.log(err);
-
-      errorToast(err?.response?.data?.message || "Unable to create listing.");
+    } catch (error) {
+      errorToast(error);
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
-  };
+  }
 
-  const inputClass =
-    "w-full border border-[var(--border)] rounded-xl p-3 bg-[var(--surface)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)] transition";
+  if (loading) return <Loader />;
 
   return (
     <section className="min-h-screen bg-[var(--background)] py-10">
       <div className="max-w-4xl mx-auto px-6">
         <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-8">
-          Create New List
+          Edit Listing
         </h1>
 
         <form
-          onSubmit={submitHandler}
+          onSubmit={handleSubmit}
           className="space-y-5 bg-[var(--surface)] border border-[var(--border)] p-8 rounded-2xl shadow"
         >
           <input
@@ -220,40 +243,29 @@ function CreateListing() {
               value={form.currentPrice}
               onChange={handleChange}
             />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
-              className={inputClass}
-              placeholder="Contact Person"
-              name="contactName"
-              value={form.contactName}
-              onChange={handleChange}
-            />
-
-            <input
-              className={inputClass}
-              placeholder="Phone Number"
-              name="contactPhone"
-              value={form.contactPhone}
-              onChange={handleChange}
+              type="file"
+              accept="image/*"
+              onChange={(e) => setImage(e.target.files[0])}
+              className="
+    w-full
+    border
+    border-theme
+    rounded-xl
+    p-3
+    bg-surface
+    text-theme
+  "
             />
           </div>
 
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setImage(e.target.files[0])}
-            className="w-full border border-[var(--border)] rounded-xl p-3 bg-[var(--surface)] text-[var(--text-primary)] file:mr-4 file:px-4 file:py-2 file:border-0 file:rounded-lg file:bg-[var(--primary)] file:text-white file:cursor-pointer"
-          />
-
-          <Button type="submit" loading={loading} fullWidth>
-            Create List
+          <Button type="submit" loading={saving} fullWidth>
+            Update Listing
           </Button>
         </form>
       </div>
     </section>
   );
-}
+};
 
-export default CreateListing;
+export default EditListing;

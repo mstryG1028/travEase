@@ -28,13 +28,17 @@ function Home() {
   if (loading) return <Loader />;
 
   return (
-    <div className="bg-[#f7f7f7]">
-      <div className="max-w-7xl mx-auto  py-1">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--text-primary)]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Categories */}
         <CategorySection />
 
-        <section className="mt-16">
+        {/* Listings */}
+        <section className="mt-14">
           {listings.length === 0 ? (
-            <h2>No Listings Found</h2>
+            <div className="text-center text-gray-500 py-20">
+              No Listings Found
+            </div>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
               {listings.map((listing) => (

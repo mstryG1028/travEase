@@ -10,6 +10,10 @@ export const getListingById = (id) => {
   return api.get(`/listings/${id}`);
 };
 
+export function getMyListings() {
+  return api.get("/listing/my-listings");
+}
+
 export const becomeHost = (formData) => {
   return api.post("/listings/become-host", formData, {
     headers: {
@@ -18,15 +22,15 @@ export const becomeHost = (formData) => {
   });
 };
 export const createListing = (formData) => {
-  return api.post("/listings", formData, {
+  return api.post("/listings/create", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
 };
 
-export const updateListing = (id, formData) => {
-  return api.patch(`/listings/${id}`, formData, {
+export const updateListing = (id, data) => {
+  return api.patch(`/listings/${id}`, data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },

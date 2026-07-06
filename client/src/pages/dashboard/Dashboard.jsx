@@ -8,6 +8,7 @@ import RecentReviews from "../../components/dashboard/RecentReviews";
 import QuickActions from "../../components/dashboard/QuickActions";
 
 import useDashboard from "../../hooks/useDashboard";
+
 function Dashboard() {
   const { dashboard, loading } = useDashboard();
 
@@ -16,10 +17,14 @@ function Dashboard() {
   }
 
   return (
-    <section className="max-w-7xl mx-auto py-10 px-6">
-      <RevenueCard revenue={dashboard.totalRevenue} />
+    <section className="max-w-full mx-auto py-10 px-6 bg-[var(--background)] text-[var(--text-primary)]">
+      {/* Revenue */}
+      <div className="mb-8">
+        <RevenueCard revenue={dashboard.totalRevenue} />
+      </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+      {/* Stats */}
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="Bookings"
           value={dashboard.totalBookings}
@@ -41,16 +46,19 @@ function Dashboard() {
         <MyListingCard total={dashboard.totalListings || 0} />
       </div>
 
+      {/* Main Content */}
       <div className="grid lg:grid-cols-3 gap-8 mt-10">
-        <div className="lg:col-span-2">
+        {/* Left Side */}
+        <div className="lg:col-span-2 space-y-8">
           <RecentBookings bookings={dashboard.recentBookings || []} />
 
-          <div className="mt-8">
-            <RecentReviews reviews={dashboard.recentReviews || []} />
-          </div>
+          <RecentReviews reviews={dashboard.recentReviews || []} />
         </div>
 
-        <QuickActions />
+        {/* Right Side */}
+        <div className="lg:col-span-1">
+          <QuickActions />
+        </div>
       </div>
     </section>
   );

@@ -1,9 +1,44 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaMapMarkerAlt, FaStar } from "react-icons/fa";
 
+import Button from "../ui/Button";
 import ListingImage from "./ListingImage";
+import WishlistButton from "./WishlistButton";
 
-function ListingCard({ listing }) {
+import { deleteListing } from "../../services/listing.service";
+import { successToast, errorToast } from "../../utils/toast";
+
+function ListingCard({ listing, isOwner = false, onDelete }) {
+  const navigate = useNavigate();
+
+  async function handleDelete(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this listing?",
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await deleteListing(listing._id);
+
+      successToast("Listing deleted successfully.");
+
+      onDelete?.(listing._id);
+    } catch (error) {
+      errorToast(error);
+    }
+  }
+
+  function handleEdit(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    navigate(`/listing/edit/${listing._id}`);
+  }
+
   return (
     <Link
       to={`/listings/${listing._id}`}
@@ -21,11 +56,16 @@ function ListingCard({ listing }) {
         transition-theme
       "
     >
-      <ListingImage image={listing.image?.url} listingId={listing._id} />
+      {/* Image */}
+      <div className="relative">
+        <ListingImage image={listing.image?.url} listingId={listing._id} />
 
+        {!isOwner && <WishlistButton listingId={listing._id} />}
+      </div>
+
+      {/* Content */}
       <div className="px-5 py-5">
         {/* Header */}
-
         <div className="flex items-start justify-between">
           <div>
             <h2 className="text-xl font-semibold text-theme line-clamp-1">
@@ -48,7 +88,6 @@ function ListingCard({ listing }) {
         </div>
 
         {/* Host */}
-
         <p className="mt-3 muted">
           Hosted by{" "}
           <span className="font-medium text-theme">
@@ -57,11 +96,9 @@ function ListingCard({ listing }) {
         </p>
 
         {/* Divider */}
-
-        <div className="my-5 h-px border-theme border-t" />
+        <div className="my-5 border-t border-theme" />
 
         {/* Footer */}
-
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold text-theme">
@@ -71,22 +108,37 @@ function ListingCard({ listing }) {
             <p className="text-sm muted">per night</p>
           </div>
 
-          <button
-            className="
-              bg-primary
-              px-5
-              py-2.5
-              rounded-full
-              text-white
-              text-sm
-              font-semibold
-              transition-theme
-              hover:opacity-90
-            "
-          >
-            Book
-          </button>
+          {!isOwner && (
+            <button
+              className="
+                bg-primary
+                px-5
+                py-2.5
+                rounded-full
+                text-white
+                text-sm
+                font-semibold
+                transition-theme
+                hover:opacity-90
+              "
+            >
+              Book
+            </button>
+          )}
         </div>
+
+        {/* Owner Actions */}
+        {isOwner && (
+          <div className="flex gap-3 mt-6">
+            <Button fullWidth variant="outline" onClick={handleEdit}>
+              Edit
+            </Button>
+
+            <Button fullWidth variant="danger" onClick={handleDelete}>
+              Delete
+            </Button>
+          </div>
+        )}
       </div>
     </Link>
   );

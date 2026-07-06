@@ -39,31 +39,31 @@ function Login() {
   return (
     <AuthLayout>
       {/* Tabs */}
-      <div className="flex justify-center gap-12 border-b mb-8">
+      <div className="flex justify-center gap-12 border-b border-theme mb-8">
         <button className="pb-3 text-[var(--primary)] border-b-2 border-[var(--primary)] font-semibold">
           Login
         </button>
 
         <Link
           to="/register"
-          className="pb-3 text-gray-400 hover:text-black font-medium"
+          className="pb-3 text-secondary hover:text-primary font-medium"
         >
           Sign Up
         </Link>
       </div>
 
       {/* Heading */}
-      <h1 className="text-3xl font-bold text-gray-800">Welcome back!</h1>
+      <h1 className="text-3xl font-bold text-primary">Welcome back!</h1>
 
-      <p className="text-gray-400 text-sm mt-1 mb-8">
+      <p className="text-secondary text-sm mt-1 mb-8">
         Please login to your account
       </p>
 
       {/* Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-        {/* Username */}
+        {/* Email */}
         <div>
-          <label className="text-sm font-medium text-gray-700">
+          <label className="text-sm font-medium text-secondary">
             Email or Username
           </label>
 
@@ -75,15 +75,13 @@ function Login() {
           />
 
           {errors.email && (
-            <p className="text-red-500 text-xs mt-1">
-              {errors.username.message}
-            </p>
+            <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
           )}
         </div>
 
         {/* Password */}
         <div>
-          <label className="text-sm font-medium text-gray-700">Password</label>
+          <label className="text-sm font-medium text-secondary">Password</label>
 
           <div className="relative mt-2">
             <Input
@@ -97,7 +95,7 @@ function Login() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-secondary hover:text-primary"
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
@@ -120,7 +118,7 @@ function Login() {
           </Link>
         </div>
 
-        {/* Login */}
+        {/* Login Button */}
         <Button
           type="submit"
           loading={isSubmitting}
@@ -132,34 +130,19 @@ function Login() {
 
       {/* Divider */}
       <div className="flex items-center my-6">
-        <div className="flex-1 border-t"></div>
-
-        <span className="mx-3 text-gray-400 text-sm">or</span>
-
-        <div className="flex-1 border-t"></div>
+        <div className="flex-1 border-t border-theme"></div>
+        <span className="mx-3 text-secondary text-sm">or</span>
+        <div className="flex-1 border-t border-theme"></div>
       </div>
 
-      {/* Google */}
-      <button
-        className="
-            w-full
-            border
-            rounded-xl
-            py-3
-            flex
-            items-center
-            justify-center
-            gap-3
-            hover:bg-gray-50
-            transition
-          "
-      >
+      {/* Google Login */}
+      <button className="w-full border border-theme rounded-xl py-3 flex items-center justify-center gap-3 hover:bg-surface transition">
         <FaGoogle className="text-red-500" />
-        Continue with Google
+        <span className="text-primary">Continue with Google</span>
       </button>
 
       {/* Footer */}
-      <p className="text-center text-sm text-gray-500 mt-8">
+      <p className="text-center text-sm text-secondary mt-8">
         Don't have an account?
         <Link
           to="/register"

@@ -50,16 +50,11 @@ function EditProfile() {
 
       await updateProfile(form);
 
-      try {
-        await createListing(formData);
-        successToast("Property listed successfully.");
-      } catch (error) {
-        errorToast(error);
-      }
+      successToast("Profile updated successfully.");
 
       navigate("/profile");
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to update profile");
+      errorToast(err.response?.data?.message || "Failed to update profile");
     } finally {
       setSaving(false);
     }
@@ -70,12 +65,12 @@ function EditProfile() {
   }
 
   return (
-    <section className="max-w-2xl mx-auto py-10 px-5">
+    <section className="max-w-2xl mx-auto py-10 px-5 bg-[var(--background)] text-[var(--text-primary)]">
       <h1 className="text-3xl font-bold mb-8">Edit Profile</h1>
 
       <form
         onSubmit={handleSubmit}
-        className="space-y-5 bg-white shadow rounded-2xl p-8"
+        className="space-y-5 bg-[var(--card)] border border-[var(--border)] rounded-2xl shadow p-8"
       >
         <div>
           <label className="block mb-2 font-medium">Full Name</label>
@@ -85,7 +80,7 @@ function EditProfile() {
             name="fullName"
             value={form.fullName}
             onChange={handleChange}
-            className="input w-full"
+            className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 outline-none focus:border-[var(--primary)]"
           />
         </div>
 
@@ -97,7 +92,7 @@ function EditProfile() {
             name="username"
             value={form.username}
             onChange={handleChange}
-            className="input w-full"
+            className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 outline-none focus:border-[var(--primary)]"
           />
         </div>
 
@@ -109,7 +104,7 @@ function EditProfile() {
             name="email"
             value={form.email}
             onChange={handleChange}
-            className="input w-full"
+            className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 outline-none focus:border-[var(--primary)]"
           />
         </div>
 
@@ -121,23 +116,14 @@ function EditProfile() {
             name="phone"
             value={form.phone}
             onChange={handleChange}
-            className="input w-full"
+            className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 outline-none focus:border-[var(--primary)]"
           />
         </div>
 
         <button
           type="submit"
           disabled={saving}
-          className="
-            w-full
-            bg-[var(--primary)]
-            text-white
-            py-3
-            rounded-xl
-            font-semibold
-            hover:opacity-90
-            disabled:opacity-50
-          "
+          className="w-full bg-[var(--primary)] text-white py-3 rounded-xl font-semibold hover:opacity-90 transition disabled:opacity-50"
         >
           {saving ? "Saving..." : "Save Changes"}
         </button>

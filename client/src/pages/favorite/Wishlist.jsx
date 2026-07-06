@@ -1,11 +1,9 @@
 import Loader from "../../components/ui/Loader";
-
 import WishlistCard from "../../components/favorite/WishlistCard";
-
 import useFavorites from "../../hooks/useFavorites";
 
 function Wishlist() {
-  const { favorites, loading } = useFavorites();
+  const { favorites, loading, removeFromUI } = useFavorites();
 
   if (loading) return <Loader />;
 
@@ -18,7 +16,7 @@ function Wishlist() {
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {favorites.map((item) => (
-            <WishlistCard key={item._id} item={item} />
+            <WishlistCard key={item._id} item={item} onRemove={removeFromUI} />
           ))}
         </div>
       )}

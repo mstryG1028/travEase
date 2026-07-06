@@ -13,10 +13,7 @@ import {
 import ApiError from "../../utils/ApiError.js";
 import ApiFeatures from "../../utils/ApiFeatures.js";
 
-import {
-  uploadOnCloudinary,
- 
-} from "../../utils/cloudinary.js";
+import { uploadOnCloudinary } from "../../utils/cloudinary.js";
 
 class ListingService {
   // ==========================
@@ -182,9 +179,17 @@ class ListingService {
   }
 
   // ==========================
+  // MY LISTINGS
+  // ==========================
+
+  async getMyListings(userId) {
+    return await listingRepository.findByOwner(userId);
+  }
+
+  // ==========================
   // UPDATE LISTING
   // ==========================
-  async updateListing(id, userId, data) {
+  async updateListing(id, userId, data, file) {
     const listing = await listingRepository.findById(id);
 
     if (!listing) {
@@ -201,6 +206,19 @@ class ListingService {
         lower: true,
         strict: true,
       })}-${Date.now()}`;
+    }
+
+    if (file) {
+      if (listing.image?.public_id) {
+        await deleteFromCloudinary(listing.image.public_id);
+      }
+
+      const uploaded = await uploadOnCloudinary(file.path);
+
+      listing.image = {
+        url: uploaded.secure_url,
+        public_id: uploaded.public_id,
+      };
     }
 
     Object.assign(listing, data);

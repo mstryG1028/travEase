@@ -1,6 +1,8 @@
 import favoriteRepository from "../../repositories/favorite.repository.js";
 import listingRepository from "../../repositories/listing.repository.js";
 
+import listingService from "../listing/listing.services.js";
+
 import ApiError from "../../utils/ApiError.js";
 
 class FavoriteService {
@@ -20,10 +22,14 @@ class FavoriteService {
       throw new ApiError(400, "Already in wishlist");
     }
 
-    return favoriteRepository.create({
+    const favorite = await favoriteRepository.create({
       user: userId,
       listing: listingId,
     });
+
+    await listingService.updateFavorites(listingId, "add");
+
+    return favorite;
   }
 
   async getWishlist(userId) {
@@ -33,10 +39,21 @@ class FavoriteService {
   }
 
   async removeFavorite(userId, listingId) {
+    const favorite = await favoriteRepository.findOne({
+      user: userId,
+      listing: listingId,
+    });
+
+    if (!favorite) {
+      throw new ApiError(404, "Favorite not found");
+    }
+
     await favoriteRepository.deleteOne({
       user: userId,
       listing: listingId,
     });
+
+    await listingService.updateFavorites(listingId, "remove");
 
     return true;
   }

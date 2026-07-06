@@ -7,7 +7,7 @@ function QuickActions() {
 
       <div className="space-y-4">
         <Link
-          to="/listings/create"
+          to="/create-listing"
           className="btn-primary w-full block text-center py-3"
         >
           Add Listing

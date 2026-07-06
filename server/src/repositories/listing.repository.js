@@ -15,6 +15,13 @@ class ListingRepository {
   async find(query = {}) {
     return await Listing.find(query).populate("owner", "fullName avatar");
   }
+  async findByOwner(ownerId) {
+    return await Listing.find({
+      owner: ownerId,
+    }).sort({
+      createdAt: -1,
+    });
+  }
 
   async update(id, data) {
     return await Listing.findByIdAndUpdate(

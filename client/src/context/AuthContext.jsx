@@ -14,6 +14,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   async function fetchUser() {
+    
     try {
       const response = await authService.getCurrentUser();
 

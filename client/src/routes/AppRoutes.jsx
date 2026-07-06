@@ -15,6 +15,10 @@ import ProtectedRoute from "./ProtectedRoute";
 import BookingDetails from "../pages/booking/BookingDetails";
 import MyBookings from "../pages/booking/MyBookings";
 import CreateListing from "../pages/listing/CreateListing";
+import BecomeHost from "../pages/listing/BecomeHost";
+
+import MyListings from "../pages/listing/MyListings";
+
 function AppRoutes() {
   return (
     <Routes>
@@ -33,8 +37,25 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <MainLayout>
-              <CreateListing />
+              <BecomeHost />
             </MainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/create-listing"
+        element={
+          <ProtectedRoute roles={["owner"]}>
+            <CreateListing />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/my-listings"
+        element={
+          <ProtectedRoute roles={["owner"]}>
+            <MyListings />
           </ProtectedRoute>
         }
       />

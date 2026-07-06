@@ -66,11 +66,11 @@ function HamburgerMenu({ user, close }) {
           </Link>
 
           <Link
-            to="/profile"
+            to="/my-listings"
             onClick={close}
             className="block px-5 py-3 hover-surface transition-theme"
           >
-            My Profile
+            My Listings
           </Link>
 
           <Link
@@ -78,7 +78,15 @@ function HamburgerMenu({ user, close }) {
             onClick={close}
             className="block px-5 py-3 hover-surface transition-theme"
           >
-            Bookings
+            My Bookings
+          </Link>
+
+          <Link
+            to="/profile"
+            onClick={close}
+            className="block px-5 py-3 hover-surface transition-theme"
+          >
+            My Profile
           </Link>
 
           <hr className="border-theme" />
@@ -144,7 +152,6 @@ function HamburgerMenu({ user, close }) {
               }`}
           >
             <FaMoon />
-
             Dark
           </button>
         </div>

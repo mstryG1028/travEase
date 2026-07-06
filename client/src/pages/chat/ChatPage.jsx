@@ -16,6 +16,7 @@ function ChatPage() {
   const [typing, setTyping] = useState(false);
 
   const [onlineUsers, setOnlineUsers] = useState([]);
+
   useEffect(() => {
     if (!selectedChat) return;
 
@@ -24,6 +25,7 @@ function ChatPage() {
     socket.on("new-message", (message) => {
       setMessages((prev) => [...prev, message]);
     });
+
     socket.on("typing", () => {
       setTyping(true);
 
@@ -35,6 +37,7 @@ function ChatPage() {
     socket.on("online-users", (users) => {
       setOnlineUsers(users);
     });
+
     socket.on("messages-read", () => {
       console.log("Messages Read");
     });
@@ -51,30 +54,46 @@ function ChatPage() {
     if (!text.trim()) return;
 
     await send(text);
-   // socket.emit("read", selectedChat._id);
+
+    // socket.emit("read", selectedChat._id);
 
     setText("");
   }
 
   return (
-    <div className="grid grid-cols-4 h-[85vh] bg-white rounded-3xl shadow">
-      <ChatSidebar
-        chats={chats}
-        selected={selectedChat}
-        setSelected={setSelectedChat}
-        onlineUsers={onlineUsers}
-      />
+    <section className="bg-[var(--background)] py-8 px-6 transition-colors">
+      <div
+        className="
+          grid
+          grid-cols-4
+          h-[85vh]
+          bg-[var(--card)]
+          border
+          border-[var(--border)]
+          rounded-3xl
+          shadow
+          overflow-hidden
+        "
+      >
+        <ChatSidebar
+          chats={chats}
+          selected={selectedChat}
+          setSelected={setSelectedChat}
+          onlineUsers={onlineUsers}
+        />
 
-      <div className="col-span-3 flex flex-col">
-        <ChatWindow messages={messages} typing={typing} />
-        <ChatInput
-          value={text}
-          setValue={setText}
-          selectedChat={selectedChat}
-          onSend={handleSend}
-        />{" "}
+        <div className="col-span-3 flex flex-col">
+          <ChatWindow messages={messages} typing={typing} />
+
+          <ChatInput
+            value={text}
+            setValue={setText}
+            selectedChat={selectedChat}
+            onSend={handleSend}
+          />
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
 

@@ -11,23 +11,15 @@ function ProfileMenu() {
     {
       icon: Calendar,
       text: "My Bookings",
-      link: "/bookings",
+      link: "/my-bookings",
     },
     {
       icon: Heart,
       text: "Wishlist",
       link: "/wishlist",
     },
-    {
-      icon: Home,
-      text: "My Listings",
-      link: "/owner/listings",
-    },
-    {
-      icon: Star,
-      text: "My Reviews",
-      link: "/reviews/me",
-    },
+   
+  
     {
       icon: Lock,
       text: "Change Password",

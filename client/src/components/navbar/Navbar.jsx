@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 import { FaBars } from "react-icons/fa";
 import { FiSearch } from "react-icons/fi";
@@ -13,7 +13,27 @@ function Navbar() {
 
   const navigate = useNavigate();
 
+  const menuRef = useRef(null);
+
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const closeMenu = () => setOpen(false);
+
+    window.addEventListener("scroll", closeMenu);
+    window.addEventListener("wheel", closeMenu);
+    window.addEventListener("touchstart", closeMenu);
+    window.addEventListener("keydown", closeMenu);
+    window.addEventListener("resize", closeMenu);
+
+    return () => {
+      window.removeEventListener("scroll", closeMenu);
+      window.removeEventListener("wheel", closeMenu);
+      window.removeEventListener("touchstart", closeMenu);
+      window.removeEventListener("keydown", closeMenu);
+      window.removeEventListener("resize", closeMenu);
+    };
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -26,7 +46,7 @@ function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 bg-surface border-b border-theme shadow-theme transition-theme">
-      <div className="max-w-7xl mx-auto h-20 px-6 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto h-18 px-6 flex items-center justify-between">
         {/* ================= Logo ================= */}
 
         <Link to="/" className="text-2xl font-bold text-brand">
@@ -59,14 +79,14 @@ function Navbar() {
             <>
               <Link
                 to="/login"
-                className=" text-theme hover:text-brand transition-theme"
+                className="text-theme hover:text-brand transition-theme"
               >
                 Login
               </Link>
 
               <Link
                 to="/register"
-                className=" text-theme hover:text-brand transition-theme"
+                className="text-theme hover:text-brand transition-theme"
               >
                 Sign Up
               </Link>
@@ -79,14 +99,14 @@ function Navbar() {
             <>
               <Link
                 to="/become-host"
-                className=" text-theme hover:text-brand transition-theme"
+                className="text-theme hover:text-brand transition-theme"
               >
                 Become a Host
               </Link>
 
               <button
                 onClick={handleLogout}
-                className=" text-theme hover:text-red-500 transition-theme"
+                className="text-theme hover:text-red-500 transition-theme"
               >
                 Logout
               </button>
@@ -99,14 +119,14 @@ function Navbar() {
             <>
               <Link
                 to="/dashboard"
-                className=" text-theme hover:text-brand transition-theme"
+                className="text-theme hover:text-brand transition-theme"
               >
                 Dashboard
               </Link>
 
               <button
                 onClick={handleLogout}
-                className=" text-theme hover:text-red-500 transition-theme"
+                className="text-theme hover:text-red-500 transition-theme"
               >
                 Logout
               </button>
@@ -115,23 +135,25 @@ function Navbar() {
 
           {/* ================= Hamburger ================= */}
 
-          <button
-            onClick={() => setOpen(!open)}
-            className="
-              p-3
-              rounded-full
-              border
-              border-theme
-              bg-surface
-               text-theme
-              hover-surface
-              transition-theme
-            "
-          >
-            <FaBars />
-          </button>
+          <div className="relative" ref={menuRef}>
+            <button
+              onClick={() => setOpen((prev) => !prev)}
+              className="
+                p-3
+                rounded-full
+                border
+                border-theme
+                bg-surface
+                text-theme
+                hover-surface
+                transition-theme
+              "
+            >
+              <FaBars />
+            </button>
 
-          {open && <HamburgerMenu user={user} close={() => setOpen(false)} />}
+            {open && <HamburgerMenu user={user} close={() => setOpen(false)} />}
+          </div>
         </div>
       </div>
     </nav>
