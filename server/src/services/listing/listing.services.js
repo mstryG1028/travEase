@@ -13,7 +13,10 @@ import {
 import ApiError from "../../utils/ApiError.js";
 import ApiFeatures from "../../utils/ApiFeatures.js";
 
-import { uploadOnCloudinary } from "../../utils/cloudinary.js";
+import {
+  uploadOnCloudinary,
+  deleteFromCloudinary,
+} from "../../utils/cloudinary.js";
 
 class ListingService {
   // ==========================
@@ -38,8 +41,15 @@ class ListingService {
       strict: true,
     })}-${Date.now()}`;
 
+    let contactPerson = body.contactPerson;
+
+    if (typeof contactPerson === "string") {
+      contactPerson = JSON.parse(contactPerson);
+    }
+
     const listing = await listingRepository.create({
       ...body,
+      contactPerson,
       owner: ownerId,
       slug,
       image,
@@ -161,6 +171,15 @@ class ListingService {
   }
 
   // ==========================
+  // GET MY LISTING
+  // ==========================
+  async getMyListings(ownerId) {
+    return await Listing.find({ owner: ownerId })
+      .populate("owner", "fullName avatar")
+      .sort({ createdAt: -1 });
+  }
+
+  // ==========================
   // GET SINGLE LISTING
   // ==========================
   async getListing(id) {
@@ -196,11 +215,14 @@ class ListingService {
       throw new ApiError(404, "Listing Not Found");
     }
 
-    if (listing.owner.toString() !== userId.toString()) {
+    if (listing.owner._id.toString() !== userId.toString()) {
       throw new ApiError(403, "Unauthorized");
     }
 
-    // Update slug if title changes
+    if (typeof data.contactPerson === "string") {
+      data.contactPerson = JSON.parse(data.contactPerson);
+    }
+
     if (data.title && data.title !== listing.title) {
       data.slug = `${slugify(data.title, {
         lower: true,
@@ -238,12 +260,12 @@ class ListingService {
       throw new ApiError(404, "Listing Not Found");
     }
 
-    if (listing.owner.toString() !== userId.toString()) {
+    if (listing.owner._id.toString() !== userId.toString()) {
       throw new ApiError(403, "Unauthorized");
     }
 
-    for (const image of listing.images) {
-      await deleteFromCloudinary(image.public_id);
+    if (listing.image?.public_id) {
+      await deleteFromCloudinary(listing.image.public_id);
     }
 
     await ListingAnalytics.deleteOne({

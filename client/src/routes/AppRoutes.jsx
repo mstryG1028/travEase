@@ -68,6 +68,17 @@ function AppRoutes() {
           </MainLayout>
         }
       />
+
+      <Route
+        path="/listings/edit/:id"
+        element={
+          <ProtectedRoute allowedRoles={["owner"]}>
+            <MainLayout>
+              <CreateListing />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/bookings/:id"
         element={

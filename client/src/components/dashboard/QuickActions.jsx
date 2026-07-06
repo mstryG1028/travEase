@@ -14,7 +14,7 @@ function QuickActions() {
         </Link>
 
         <Link
-          to="/owner/listings"
+          to="/my-listings"
           className="btn-outline w-full block text-center py-3"
         >
           My Listings

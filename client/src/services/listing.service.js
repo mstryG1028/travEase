@@ -11,7 +11,7 @@ export const getListingById = (id) => {
 };
 
 export function getMyListings() {
-  return api.get("/listing/my-listings");
+  return api.get("/listings/my-listings");
 }
 
 export const becomeHost = (formData) => {
@@ -27,6 +27,10 @@ export const createListing = (formData) => {
       "Content-Type": "multipart/form-data",
     },
   });
+};
+export const getSingleListing = async (id) => {
+  const response = await api.get(`/listings/${id}`);
+  return response.data.data;
 };
 
 export const updateListing = (id, data) => {

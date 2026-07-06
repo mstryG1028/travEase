@@ -4,17 +4,12 @@ dotenv.config();
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
 
-// console.log("ENV from cloudinary.js:", {
-//   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-//   api_key: process.env.CLOUDINARY_API_KEY,
-//   api_secret: process.env.CLOUDINARY_API_SECRET,
-// });
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
-console.log(cloudinary.config());
+
 const uploadOnCloudinary = async (localFilePath) => {
   try {
     if (!localFilePath) return null;
@@ -26,8 +21,7 @@ const uploadOnCloudinary = async (localFilePath) => {
     fs.unlinkSync(localFilePath);
     return response;
   } catch (error) {
-    console.log("========== CLOUDINARY ERROR ==========");
-    console.dir(error, { depth: null });
+
 
     if (error.response) {
       console.log("Response:", error.response);
@@ -45,4 +39,14 @@ const uploadOnCloudinary = async (localFilePath) => {
   }
 };
 
-export { uploadOnCloudinary };
+const deleteFromCloudinary = async (publicId) => {
+  try {
+    if (!publicId) return;
+
+    await cloudinary.uploader.destroy(publicId);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export { uploadOnCloudinary,deleteFromCloudinary };

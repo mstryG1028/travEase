@@ -7,7 +7,7 @@ import { becomeHost, createListing } from "../../services/listing.service";
 import useAuth from "../../hooks/useAuth";
 import Button from "../../components/ui/Button";
 
-function CreateListing() {
+function BecomeHost() {
   const navigate = useNavigate();
   const { fetchUser } = useAuth();
 
@@ -67,7 +67,7 @@ function CreateListing() {
       }
 
       await becomeHost(formData);
-      await createListing(formData);
+
 
       successToast("Property listed successfully.");
 
@@ -317,4 +317,4 @@ function CreateListing() {
   );
 }
 
-export default CreateListing;
+export default BecomeHost;

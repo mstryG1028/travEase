@@ -1,12 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { successToast, errorToast } from "../../utils/toast";
-import { createListing } from "../../services/listing.service";
+
+import * as listingService from "../../services/listing.service";
+import { useParams } from "react-router-dom";
 
 import Button from "../../components/ui/Button";
 
 function CreateListing() {
+  const { id } = useParams();
+
+  const isEdit = Boolean(id);
+
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
@@ -64,9 +70,16 @@ function CreateListing() {
         formData.append("image", image);
       }
 
-      await createListing(formData);
+      if (isEdit) {
+        await listingService.updateListing(id, formData);
 
-      successToast("Property listed successfully.");
+        successToast("Listing updated successfully.");
+      } else {
+        await listingService.createListing(formData);
+
+        successToast("Listing created successfully.");
+      }
+
 
       navigate("/my-listings");
     } catch (err) {
@@ -78,15 +91,45 @@ function CreateListing() {
     }
   };
 
+  useEffect(() => {
+    if (!isEdit) return;
+
+    async function fetchListing() {
+      try {
+        const listing = await listingService.getSingleListing(id);
+
+        setForm({
+          title: listing.title,
+          description: listing.description,
+          propertyType: listing.propertyType,
+          address: listing.address,
+          city: listing.city,
+          state: listing.state,
+          country: listing.country,
+          guests: listing.guests,
+          bedrooms: listing.bedrooms,
+          beds: listing.beds,
+          bathrooms: listing.bathrooms,
+          basePrice: listing.basePrice,
+          currentPrice: listing.currentPrice,
+          contactName: listing.contactPerson.name,
+          contactPhone: listing.contactPerson.phone,
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    fetchListing();
+  }, [id]);
+
   const inputClass =
     "w-full border border-[var(--border)] rounded-xl p-3 bg-[var(--surface)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)] transition";
 
   return (
     <section className="min-h-screen bg-[var(--background)] py-10">
       <div className="max-w-4xl mx-auto px-6">
-        <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-8">
-          Create New List
-        </h1>
+        <h1>{isEdit ? "Edit Listing" : "Create Listing"}</h1>
 
         <form
           onSubmit={submitHandler}
@@ -247,8 +290,8 @@ function CreateListing() {
             className="w-full border border-[var(--border)] rounded-xl p-3 bg-[var(--surface)] text-[var(--text-primary)] file:mr-4 file:px-4 file:py-2 file:border-0 file:rounded-lg file:bg-[var(--primary)] file:text-white file:cursor-pointer"
           />
 
-          <Button type="submit" loading={loading} fullWidth>
-            Create List
+          <Button type="submit" loading={loading}>
+            {isEdit ? "Update Listing" : "Create Listing"}
           </Button>
         </form>
       </div>

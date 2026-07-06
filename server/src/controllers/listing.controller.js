@@ -67,6 +67,8 @@ export const getSingleListing = AsyncHandler(async (req, res) => {
   );
 });
 
+
+
 export const updateListing = AsyncHandler(async (req, res) => {
   const listing = await listingService.updateListing(
     req.params.id,

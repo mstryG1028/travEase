@@ -1,10 +1,12 @@
 import Loader from "../../components/ui/Loader";
 import ListingCard from "../../components/listing/ListingCard";
-
+import * as listingService from "../../services/listing.service";
+import { useEffect } from "react";
 import useMyListings from "../../hooks/useMyListings";
 
 function MyListings() {
   const { listings, loading, setListings } = useMyListings();
+
 
   if (loading) return <Loader />;
 
