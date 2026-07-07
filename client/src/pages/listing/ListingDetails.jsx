@@ -6,10 +6,13 @@ import ReviewSection from "../../components/review/ReviewSection";
 import useAuth from "../../hooks/useAuth";
 import * as listingService from "../../services/listing.service";
 import Loader from "../../components/ui/Loader";
+import AIButton from "../../components/ai/AIButton";
+import AIChatModal from "../../components/ai/AIChatModal";
 
 function ListingDetails() {
   const { id } = useParams();
   const { user } = useAuth();
+  const [openAI, setOpenAI] = useState(false);
 
   const [listing, setListing] = useState(null);
 
@@ -222,6 +225,13 @@ function ListingDetails() {
           <ReviewSection listingId={listing._id} />
         </div>
       </div>
+      <AIButton onClick={() => setOpenAI(true)} />
+
+      <AIChatModal
+        open={openAI}
+        onClose={() => setOpenAI(false)}
+        listingId={listing._id}
+      />
     </section>
   );
 }

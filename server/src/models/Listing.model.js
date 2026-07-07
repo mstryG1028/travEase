@@ -274,8 +274,8 @@ listingSchema.set("toJSON", {
 });
 
 // GeoSpatial Index
-listingSchema.index({
-  location: "2dsphere",
-});
+// listingSchema.index({
+//   location: "2dsphere",
+// });
 
 export const Listing = mongoose.model("Listing", listingSchema);

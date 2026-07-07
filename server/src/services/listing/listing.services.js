@@ -6,7 +6,6 @@ import {
   ListingAnalytics,
   ListingPricing,
   ListingAI,
-  ListingWeather,
   User,
 } from "../../models/index.js";
 
