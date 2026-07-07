@@ -56,8 +56,16 @@ export function WishlistProvider({ children }) {
       if (isWishlisted(id)) {
         await removeFromWishlist(id);
 
-        setWishlist((prev) => prev.filter((item) => item.listing?._id !== id));
+        setWishlist((prev) =>
+          prev.filter((item) => {
+            const listingId =
+              typeof item.listing === "object"
+                ? item.listing._id
+                : item.listing;
 
+            return listingId !== id;
+          }),
+        );
         toast.success("Removed from wishlist");
       } else {
         await addToWishlist(id);

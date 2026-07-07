@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   FaCalendarAlt,
@@ -7,12 +8,53 @@ import {
   FaUser,
 } from "react-icons/fa";
 
-function BookingCard({ booking }) {
+import Button from "../ui/Button";
+import { cancelBooking, completeBooking } from "../../services/booking.service";
+import { successToast, errorToast } from "../../utils/toast";
+
+function BookingCard({ booking, onUpdate }) {
+  const [loading, setLoading] = useState(false);
   const statusClass = {
     COMPLETED: "bg-[var(--success)]",
     PENDING: "bg-[var(--warning)]",
     CANCELLED: "bg-[var(--danger)]",
   };
+
+  async function handleCancel() {
+    if (!window.confirm("Cancel this booking?")) return;
+
+    try {
+      setLoading(true);
+
+      await cancelBooking(booking._id);
+
+      successToast("Booking cancelled.");
+
+      onUpdated?.();
+    } catch (err) {
+      errorToast(err.response?.data?.message || "Unable to cancel booking.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleCheckout() {
+    if (!window.confirm("Complete this booking?")) return;
+
+    try {
+      setLoading(true);
+
+      await completeBooking(booking._id);
+
+      successToast("Checkout successful.");
+
+      onUpdated?.();
+    } catch (err) {
+      errorToast(err.response?.data?.message || "Checkout failed.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="card-theme overflow-hidden">
@@ -95,9 +137,25 @@ function BookingCard({ booking }) {
           </div>
         </div>
 
-        <Link to={`/bookings/${booking._id}`} className="btn-primary w-full">
-          View Booking Details
-        </Link>
+        <div className="space-y-3">
+          <Link
+            to={`/bookings/${booking._id}`}
+            className="btn-primary w-full text-center"
+          >
+            View Booking
+          </Link>
+
+          {booking.bookingStatus === "CONFIRMED" && (
+            <Button
+              fullWidth
+              variant="outline"
+              loading={loading}
+              onClick={handleCancel}
+            >
+              Cancel Booking
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );

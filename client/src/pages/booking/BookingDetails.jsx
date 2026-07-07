@@ -99,16 +99,19 @@ function BookingDetails() {
             </div>
 
             {/* REVIEW */}
-            <div className="bg-surface rounded-3xl shadow-theme p-7">
-              <h2 className="text-xl font-semibold text-primary mb-5">
-                Leave a Review
-              </h2>
 
-              <ReviewSection
-                bookingId={booking._id}
-                listingId={booking.listing._id}
-              />
-            </div>
+            {booking.bookingStatus === "COMPLETED" && (
+              <div className="bg-surface rounded-3xl shadow-theme p-7">
+                <h2 className="text-xl font-semibold text-primary mb-5">
+                  Leave a Review
+                </h2>
+
+                <ReviewSection
+                  bookingId={booking._id}
+                  listingId={booking.listing._id}
+                />
+              </div>
+            )}
           </div>
 
           {/* RIGHT SIDE */}
@@ -135,6 +138,19 @@ function BookingDetails() {
                 value={new Date(booking.checkOut).toLocaleDateString()}
               />
               <Info icon={<FaUsers />} title="Guests" value={booking.guests} />
+
+              <Info
+                icon={<FaCalendarAlt />}
+                title="Total Nights"
+                value={`${booking.totalNights} Night(s)`}
+              />
+
+              <Info
+                icon={<FaCalendarAlt />}
+                title="Booked On"
+                value={new Date(booking.createdAt).toLocaleDateString()}
+              />
+
               <Info
                 icon={<FaMoneyBillWave />}
                 title="Payment"

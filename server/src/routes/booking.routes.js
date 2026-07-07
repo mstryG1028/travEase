@@ -22,8 +22,6 @@ router.post(
 
   verifyJWT,
 
-  authorizeRoles("user"),
-
   validate(bookingValidator),
 
   createBooking,

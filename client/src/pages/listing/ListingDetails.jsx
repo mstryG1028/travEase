@@ -3,12 +3,13 @@ import { useParams } from "react-router-dom";
 import { FaMapMarkerAlt, FaStar } from "react-icons/fa";
 import BookingForm from "../../components/booking/BookingForm";
 import ReviewSection from "../../components/review/ReviewSection";
-
+import useAuth from "../../hooks/useAuth";
 import * as listingService from "../../services/listing.service";
 import Loader from "../../components/ui/Loader";
 
 function ListingDetails() {
   const { id } = useParams();
+  const { user } = useAuth();
 
   const [listing, setListing] = useState(null);
 
@@ -185,8 +186,17 @@ function ListingDetails() {
               </div>
 
               {/* Booking Form */}
+
               <div className="p-6">
-                <BookingForm listing={listing} />
+                {listing.owner?._id === user?._id ? (
+                  <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-6 text-center">
+                    <h3 className="text-xl font-bold text-[var(--text-primary)]">
+                      Your Property
+                    </h3>
+                  </div>
+                ) : (
+                  <BookingForm listing={listing} />
+                )}
               </div>
 
               {/* Footer */}

@@ -5,21 +5,9 @@ import useAuth from "../../hooks/useAuth";
 import { useTheme } from "../../context/ThemeContext";
 
 function HamburgerMenu({ user, close }) {
-  const { logout } = useAuth();
-
   const { theme, setTheme } = useTheme();
 
   const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-      close();
-      navigate("/login");
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   return (
     <div className="absolute right-6 top-20 z-50 w-64 overflow-hidden rounded-2xl border border-theme bg-surface shadow-theme transition-theme">
@@ -44,7 +32,8 @@ function HamburgerMenu({ user, close }) {
 
           <Link
             to="/wishlist"
-            className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition"
+            onClick={close}
+            className="block px-5 py-3 hover-surface transition-theme"
           >
             Wishlist
           </Link>
@@ -56,6 +45,13 @@ function HamburgerMenu({ user, close }) {
       {/* Owner */}
       {user?.role === "owner" && (
         <>
+          <Link
+            to="/profile"
+            onClick={close}
+            className="block px-5 py-3 hover-surface transition-theme"
+          >
+            My Profile
+          </Link>
           <Link
             to="/dashboard"
             onClick={close}
@@ -81,15 +77,17 @@ function HamburgerMenu({ user, close }) {
           </Link>
 
           <Link
-            to="/profile"
+            to="/all-bookings"
             onClick={close}
             className="block px-5 py-3 hover-surface transition-theme"
           >
-            My Profile
+            All Bookings
           </Link>
+
           <Link
             to="/wishlist"
-            className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition"
+            onClick={close}
+            className="block px-5 py-3 hover-surface transition-theme"
           >
             Wishlist
           </Link>

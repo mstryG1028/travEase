@@ -24,23 +24,35 @@ function Dashboard() {
       </div>
 
       {/* Stats */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6">
         <StatCard
           title="Bookings"
-          value={dashboard.totalBookings}
+          value={dashboard.totalBookings || 0}
           color="text-blue-600"
         />
 
         <StatCard
-          title="Pending"
-          value={dashboard.pending}
-          color="text-yellow-500"
+          title="Confirmed"
+          value={dashboard.confirmed || 0}
+          color="text-sky-600"
+        />
+
+        <StatCard
+          title="Active"
+          value={dashboard.active || 0}
+          color="text-green-600"
         />
 
         <StatCard
           title="Completed"
-          value={dashboard.completed}
-          color="text-green-600"
+          value={dashboard.completed || 0}
+          color="text-emerald-600"
+        />
+
+        <StatCard
+          title="Cancelled"
+          value={dashboard.cancelled || 0}
+          color="text-red-500"
         />
 
         <MyListingCard total={dashboard.totalListings || 0} />

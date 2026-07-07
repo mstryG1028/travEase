@@ -26,24 +26,31 @@ export async function ownerDashboard(ownerId) {
     owner: ownerId,
   });
 
-  // Revenue
-  const totalRevenue = bookings.reduce(
-    (sum, booking) => sum + booking.totalAmount,
-    0,
-  );
+  // Revenue (exclude cancelled)
+
+  const totalRevenue = bookings
+    .filter((booking) => booking.bookingStatus !== "CANCELLED")
+    .reduce((sum, booking) => sum + booking.totalAmount, 0);
 
   // Total Bookings
+
   const totalBookings = bookings.length;
 
-  // Pending Bookings
-  const pending = bookings.filter(
-    (booking) => booking.bookingStatus === "Pending",
+  // Confirmed
+  const confirmed = bookings.filter(
+    (booking) => booking.bookingStatus === "Confirmed",
   ).length;
 
-  // Completed Bookings
   const completed = bookings.filter(
     (booking) => booking.bookingStatus === "Completed",
   ).length;
+
+  const cancelled = bookings.filter(
+    (booking) => booking.bookingStatus === "Cancelled",
+  ).length;
+
+  // You don't even have ACTIVE in schema
+  const active = 0;
 
   // Recent Bookings
   const recentBookings = [...bookings]
@@ -68,8 +75,10 @@ export async function ownerDashboard(ownerId) {
   return {
     totalRevenue,
     totalBookings,
-    pending,
+    confirmed,
+    active,
     completed,
+    cancelled,
     totalListings,
     recentBookings,
     recentReviews,

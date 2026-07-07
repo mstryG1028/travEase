@@ -16,7 +16,7 @@ import BookingDetails from "../pages/booking/BookingDetails";
 import MyBookings from "../pages/booking/MyBookings";
 import CreateListing from "../pages/listing/CreateListing";
 import BecomeHost from "../pages/listing/BecomeHost";
-
+import AllBookings from "../pages/booking/AllBookings";
 import MyListings from "../pages/listing/MyListings";
 
 function AppRoutes() {
@@ -55,11 +55,24 @@ function AppRoutes() {
         path="/my-listings"
         element={
           <ProtectedRoute roles={["owner"]}>
-            <MyListings />
+            <MainLayout>
+             <MyListings />
+            </MainLayout>
+            
           </ProtectedRoute>
         }
       />
-
+      <Route
+        path="/all-bookings"
+        element={
+          <ProtectedRoute allowedRoles={["owner"]}>
+            <MainLayout>
+               <AllBookings />
+            </MainLayout>
+          
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/listings/:id"
         element={
@@ -128,7 +141,10 @@ function AppRoutes() {
         path="/wishlist"
         element={
           <ProtectedRoute>
-            <Wishlist />
+             <MainLayout>
+             <Wishlist />
+            </MainLayout>
+            
           </ProtectedRoute>
         }
       />

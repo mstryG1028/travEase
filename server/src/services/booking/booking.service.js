@@ -19,7 +19,10 @@ import {
 
 import * as notificationService from "../notification/notification.service.js";
 
-import { BOOKING_STATUS,PAYMENT_STATUS } from "../../constants/booking.constants.js";
+import {
+  BOOKING_STATUS,
+  PAYMENT_STATUS,
+} from "../../constants/booking.constants.js";
 
 // ===================================================
 // Create Booking
@@ -42,34 +45,89 @@ export async function createBooking(data, user) {
     }
 
     // ==========================================
-    // Check Availability (Optimized Query)
+    // Prevent Self Booking
+    // ==========================================
+
+    if (listing.owner.toString() === user._id.toString()) {
+      throw new ApiError(400, "You cannot book your own listing.");
+    }
+
+    // ==========================================
+    // Validate Dates
+    // ==========================================
+
+    const checkIn = new Date(data.checkIn);
+    const checkOut = new Date(data.checkOut);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (checkIn < today) {
+      throw new ApiError(400, "Check-in date cannot be in the past.");
+    }
+
+    if (checkOut <= checkIn) {
+      throw new ApiError(400, "Check-out date must be after check-in.");
+    }
+
+    // ==========================================
+    // Validate Guests
+    // ==========================================
+
+    if (!data.guests || data.guests < 1) {
+      throw new ApiError(400, "Guests must be at least 1.");
+    }
+
+    if (listing.maxGuests && data.guests > listing.maxGuests) {
+      throw new ApiError(400, `Maximum ${listing.maxGuests} guests allowed.`);
+    }
+
+    // ==========================================
+    // Check Availability
     // ==========================================
 
     const overlap = await bookingRepository.exists({
       listing: listing._id,
 
       bookingStatus: {
-        $in: [BOOKING_STATUS.PENDING, BOOKING_STATUS.CONFIRMED],
+        $in: [
+          BOOKING_STATUS.PENDING,
+          BOOKING_STATUS.CONFIRMED,
+          BOOKING_STATUS.ACTIVE,
+        ],
       },
 
       checkIn: {
-        $lt: new Date(data.checkOut),
+        $lt: checkOut,
       },
 
       checkOut: {
-        $gt: new Date(data.checkIn),
+        $gt: checkIn,
       },
     });
 
     if (overlap) {
-      throw new ApiError(400, "Selected dates are already booked");
+      throw new ApiError(400, "Selected dates are already booked.");
     }
 
     // ==========================================
-    // Dynamic Pricing
+    // Pricing
     // ==========================================
 
-    const pricing = await calculatePrice(listing._id, data.checkIn);
+    const pricing = await calculatePrice(listing._id);
+
+    const totalNights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+
+    const pricePerNight = pricing.finalPrice;
+
+    const taxes = 0;
+
+    const serviceFee = 0;
+
+    const discount = 0;
+
+    const totalAmount =
+      totalNights * pricePerNight + taxes + serviceFee - discount;
 
     // ==========================================
     // Create Booking
@@ -79,35 +137,37 @@ export async function createBooking(data, user) {
       {
         guest: user._id,
 
-        owner: listing.owner?._id || listing.owner,
+        owner: listing.owner,
 
         listing: listing._id,
 
-        checkIn: data.checkIn,
+        checkIn,
 
-        checkOut: data.checkOut,
+        checkOut,
 
-        totalNights: data.totalNights,
+        totalNights,
 
         guests: data.guests,
 
-        pricePerNight: pricing.finalPrice,
+        pricePerNight,
 
-        taxes: data.taxes || 0,
+        taxes,
 
-        serviceFee: data.serviceFee || 0,
+        serviceFee,
 
-        discount: data.discount || 0,
+        discount,
 
-        totalAmount: data.totalAmount,
+        totalAmount,
 
         contactPerson: listing.contactPerson,
 
-        bookingStatus: BOOKING_STATUS.COMPLETED,
+        bookingStatus: BOOKING_STATUS.CONFIRMED,
+
         paymentStatus: PAYMENT_STATUS.PENDING,
       },
       session,
     );
+
     await Chat.create({
       booking: booking._id,
       listing: listing._id,
@@ -116,7 +176,7 @@ export async function createBooking(data, user) {
     });
 
     // ==========================================
-    // Listing Analytics
+    // Analytics
     // ==========================================
 
     const analytics = await ListingAnalytics.findOne({
@@ -125,14 +185,13 @@ export async function createBooking(data, user) {
 
     if (analytics) {
       analytics.totalBookings += 1;
-
       analytics.revenue += booking.totalAmount;
 
       await analytics.save({ session });
     }
 
     // ==========================================
-    // Block Calendar
+    // Block Dates
     // ==========================================
 
     await blockDates(listing._id, booking.checkIn, booking.checkOut);
@@ -154,7 +213,7 @@ export async function createBooking(data, user) {
     });
 
     // ==========================================
-    // Emit Event
+    // Event
     // ==========================================
 
     eventBus.emit(BOOKING_CREATED, {
@@ -163,16 +222,11 @@ export async function createBooking(data, user) {
       guest: user,
     });
 
-    // ==========================================
-    // Commit Transaction
-    // ==========================================
-
     await session.commitTransaction();
 
     return booking;
   } catch (error) {
     await session.abortTransaction();
-
     throw error;
   } finally {
     session.endSession();
@@ -180,20 +234,70 @@ export async function createBooking(data, user) {
 }
 
 // ===================================================
+//   Helper fn to  update Booking Status
+// ===================================================
+
+function updateBookingStatus(booking) {
+  if (booking.bookingStatus === BOOKING_STATUS.CANCELLED) {
+    return booking;
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const checkIn = new Date(booking.checkIn);
+  checkIn.setHours(0, 0, 0, 0);
+
+  const checkOut = new Date(booking.checkOut);
+  checkOut.setHours(0, 0, 0, 0);
+
+  if (today >= checkOut) {
+    booking.bookingStatus = BOOKING_STATUS.COMPLETED;
+  } else if (today >= checkIn) {
+    booking.bookingStatus = BOOKING_STATUS.ACTIVE;
+  } else {
+    booking.bookingStatus = BOOKING_STATUS.CONFIRMED;
+  }
+
+  return booking;
+}
+
+// ===================================================
 // My Bookings
 // ===================================================
 
 export async function myBookings(userId) {
-  return await Booking.find({
+  const bookings = await Booking.find({
     guest: userId,
   })
     .populate("listing", "title image city state currentPrice contactPerson")
     .populate("owner", "fullName phone email")
     .sort({
       createdAt: -1,
-    })
-    .lean();
+    });
+
+  let changed = false;
+
+  bookings.forEach((booking) => {
+    const previous = booking.bookingStatus;
+
+    updateBookingStatus(booking);
+
+    if (previous !== booking.bookingStatus) {
+      changed = true;
+    }
+  });
+
+  if (changed) {
+    await Promise.all(bookings.map((booking) => booking.save()));
+  }
+
+  return bookings;
 }
+
+// ===================================================
+// Bookings Details
+// ===================================================
 
 export async function bookingDetails(id) {
   const booking = await Booking.findById(id)
@@ -217,9 +321,27 @@ export async function bookingDetails(id) {
 // ===================================================
 
 export async function ownerBookings(ownerId) {
-  return await bookingRepository.find({
+  const bookings = await bookingRepository.find({
     owner: ownerId,
   });
+
+  let changed = false;
+
+  bookings.forEach((booking) => {
+    const previous = booking.bookingStatus;
+
+    updateBookingStatus(booking);
+
+    if (previous !== booking.bookingStatus) {
+      changed = true;
+    }
+  });
+
+  if (changed) {
+    await Promise.all(bookings.map((booking) => booking.save()));
+  }
+
+  return bookings;
 }
 
 // ===================================================
