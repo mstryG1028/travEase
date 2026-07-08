@@ -1,9 +1,11 @@
 import api from "../api/axios";
 
-export const getAllListings = (params = {}) => {
-  return api.get("/listings", {
+export const getAllListings = async (params = {}) => {
+  const response = await api.get("/listings", {
     params,
   });
+
+  return response.data.data;
 };
 
 export const getListingById = (id) => {

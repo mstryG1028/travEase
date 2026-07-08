@@ -7,7 +7,6 @@ import useMyListings from "../../hooks/useMyListings";
 function MyListings() {
   const { listings, loading, setListings } = useMyListings();
 
-
   if (loading) return <Loader />;
 
   return (

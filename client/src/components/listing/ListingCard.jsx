@@ -55,7 +55,6 @@ function ListingCard({ listing, isOwner = false, onDelete }) {
           <ListingImage image={listing.image?.url} listingId={listing._id} />
           <WishlistButton listingId={listing._id} />
         </div>
-        
 
         {/* Content */}
         <div className="px-5 py-5">

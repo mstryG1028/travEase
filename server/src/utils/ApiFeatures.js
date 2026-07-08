@@ -1,61 +1,160 @@
 class ApiFeatures {
+  constructor(query, queryString) {
+    this.query = query;
+    this.queryString = queryString;
+  }
 
-    constructor(query, queryString) {
+  // ==========================
+  // SEARCH
+  // ==========================
+  search() {
+    const keyword = this.queryString.keyword?.trim();
 
-        this.query = query;
-        this.queryString = queryString;
+    if (!keyword) return this;
 
+    const filters = [
+      {
+        title: {
+          $regex: keyword,
+          $options: "i",
+        },
+      },
+      {
+        city: {
+          $regex: keyword,
+          $options: "i",
+        },
+      },
+      {
+        state: {
+          $regex: keyword,
+          $options: "i",
+        },
+      },
+      {
+        country: {
+          $regex: keyword,
+          $options: "i",
+        },
+      },
+      {
+        address: {
+          $regex: keyword,
+          $options: "i",
+        },
+      },
+      {
+        propertyType: {
+          $regex: keyword,
+          $options: "i",
+        },
+      },
+    ];
+
+    // Search by nearby price
+    if (!isNaN(keyword)) {
+      const price = Number(keyword);
+
+      filters.push({
+        currentPrice: {
+          $gte: price - 500,
+          $lte: price + 500,
+        },
+      });
     }
 
-    search() {
+    this.query = this.query.find({
+      $or: filters,
+    });
 
-        if (this.queryString.keyword) {
+    return this;
+  }
 
-            this.query = this.query.find({
+  // ==========================
+  // FILTER
+  // ==========================
+  filter() {
+    const mongoFilter = {};
 
-                title: {
-                    $regex: this.queryString.keyword,
-                    $options: "i"
-                }
-
-            });
-
-        }
-
-        return this;
-
+    // Property Type
+    if (this.queryString.category && this.queryString.category !== "Trending") {
+      mongoFilter.propertyType = this.queryString.category;
     }
 
-    filter() {
-
-        const queryCopy = { ...this.queryString };
-
-        const removeFields = [
-            "keyword",
-            "page",
-            "limit"
-        ];
-
-        removeFields.forEach(field => delete queryCopy[field]);
-
-        this.query = this.query.find(queryCopy);
-
-        return this;
-
+    // City
+    if (this.queryString.location?.trim()) {
+      mongoFilter.city = {
+        $regex: this.queryString.location.trim(),
+        $options: "i",
+      };
     }
 
-    pagination(resultPerPage = 10) {
-
-        const currentPage = Number(this.queryString.page) || 1;
-
-        const skip = resultPerPage * (currentPage - 1);
-
-        this.query = this.query.limit(resultPerPage).skip(skip);
-
-        return this;
-
+    // Country
+    if (this.queryString.country?.trim()) {
+      mongoFilter.country = {
+        $regex: this.queryString.country.trim(),
+        $options: "i",
+      };
     }
 
+    // Price
+    if (this.queryString.minPrice || this.queryString.maxPrice) {
+      mongoFilter.currentPrice = {};
+
+      if (this.queryString.minPrice) {
+        mongoFilter.currentPrice.$gte = Number(this.queryString.minPrice);
+      }
+
+      if (this.queryString.maxPrice) {
+        mongoFilter.currentPrice.$lte = Number(this.queryString.maxPrice);
+      }
+    }
+
+    this.query = this.query.find(mongoFilter);
+
+    return this;
+  }
+
+  // ==========================
+  // SORT
+  // ==========================
+  sort() {
+    const { sort, order } = this.queryString;
+
+    if (!sort) {
+      this.query = this.query.sort({
+        createdAt: -1,
+      });
+
+      return this;
+    }
+
+    const sortObject = {};
+
+    // Frontend sends "price"
+    if (sort === "price") {
+      sortObject.currentPrice = order === "asc" ? 1 : -1;
+    } else {
+      sortObject[sort] = order === "asc" ? 1 : -1;
+    }
+
+    this.query = this.query.sort(sortObject);
+
+    return this;
+  }
+
+  // ==========================
+  // PAGINATION
+  // ==========================
+  pagination(resultPerPage = 12) {
+    const currentPage = Number(this.queryString.page) || 1;
+
+    const skip = resultPerPage * (currentPage - 1);
+
+    this.query = this.query.skip(skip).limit(resultPerPage);
+
+    return this;
+  }
 }
 
 export default ApiFeatures;

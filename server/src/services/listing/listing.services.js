@@ -156,7 +156,7 @@ class ListingService {
   // GET ALL LISTINGS
   // ==========================
   async getAllListings(query) {
-    const resultPerPage = 8;
+    const resultPerPage = 16;
 
     const apiFeature = new ApiFeatures(
       Listing.find().populate("owner", "fullName avatar"),
@@ -164,6 +164,7 @@ class ListingService {
     )
       .search()
       .filter()
+      .sort()
       .pagination(resultPerPage);
 
     return await apiFeature.query;
@@ -276,10 +277,6 @@ class ListingService {
     });
 
     await ListingAI.deleteOne({
-      listing: listing._id,
-    });
-
-    await ListingWeather.deleteOne({
       listing: listing._id,
     });
 

@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 
 import { FaBars } from "react-icons/fa";
@@ -13,9 +13,17 @@ function Navbar() {
 
   const navigate = useNavigate();
 
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const menuRef = useRef(null);
 
   const [open, setOpen] = useState(false);
+
+  const [keyword, setKeyword] = useState(searchParams.get("keyword") || "");
+
+  useEffect(() => {
+    setKeyword(searchParams.get("keyword") || "");
+  }, [searchParams]);
 
   useEffect(() => {
     const closeMenu = () => setOpen(false);
@@ -44,6 +52,22 @@ function Navbar() {
     }
   };
 
+  const handleSearch = () => {
+    const params = new URLSearchParams(searchParams);
+
+    if (keyword.trim()) {
+      params.set("keyword", keyword.trim());
+    } else {
+      params.delete("keyword");
+    }
+
+    params.delete("page");
+
+    setSearchParams(params);
+
+    navigate(`/?${params.toString()}`);
+  };
+
   return (
     <nav className="sticky top-0 z-50 bg-surface border-b border-theme shadow-theme transition-theme">
       <div className="max-w-7xl mx-auto h-18 px-6 flex items-center justify-between">
@@ -59,22 +83,30 @@ function Navbar() {
           <div className="relative w-[420px]">
             <input
               type="text"
-              placeholder="Search destinations..."
-              className="input-theme rounded-full pr-12 text-sm"
+              value={keyword}
+              placeholder="Search destination, hotel, ₹1500..."
+              onChange={(e) => setKeyword(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSearch();
+                }
+              }}
+              className="input-theme rounded-full pr-12"
             />
 
-            <FiSearch
-              size={18}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-secondary pointer-events-none"
-            />
+            <button
+              type="button"
+              onClick={handleSearch}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-secondary hover:text-brand transition-theme"
+            >
+              <FiSearch size={18} />
+            </button>
           </div>
         </div>
 
         {/* ================= Right ================= */}
 
         <div className="flex items-center gap-5">
-          {/* Guest */}
-
           {!user && (
             <>
               <Link
@@ -93,8 +125,6 @@ function Navbar() {
             </>
           )}
 
-          {/* User */}
-
           {user?.role === "user" && (
             <>
               <Link
@@ -112,8 +142,6 @@ function Navbar() {
               </button>
             </>
           )}
-
-          {/* Owner */}
 
           {user?.role === "owner" && (
             <>

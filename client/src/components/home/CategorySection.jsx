@@ -1,87 +1,267 @@
+import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
+
 import {
   FaFire,
-  FaBed,
-  FaMountain,
   FaHotel,
   FaHome,
-  FaCampground,
-  FaWater,
-  FaSnowflake,
   FaUmbrellaBeach,
-  FaTree,
-  FaLandmark,
+  FaBuilding,
+  FaBed,
+  FaSlidersH,
 } from "react-icons/fa";
 
+import { LuHouse, LuTentTree } from "react-icons/lu";
+
+import FilterDrawer from "./FilterDrawer";
+
 const categories = [
-  { name: "Trending", icon: FaFire },
-  { name: "Rooms", icon: FaBed },
-  { name: "Hotels", icon: FaHotel },
-  { name: "Mountains", icon: FaMountain },
-  { name: "Villas", icon: FaHome },
-  { name: "Camping", icon: FaCampground },
-  { name: "Lake", icon: FaWater },
-  { name: "Snow", icon: FaSnowflake },
-  { name: "Beach", icon: FaUmbrellaBeach },
-  { name: "Tree House", icon: FaTree },
-  { name: "Historical", icon: FaLandmark },
+  {
+    name: "Trending",
+    icon: FaFire,
+  },
+  {
+    name: "Hotel",
+    icon: FaHotel,
+  },
+  {
+    name: "Villa",
+    icon: FaHome,
+  },
+  {
+    name: "Resort",
+    icon: FaUmbrellaBeach,
+  },
+  {
+    name: "Apartment",
+    icon: FaBuilding,
+  },
+  {
+    name: "Hostel",
+    icon: FaBed,
+  },
+  {
+    name: "Homestay",
+    icon: LuHouse,
+  },
+  {
+    name: "Cottage",
+    icon: LuTentTree,
+  },
 ];
 
 function CategorySection() {
-  return (
-    <section className="bg-surface w-full border-b border-theme sticky top-19 z-40 transition-theme">
-      <div className="flex overflow-x-auto scrollbar-hide px-2 md:px-6">
-        <div className="flex w-full min-w-max md:min-w-0">
-          {categories.map((item) => {
-            const Icon = item.icon;
+  const [searchParams, setSearchParams] = useSearchParams();
 
-            return (
-              <button
-                key={item.name}
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const selectedCategory = searchParams.get("category") || "Trending";
+
+  const handleCategory = (category) => {
+    const params = new URLSearchParams(searchParams);
+
+    if (category === "Trending") {
+      params.delete("category");
+    } else {
+      params.set("category", category);
+    }
+
+    params.delete("page");
+
+    setSearchParams(params);
+  };
+
+  const applyFilters = ({ location, category, minPrice, maxPrice, sort }) => {
+    const params = new URLSearchParams(searchParams);
+
+    // Location
+    if (location) {
+      params.set("location", location);
+    } else {
+      params.delete("location");
+    }
+
+    // Category
+    if (category) {
+      params.set("category", category);
+    }
+
+    // Min Price
+    if (minPrice) {
+      params.set("minPrice", minPrice);
+    } else {
+      params.delete("minPrice");
+    }
+
+    // Max Price
+    if (maxPrice) {
+      params.set("maxPrice", maxPrice);
+    } else {
+      params.delete("maxPrice");
+    }
+
+    // Sorting
+    if (sort === "priceAsc") {
+      params.set("sort", "currentPrice");
+      params.set("order", "asc");
+    } else if (sort === "priceDesc") {
+      params.set("sort", "currentPrice");
+      params.set("order", "desc");
+    } else {
+      params.delete("sort");
+      params.delete("order");
+    }
+
+    params.delete("page");
+
+    setSearchParams(params);
+  };
+
+  const activeFilters =
+    (searchParams.get("location") ? 1 : 0) +
+    (searchParams.get("minPrice") ? 1 : 0) +
+    (searchParams.get("maxPrice") ? 1 : 0) +
+    (searchParams.get("sort") ? 1 : 0);
+
+  return (
+    <>
+      <section className="sticky top-18 z-40 bg-surface border-b border-theme transition-theme">
+        <div className="flex items-center justify-between gap-2 md:px-6">
+          {/* Categories */}
+
+          <div className="flex flex-1 overflow-x-auto  scrollbar-hide">
+            {categories.map((item) => {
+              const Icon = item.icon;
+
+              const active = selectedCategory === item.name;
+
+              return (
+                <button
+                  key={item.name}
+                  onClick={() => handleCategory(item.name)}
+                  className={`
+                    group
+                    flex-shrink-0
+                    min-w-[98px]
+                    h-20
+                    flex
+                    flex-col
+                    items-center
+                    justify-center
+                    gap-1
+                  ml-5
+                    border-b-2
+                    transition-theme
+
+                    ${
+                      active
+                        ? "border-primary"
+                        : "border-transparent hover:border-primary"
+                    }
+                  `}
+                >
+                  <Icon
+                    size={20}
+                    className={`
+                      transition-theme
+
+                      ${
+                        active
+                          ? "text-brand scale-110"
+                          : "text-secondary group-hover:text-brand group-hover:scale-110"
+                      }
+                    `}
+                  />
+
+                  <span
+                    className={`
+                      text-xs
+                      font-medium
+                      whitespace-nowrap
+                      transition-theme
+
+                      ${
+                        active
+                          ? "text-brand"
+                          : "text-secondary group-hover:text-brand"
+                      }
+                    `}
+                  >
+                    {item.name}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Filter Button */}
+
+          <button
+            onClick={() => setDrawerOpen(true)}
+            className="
+              relative
+              flex
+              items-center
+              gap-2
+              px-4
+              py-2
+              rounded-full
+              border
+              border-theme
+              bg-background
+              hover:bg-brand
+              hover:text-white
+              transition-theme
+              flex-shrink-0
+            "
+          >
+            <FaSlidersH size={15} />
+
+            <span className="text-sm font-medium">Filters</span>
+
+            {activeFilters > 0 && (
+              <span
                 className="
-                  group
-                  flex-1
-                  min-w-[90px]
-                  h-20
+                  absolute
+                  -top-2
+                  -right-2
+                  w-5
+                  h-5
+                  rounded-full
+                  bg-brand
+                  text-white
+                  text-[11px]
                   flex
-                  flex-col
                   items-center
                   justify-center
-                  gap-1
-                  border-b-2
-                  border-transparent
-                  transition-theme
-                  hover:border-primary
-                  hover:text-brand
+                  font-semibold
                 "
               >
-                <Icon
-                  size={20}
-                  className="
-                    text-secondary
-                    transition-theme
-                    group-hover:text-brand
-                    group-hover:scale-110
-                  "
-                />
-
-                <span
-                  className="
-                    text-xs
-                    font-medium
-                    text-secondary
-                    whitespace-nowrap
-                    transition-theme
-                    group-hover:text-brand
-                  "
-                >
-                  {item.name}
-                </span>
-              </button>
-            );
-          })}
+                {activeFilters}
+              </span>
+            )}
+          </button>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <FilterDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        applyFilters={applyFilters}
+        initialFilters={{
+          location: searchParams.get("location") || "",
+          category: searchParams.get("category") || "",
+          minPrice: searchParams.get("minPrice") || "",
+          maxPrice: searchParams.get("maxPrice") || "",
+          sort:
+            searchParams.get("sort") === "currentPrice"
+              ? searchParams.get("order") === "asc"
+                ? "priceAsc"
+                : "priceDesc"
+              : "",
+        }}
+      />
+    </>
   );
 }
 
