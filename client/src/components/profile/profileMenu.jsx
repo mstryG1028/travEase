@@ -1,4 +1,4 @@
-import { User, Heart, Calendar, Home, Star, Lock } from "lucide-react";
+import { User, Heart, Calendar, Home, Star, Lock, Images } from "lucide-react";
 import { Link } from "react-router-dom";
 
 function ProfileMenu() {
@@ -14,12 +14,16 @@ function ProfileMenu() {
       link: "/my-bookings",
     },
     {
+      icon: Images,
+      text: "Flashbacks",
+      link: "/flashbacks",
+    },
+    {
       icon: Heart,
       text: "Wishlist",
       link: "/wishlist",
     },
-   
-  
+
     {
       icon: Lock,
       text: "Change Password",

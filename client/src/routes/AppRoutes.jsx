@@ -18,6 +18,7 @@ import CreateListing from "../pages/listing/CreateListing";
 import BecomeHost from "../pages/listing/BecomeHost";
 import AllBookings from "../pages/booking/AllBookings";
 import MyListings from "../pages/listing/MyListings";
+import MyMemories from "../pages/flashback/MyMemories";
 
 function AppRoutes() {
   return (
@@ -56,9 +57,8 @@ function AppRoutes() {
         element={
           <ProtectedRoute roles={["owner"]}>
             <MainLayout>
-             <MyListings />
+              <MyListings />
             </MainLayout>
-            
           </ProtectedRoute>
         }
       />
@@ -67,9 +67,8 @@ function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={["owner"]}>
             <MainLayout>
-               <AllBookings />
+              <AllBookings />
             </MainLayout>
-          
           </ProtectedRoute>
         }
       />
@@ -141,10 +140,9 @@ function AppRoutes() {
         path="/wishlist"
         element={
           <ProtectedRoute>
-             <MainLayout>
-             <Wishlist />
+            <MainLayout>
+              <Wishlist />
             </MainLayout>
-            
           </ProtectedRoute>
         }
       />
@@ -160,6 +158,16 @@ function AppRoutes() {
         }
       />
 
+      <Route
+        path="/flashbacks"
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <MyMemories />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/profile/edit"
         element={

@@ -15,7 +15,7 @@ import {
 import Loader from "../../components/ui/Loader";
 import ReviewSection from "../../components/review/ReviewSection";
 import { getBookingDetails } from "../../services/booking.service";
-
+import MemorySection from "../../components/memory/MemorySection";
 function BookingDetails() {
   const { id } = useParams();
 
@@ -100,7 +100,7 @@ function BookingDetails() {
 
             {/* REVIEW */}
 
-            {booking.bookingStatus === "COMPLETED" && (
+            {booking.bookingStatus === "Completed" && (
               <div className="bg-surface rounded-3xl shadow-theme p-7">
                 <h2 className="text-xl font-semibold text-primary mb-5">
                   Leave a Review
@@ -110,6 +110,9 @@ function BookingDetails() {
                   bookingId={booking._id}
                   listingId={booking.listing._id}
                 />
+                <div className="bg-surface rounded-3xl shadow-theme p-7">
+                  <MemorySection bookingId={booking._id} />
+                </div>
               </div>
             )}
           </div>

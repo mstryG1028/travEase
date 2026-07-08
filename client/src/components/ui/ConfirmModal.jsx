@@ -1,35 +1,84 @@
+import { AlertTriangle } from "lucide-react";
+
+import Modal from "./Modal";
 import Button from "./Button";
 
 function ConfirmModal({
   open,
-  title,
-  message,
-  confirmText = "Delete",
-  cancelText = "Cancel",
+  onClose,
   onConfirm,
-  onCancel,
+  title = "Are you sure?",
+  description = "",
+  confirmText = "Confirm",
+  cancelText = "Cancel",
   loading = false,
+  danger = true,
 }) {
-  if (!open) return null;
-
   return (
-    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-3xl bg-surface border border-theme shadow-2xl p-6">
-        <h2 className="text-2xl font-semibold text-theme">{title}</h2>
+    <Modal
+      open={open}
+      onClose={loading ? undefined : onClose}
+      showCloseButton={!loading}
+    >
+      <div
+        className="
+        bg-surface
+        rounded-3xl
+        w-[450px]
+        max-w-[92vw]
+        p-8
+        shadow-theme
+        "
+      >
+        <div className="flex justify-center">
+          <div
+            className={`
+              w-16
+              h-16
+              rounded-full
+              flex
+              items-center
+              justify-center
+              ${
+                danger ? "bg-red-100 text-red-600" : "bg-blue-100 text-blue-600"
+              }
+            `}
+          >
+            <AlertTriangle size={30} />
+          </div>
+        </div>
 
-        <p className="mt-3 text-secondary">{message}</p>
+        <h2 className="text-2xl font-bold text-center mt-6 text-primary">
+          {title}
+        </h2>
 
-        <div className="mt-8 flex justify-end gap-3">
-          <Button variant="outline" onClick={onCancel}>
+        {description && (
+          <p className="text-secondary text-center mt-3 leading-7">
+            {description}
+          </p>
+        )}
+
+        <div className="flex gap-4 mt-8">
+          <Button
+            variant="outline"
+            fullWidth
+            disabled={loading}
+            onClick={onClose}
+          >
             {cancelText}
           </Button>
 
-          <Button variant="danger" loading={loading} onClick={onConfirm}>
+          <Button
+            fullWidth
+            loading={loading}
+            onClick={onConfirm}
+            variant={danger ? "danger" : "primary"}
+          >
             {confirmText}
           </Button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }
 

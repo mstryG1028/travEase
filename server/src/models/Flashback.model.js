@@ -1,55 +1,161 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
-const flashbackSchema = new mongoose.Schema(
+const mediaSchema = new Schema(
   {
-    booking: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Booking",
+    url: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    public_id: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    type: {
+      type: String,
+      enum: ["image", "video"],
       required: true,
     },
 
+    width: {
+      type: Number,
+      default: 0,
+    },
+
+    height: {
+      type: Number,
+      default: 0,
+    },
+
+    duration: {
+      type: Number,
+      default: 0,
+    },
+
+    size: {
+      type: Number,
+      default: 0,
+    },
+
+    format: {
+      type: String,
+      default: "",
+    },
+  },
+  { _id: false },
+);
+
+const memorySchema = new Schema(
+  {
+    booking: {
+      type: Schema.Types.ObjectId,
+      ref: "Booking",
+      required: true,
+      index: true,
+    },
+
     listing: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Listing",
       required: true,
       index: true,
     },
 
     user: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
+      index: true,
+    },
+
+    // Snapshot of trip details
+    trip: {
+      listingTitle: {
+        type: String,
+        required: true,
+      },
+
+      city: {
+        type: String,
+        default: "",
+      },
+
+      country: {
+        type: String,
+        default: "",
+      },
+
+      checkIn: {
+        type: Date,
+        required: true,
+      },
+
+      checkOut: {
+        type: Date,
+        required: true,
+      },
+    },
+
+    title: {
+      type: String,
+      trim: true,
+      maxlength: 80,
+      default: "",
     },
 
     caption: {
       type: String,
+      trim: true,
+      maxlength: 500,
       default: "",
     },
 
-    images: [
-      {
-        url: String,
-
-        public_id: String,
+    media: {
+      type: [mediaSchema],
+      validate: {
+        validator(value) {
+          return value.length > 0;
+        },
+        message: "Please upload at least one image or video.",
       },
-    ],
-
-    visibility: {
-      type: String,
-      enum: ["Public", "Private"],
-      default: "Public",
     },
 
-    likes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-
-        ref: "User",
-      },
-    ],
-    likesCount: {
+    coverMedia: {
       type: Number,
       default: 0,
+      min: 0,
+    },
+
+    aiRecap: {
+      text: {
+        type: String,
+        default: "",
+      },
+
+      generatedAt: {
+        type: Date,
+        default: null,
+      },
+    },
+
+    aiCollage: {
+      url: {
+        type: String,
+        default: "",
+      },
+
+      public_id: {
+        type: String,
+        default: "",
+      },
+
+      generatedAt: {
+        type: Date,
+        default: null,
+      },
     },
   },
   {
@@ -57,8 +163,14 @@ const flashbackSchema = new mongoose.Schema(
   },
 );
 
-export const Flashback = mongoose.model(
-  "Flashback",
+memorySchema.index({
+  booking: 1,
+  createdAt: -1,
+});
 
-  flashbackSchema,
-);
+memorySchema.index({
+  user: 1,
+  createdAt: -1,
+});
+
+export const Memory = mongoose.model("Memory", memorySchema);

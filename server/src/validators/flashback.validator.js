@@ -1,15 +1,18 @@
-import Joi from "joi";
+import { body } from "express-validator";
 
-export const flashbackValidator = Joi.object({
-  booking: Joi.string().required(),
+export const createFlashbackValidator = [
+  body("caption")
+    .optional()
+    .trim()
+    .isLength({ max: 500 })
+    .withMessage("Caption cannot exceed 500 characters."),
+];
 
-  caption: Joi.string().allow(""),
-
-  visibility: Joi.string()
-
-    .valid(
-      "Public",
-
-      "Private",
-    ),
-});
+export const updateFlashbackValidator = [
+  body("caption")
+    .trim()
+    .notEmpty()
+    .withMessage("Caption is required.")
+    .isLength({ max: 500 })
+    .withMessage("Caption cannot exceed 500 characters."),
+];
