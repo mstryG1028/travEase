@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 
 function formatDate(date) {
+  if (!date) return "";
+
   return new Date(date).toLocaleDateString("en-IN", {
     day: "numeric",
     month: "short",
@@ -17,43 +19,40 @@ function formatDate(date) {
   });
 }
 
-function MemoryCard({ memory, onView, onEdit, onDelete }) {
-  const cover = memory.media[memory.coverMedia] || memory.media[0];
+function MemoryCard({ memory, onView, onEdit, onDelete, showActions = true }) {
+  const cover =
+    memory.media.find(
+      (item) => item._id?.toString() === memory.coverMedia?.toString(),
+    ) || memory.media[0];
 
-  const imageCount = memory.media.filter((m) => m.type === "image").length;
+  const imageCount = memory.media.filter(
+    (item) => item.type === "image",
+  ).length;
 
-  const videoCount = memory.media.filter((m) => m.type === "video").length;
+  const videoCount = memory.media.filter(
+    (item) => item.type === "video",
+  ).length;
 
   return (
     <div
       className="
-      group
-
-      overflow-hidden
-
-      rounded-3xl
-
-      border
-
-      border-theme
-
-      bg-surface
-
-      shadow-sm
-
-      transition-all
-
-      duration-300
-
-      hover:-translate-y-2
-
-      hover:shadow-2xl
-    "
+        group
+        overflow-hidden
+        rounded-3xl
+        border
+        border-theme
+        bg-surface
+        shadow-sm
+        transition-all
+        duration-300
+        hover:-translate-y-2
+        hover:shadow-2xl
+      "
     >
       {/* Cover */}
 
       <div className="relative aspect-[16/10] overflow-hidden">
-        {cover.type === "image" ? (
+        {cover?.type === "image" ? (
           <img
             src={cover.url}
             alt={memory.title}
@@ -61,17 +60,15 @@ function MemoryCard({ memory, onView, onEdit, onDelete }) {
               h-full
               w-full
               object-cover
-
               transition-transform
               duration-500
-
               group-hover:scale-105
             "
           />
         ) : (
           <>
             <video
-              src={cover.url}
+              src={cover?.url}
               muted
               className="
                 h-full
@@ -84,11 +81,9 @@ function MemoryCard({ memory, onView, onEdit, onDelete }) {
               className="
                 absolute
                 inset-0
-
                 flex
                 items-center
                 justify-center
-
                 bg-black/40
               "
             >
@@ -97,119 +92,73 @@ function MemoryCard({ memory, onView, onEdit, onDelete }) {
           </>
         )}
 
-        {/* Hover Overlay */}
-
+        {/* Overlay */}
         <div
           className="
-            absolute
-
-            inset-0
-
-            flex
-
-            items-center
-
-            justify-center
-
-            gap-3
-
-            bg-black/55
-
-            opacity-0
-
-            transition
-
-            group-hover:opacity-100
-          "
+    absolute
+    inset-0
+    flex
+    items-center
+    justify-center
+    gap-3
+    bg-black/55
+    opacity-0
+    transition
+    group-hover:opacity-100
+  "
         >
-          <button
-            onClick={() => onView(memory)}
-            className="
-              rounded-full
+          {onView && (
+            <button
+              onClick={() => onView(memory)}
+              className="
+    rounded-lg
+    bg-primary
+    px-4
+    py-2
+    text-sm
+    font-medium
+    text-white
+    transition
+    hover:opacity-90
+  "
+            >
+              <Eye size={20} />
+            </button>
+          )}
 
-              bg-white
+          {showActions && onEdit && (
+            <button
+              onClick={() => onEdit(memory)}
+              className="rounded-full bg-white p-3 transition hover:scale-110"
+            >
+              <Pencil size={20} />
+            </button>
+          )}
 
-              p-3
-
-              transition
-
-              hover:scale-110
-            "
-          >
-            <Eye size={20} />
-          </button>
-
-          <button
-            onClick={() => onEdit(memory)}
-            className="
-              rounded-full
-
-              bg-white
-
-              p-3
-
-              transition
-
-              hover:scale-110
-            "
-          >
-            <Pencil size={20} />
-          </button>
-
-          <button
-            onClick={() => onDelete(memory)}
-            className="
-              rounded-full
-
-              bg-red-500
-
-              p-3
-
-              text-white
-
-              transition
-
-              hover:scale-110
-            "
-          >
-            <Trash2 size={20} />
-          </button>
+          {showActions && onDelete && (
+            <button
+              onClick={() => onDelete(memory)}
+              className="rounded-full bg-red-500 p-3 text-white transition hover:scale-110"
+            >
+              <Trash2 size={20} />
+            </button>
+          )}
         </div>
 
         {/* Media Count */}
 
-        <div
-          className="
-            absolute
-
-            bottom-3
-
-            left-3
-
-            flex
-
-            gap-2
-          "
-        >
+        <div className="absolute bottom-3 left-3 flex gap-2">
           {imageCount > 0 && (
             <div
               className="
                 flex
-
                 items-center
-
                 gap-1
-
                 rounded-full
-
                 bg-black/70
-
                 px-3
-
                 py-1
-
                 text-xs
-
                 text-white
               "
             >
@@ -222,21 +171,13 @@ function MemoryCard({ memory, onView, onEdit, onDelete }) {
             <div
               className="
                 flex
-
                 items-center
-
                 gap-1
-
                 rounded-full
-
                 bg-black/70
-
                 px-3
-
                 py-1
-
                 text-xs
-
                 text-white
               "
             >
@@ -251,123 +192,58 @@ function MemoryCard({ memory, onView, onEdit, onDelete }) {
 
       <div className="space-y-4 p-6">
         <div>
-          <h3
-            className="
-              text-xl
-
-              font-bold
-
-              text-theme
-            "
-          >
-            {memory.title}
+          <h3 className="text-xl font-bold text-theme">
+            {memory.title || "Untitled Memory"}
           </h3>
 
-          <p
-            className="
-              mt-2
-
-              line-clamp-2
-
-              text-sm
-
-              text-muted
-            "
-          >
+          <p className="mt-2 line-clamp-2 text-sm text-muted">
             {memory.caption || "No description added."}
           </p>
         </div>
 
-        <div
-          className="
-            flex
+        {/* Trip Dates */}
 
-            items-center
-
-            gap-2
-
-            text-sm
-
-            text-muted
-          "
-        >
-          <MapPin size={16} />
-
-          <span>
-            {memory.trip.city}, {memory.trip.country}
-          </span>
-        </div>
-
-        <div
-          className="
-            flex
-
-            items-center
-
-            gap-2
-
-            text-sm
-
-            text-muted
-          "
-        >
+        {/* <div className="flex items-center gap-2 text-sm text-muted">
           <Calendar size={16} />
 
           <span>
-            {formatDate(memory.trip.checkIn)}
-
-            {" - "}
-
-            {formatDate(memory.trip.checkOut)}
+            {memory.booking
+              ? `${formatDate(memory.booking.checkIn)} - ${formatDate(
+                  memory.booking.checkOut,
+                )}`
+              : "Trip dates unavailable"}
           </span>
-        </div>
+        </div> */}
+
+        {/* Footer */}
 
         <div
           className="
             flex
-
             items-center
-
             justify-between
-
             border-t
-
             border-theme
-
             pt-4
           "
         >
-          <span
-            className="
-              text-xs
-
-              text-muted
-            "
-          >
+          <span className="text-xs text-muted">
             Created {formatDate(memory.createdAt)}
           </span>
 
           <button
-            onClick={() => onView(memory)}
+            onClick={() => onView?.(memory)}
             className="
-              rounded-lg
-
-              bg-primary
-
-              px-4
-
-              py-2
-
-              text-sm
-
-              font-medium
-
-              text-white
-
-              transition
-
-              hover:opacity-90
-            "
+    rounded-lg
+    bg-primary
+    px-4
+    py-2
+    text-sm
+    font-medium
+    text-white
+    transition
+    hover:opacity-90
+  "
           >
             View Memory
           </button>

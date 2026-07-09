@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import {
+  getMyMemories,
   createMemory,
   getBookingMemories,
   getMemoryById,
@@ -18,11 +19,14 @@ const router = Router();
 
 router.use(verifyJWT);
 
-router.post(":bookingId", upload.array("media", 50), createMemory);
+router.get("/", getMyMemories);
+
 
 router.get("/booking/:bookingId", getBookingMemories);
 
 router.get("/:memoryId", getMemoryById);
+
+router.post("/:bookingId", upload.array("media", 50), createMemory);
 
 router.patch("/:memoryId", updateMemory);
 

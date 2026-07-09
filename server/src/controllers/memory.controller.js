@@ -5,15 +5,42 @@ import {
   deleteMemoryMedia,
 } from "../services/memory/memory.service.js";
 
-import  ApiError  from "../utils/ApiError.js";
-import  ApiResponse from "../utils/ApiResponse.js";
-import  asyncHandler  from "../utils/asyncHandler.js";
+import ApiError from "../utils/ApiError.js";
+import ApiResponse from "../utils/ApiResponse.js";
+import asyncHandler from "../utils/asyncHandler.js";
 
 /*
 |--------------------------------------------------------------------------
 | Helper
 |--------------------------------------------------------------------------
 */
+
+/*
+|--------------------------------------------------------------------------
+| GET MY MEMORIES
+|--------------------------------------------------------------------------
+*/
+
+export const getMyMemories = asyncHandler(async (req, res) => {
+  const memories = await Memory.find({
+    user: req.user._id,
+  })
+    .populate({
+      path: "listing",
+      select: "title city state country image",
+    })
+    .populate({
+      path: "booking",
+      select: "checkIn checkOut bookingStatus",
+    })
+    .sort({
+      createdAt: -1,
+    });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, memories, "Memories fetched successfully."));
+});
 
 const getAuthorizedMemory = async (memoryId, userId) => {
   const memory = await Memory.findById(memoryId);
@@ -152,17 +179,16 @@ export const getBookingMemories = asyncHandler(async (req, res) => {
 */
 
 export const getMemoryById = asyncHandler(async (req, res) => {
+  console.log("========================");
+  console.log("Params:", req.params);
+
   const { memoryId } = req.params;
 
-  const memory = await Memory.findById(memoryId)
-    .populate({
-      path: "listing",
-      select: "title city state country image",
-    })
-    .populate({
-      path: "booking",
-      select: "checkIn checkOut bookingStatus",
-    });
+  console.log("Memory ID:", memoryId);
+
+  const memory = await Memory.findById(memoryId);
+
+  console.log("Memory:", memory);
 
   if (!memory) {
     throw new ApiError(404, "Memory not found.");

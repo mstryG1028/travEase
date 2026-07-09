@@ -18,6 +18,9 @@ export const deleteMemory = (memoryId) => api.delete(`/memories/${memoryId}`);
 export const addMedia = (memoryId, data) =>
   api.post(`/memories/${memoryId}/media`, data);
 
+export const deleteMemoryMedia = (memoryId, mediaId) =>
+  api.delete(`/memories/${memoryId}/media/${mediaId}`);
+
 export const deleteMedia = (memoryId, mediaId) =>
   api.delete(`/memories/${memoryId}/media/${mediaId}`);
 

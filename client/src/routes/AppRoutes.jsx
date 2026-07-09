@@ -19,6 +19,7 @@ import BecomeHost from "../pages/listing/BecomeHost";
 import AllBookings from "../pages/booking/AllBookings";
 import MyListings from "../pages/listing/MyListings";
 import MyMemories from "../pages/flashback/MyMemories";
+import MemoryDetailsPage from "../pages/flashback/MemoryDetailsPage";
 
 function AppRoutes() {
   return (
@@ -146,7 +147,27 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/my-memories"
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <MyMemories />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
 
+      <Route
+        path="/memories/:memoryId"
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <MemoryDetailsPage />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/profile"
         element={
@@ -158,16 +179,6 @@ function AppRoutes() {
         }
       />
 
-      <Route
-        path="/flashbacks"
-        element={
-          <ProtectedRoute>
-            <MainLayout>
-              <MyMemories />
-            </MainLayout>
-          </ProtectedRoute>
-        }
-      />
       <Route
         path="/profile/edit"
         element={

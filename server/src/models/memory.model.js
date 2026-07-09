@@ -115,14 +115,19 @@ const memorySchema = new Schema(
       type: Schema.Types.ObjectId,
       default: null,
     },
-    resource_type: {
-      type: String,
-      enum: ["image", "video"],
-    },
 
     // Future AI Story
     aiRecap: {
       text: {
+        type: String,
+        default: "",
+      },
+      size: {
+        type: Number,
+        default: 0,
+      },
+
+      format: {
         type: String,
         default: "",
       },
@@ -210,10 +215,9 @@ memorySchema.set("toObject", {
 | Validation
 |--------------------------------------------------------------------------
 */
-
-memorySchema.pre("save", function (next) {
+memorySchema.pre("save", async function () {
   if (!this.media.length) {
-    return next(new Error("At least one media file is required."));
+    throw new Error("At least one media file is required.");
   }
 
   if (
@@ -228,8 +232,6 @@ memorySchema.pre("save", function (next) {
   if (!this.coverMedia && this.media.length) {
     this.coverMedia = this.media[0]._id;
   }
-
-  next();
 });
 
 export const Memory = mongoose.model("Memory", memorySchema);

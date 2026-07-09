@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 import Loader from "../../components/ui/Loader";
 import EmptyState from "../../components/ui/EmptyState";
 import MemorySection from "../../components/memory/MemorySection";
-
+import MemoryCard from "../../components/memory/MemoryCard";
 import { getMyMemories } from "../../services/memory.service";
 
 function MyMemories() {
@@ -11,10 +11,15 @@ function MyMemories() {
 
   const [memories, setMemories] = useState([]);
 
-  
+  const navigate = useNavigate();
+
   useEffect(() => {
     loadMemories();
   }, []);
+
+  const handleView = (memory) => {
+    navigate(`/memories/${memory._id}`);
+  };
 
   async function loadMemories() {
     try {
@@ -56,24 +61,13 @@ function MyMemories() {
               <MemoryCard
                 key={memory._id}
                 memory={memory}
-                onClick={() => {
-                  // setSelectedMemory(memory);
-                  // setGalleryOpen(true);
-                }}
+                onView={(memory) => navigate(`/memories/${memory._id}`)}
+                onEdit={(memory) => navigate(`/memories/${memory._id}`)}
+                onDelete={() => {}}
               />
             ))}
           </div>
         )}
-
-        {/* <MemoryGallery
-          open={galleryOpen}
-          onClose={() => {
-            setGalleryOpen(false);
-            setSelectedMemory(null);
-          }}
-          memory={selectedMemory}
-          refresh={loadMemories}
-        /> */}
       </div>
     </section>
   );

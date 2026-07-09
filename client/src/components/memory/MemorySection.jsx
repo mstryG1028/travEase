@@ -34,11 +34,12 @@ function MemorySection({ bookingId }) {
   };
 
   const handleView = (memory) => {
-    navigate(`/bookings/${bookingId}/memories/${memory._id}`);
+    
+    navigate(`/memories/${memory._id}`);
   };
 
   const handleEdit = (memory) => {
-    navigate(`/bookings/${bookingId}/memories/${memory._id}`);
+    navigate(`/memories/${memory._id}`);
   };
 
   if (loading) {
