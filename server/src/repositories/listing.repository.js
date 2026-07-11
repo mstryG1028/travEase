@@ -2,68 +2,74 @@ import { Listing } from "../models/index.js";
 
 class ListingRepository {
   async create(data) {
-    return await Listing.create(data);
+    return Listing.create(data);
+  }
+
+  async find(filter = {}) {
+    return Listing.find(filter).populate("owner", "fullName avatar");
+  }
+
+  async findOne(filter) {
+    return Listing.findOne(filter).populate("owner", "fullName avatar email");
   }
 
   async findById(id) {
-    return await Listing.findById(id).populate(
-      "owner",
-      "fullName avatar email",
-    );
+    return Listing.findById(id).populate("owner", "fullName avatar email");
   }
 
-  async find(query = {}) {
-    return await Listing.find(query).populate("owner", "fullName avatar");
-  }
   async findByOwner(ownerId) {
-    return await Listing.find({ owner: ownerId })
+    return Listing.find({
+      owner: ownerId,
+    })
       .populate("owner", "fullName avatar")
-      .sort({ createdAt: -1 });
+      .sort({
+        createdAt: -1,
+      });
   }
 
   async update(id, data) {
-    return await Listing.findByIdAndUpdate(
-      id,
-
-      data,
-
-      {
-        new: true,
-      },
-    );
+    return Listing.findByIdAndUpdate(id, data, {
+      new: true,
+      runValidators: true,
+    });
   }
+
+  async delete(id) {
+    return Listing.findByIdAndDelete(id);
+  }
+
+  async deleteMany(filter) {
+    return Listing.deleteMany(filter);
+  }
+
+  async save(doc) {
+    return doc.save();
+  }
+
+  async exists(filter) {
+    return Listing.exists(filter);
+  }
+
+  async count(filter = {}) {
+    return Listing.countDocuments(filter);
+  }
+
   async search(keyword) {
-    return await Listing.find({
+    return Listing.find({
       $text: {
         $search: keyword,
       },
     });
   }
 
-  async delete(id) {
-    return await Listing.findByIdAndDelete(id);
-  }
-
-  async save(document) {
-    return await document.save();
-  }
-
-  async findNearby(
-    longitude,
-
-    latitude,
-
-    distance = 5000,
-  ) {
-    return await Listing.find({
+  async findNearby(longitude, latitude, distance = 5000) {
+    return Listing.find({
       location: {
         $near: {
           $geometry: {
             type: "Point",
-
             coordinates: [longitude, latitude],
           },
-
           $maxDistance: distance,
         },
       },

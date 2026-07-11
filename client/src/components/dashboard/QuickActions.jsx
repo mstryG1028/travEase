@@ -21,7 +21,7 @@ function QuickActions() {
         </Link>
 
         <Link
-          to="/bookings"
+          to="/all-bookings"
           className="btn-outline w-full block text-center py-3"
         >
           View Bookings

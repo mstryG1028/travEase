@@ -14,12 +14,12 @@ import { initializeSocket } from "./socket/index.js";
 
 const server = http.createServer(app);
 
- initializeSocket(server);
+initializeSocket(server);
 
 // chatSocket(io);
 
 connectDB().then(() => {
   server.listen(process.env.PORT, () => {
-    console.log("Server Running");
+    console.log("Server Started");
   });
 });

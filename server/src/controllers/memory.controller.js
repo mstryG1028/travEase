@@ -1,19 +1,7 @@
-import { Booking, Memory } from "../models/index.js";
+import memoryService from "../services/memory/memory.service.js";
 
-import {
-  uploadMemoryMedia,
-  deleteMemoryMedia,
-} from "../services/memory/memory.service.js";
-
-import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
-
-/*
-|--------------------------------------------------------------------------
-| Helper
-|--------------------------------------------------------------------------
-*/
 
 /*
 |--------------------------------------------------------------------------
@@ -22,55 +10,12 @@ import asyncHandler from "../utils/asyncHandler.js";
 */
 
 export const getMyMemories = asyncHandler(async (req, res) => {
-  const memories = await Memory.find({
-    user: req.user._id,
-  })
-    .populate({
-      path: "listing",
-      select: "title city state country image",
-    })
-    .populate({
-      path: "booking",
-      select: "checkIn checkOut bookingStatus",
-    })
-    .sort({
-      createdAt: -1,
-    });
+  const memories = await memoryService.getMyMemories(req.user._id);
 
   return res
     .status(200)
     .json(new ApiResponse(200, memories, "Memories fetched successfully."));
 });
-
-const getAuthorizedMemory = async (memoryId, userId) => {
-  const memory = await Memory.findById(memoryId);
-
-  if (!memory) {
-    throw new ApiError(404, "Memory not found.");
-  }
-
-  if (memory.user.toString() !== userId.toString()) {
-    throw new ApiError(403, "Unauthorized.");
-  }
-
-  return memory;
-};
-
-/*
-|--------------------------------------------------------------------------
-| Generate Default Title
-|--------------------------------------------------------------------------
-*/
-
-const generateTitle = () => {
-  const today = new Date();
-
-  return `Memory • ${today.toLocaleDateString("en-IN", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  })}`;
-};
 
 /*
 |--------------------------------------------------------------------------
@@ -79,60 +24,16 @@ const generateTitle = () => {
 */
 
 export const createMemory = asyncHandler(async (req, res) => {
-  const { bookingId } = req.params;
-
-  const { title = "", caption = "" } = req.body;
-
-  const booking = await Booking.findById(bookingId).populate("listing");
-
-  if (!booking) {
-    throw new ApiError(404, "Booking not found.");
-  }
-
-  if (booking.guest.toString() !== req.user._id.toString()) {
-    throw new ApiError(403, "Unauthorized.");
-  }
-
-  if (booking.bookingStatus !== "Completed") {
-    throw new ApiError(
-      400,
-      "You can create memories only after completing your trip.",
-    );
-  }
-
-  if (!req.files || req.files.length === 0) {
-    throw new ApiError(400, "Please upload at least one photo or video.");
-  }
-
-  const uploadedMedia = await uploadMemoryMedia(req.files);
-
-  const memory = await Memory.create({
-    booking: booking._id,
-
-    listing: booking.listing._id,
-
-    user: booking.guest,
-
-    title: title.trim() || generateTitle(),
-
-    caption: caption.trim(),
-
-    media: uploadedMedia,
-  });
-
-  const createdMemory = await Memory.findById(memory._id)
-    .populate({
-      path: "listing",
-      select: "title city state country image",
-    })
-    .populate({
-      path: "booking",
-      select: "checkIn checkOut bookingStatus",
-    });
+  const memory = await memoryService.createMemory(
+    req.params.bookingId,
+    req.user._id,
+    req.body,
+    req.files,
+  );
 
   return res
     .status(201)
-    .json(new ApiResponse(201, createdMemory, "Memory created successfully."));
+    .json(new ApiResponse(201, memory, "Memory created successfully."));
 });
 
 /*
@@ -142,30 +43,10 @@ export const createMemory = asyncHandler(async (req, res) => {
 */
 
 export const getBookingMemories = asyncHandler(async (req, res) => {
-  const { bookingId } = req.params;
-
-  const booking = await Booking.findById(bookingId);
-
-  if (!booking) {
-    throw new ApiError(404, "Booking not found.");
-  }
-
-  if (booking.guest.toString() !== req.user._id.toString()) {
-    throw new ApiError(403, "Unauthorized.");
-  }
-
-  const memories = await Memory.find({
-    booking: bookingId,
-
-    user: req.user._id,
-  })
-    .populate({
-      path: "listing",
-      select: "title city state country image",
-    })
-    .sort({
-      createdAt: -1,
-    });
+  const memories = await memoryService.getBookingMemories(
+    req.params.bookingId,
+    req.user._id,
+  );
 
   return res
     .status(200)
@@ -179,30 +60,15 @@ export const getBookingMemories = asyncHandler(async (req, res) => {
 */
 
 export const getMemoryById = asyncHandler(async (req, res) => {
-  console.log("========================");
-  console.log("Params:", req.params);
-
-  const { memoryId } = req.params;
-
-  console.log("Memory ID:", memoryId);
-
-  const memory = await Memory.findById(memoryId);
-
-  console.log("Memory:", memory);
-
-  if (!memory) {
-    throw new ApiError(404, "Memory not found.");
-  }
-
-  if (memory.user.toString() !== req.user._id.toString()) {
-    throw new ApiError(403, "Unauthorized.");
-  }
+  const memory = await memoryService.getMemory(
+    req.params.memoryId,
+    req.user._id,
+  );
 
   return res
     .status(200)
     .json(new ApiResponse(200, memory, "Memory fetched successfully."));
 });
-
 /*
 |--------------------------------------------------------------------------
 | UPDATE MEMORY
@@ -210,35 +76,15 @@ export const getMemoryById = asyncHandler(async (req, res) => {
 */
 
 export const updateMemory = asyncHandler(async (req, res) => {
-  const { memoryId } = req.params;
-
-  const { title, caption } = req.body;
-
-  const memory = await getAuthorizedMemory(memoryId, req.user._id);
-
-  if (title !== undefined) {
-    memory.title = title.trim();
-  }
-
-  if (caption !== undefined) {
-    memory.caption = caption.trim();
-  }
-
-  await memory.save();
-
-  const updatedMemory = await Memory.findById(memory._id)
-    .populate({
-      path: "listing",
-      select: "title city state country image",
-    })
-    .populate({
-      path: "booking",
-      select: "checkIn checkOut bookingStatus",
-    });
+  const memory = await memoryService.updateMemory(
+    req.params.memoryId,
+    req.user._id,
+    req.body,
+  );
 
   return res
     .status(200)
-    .json(new ApiResponse(200, updatedMemory, "Memory updated successfully."));
+    .json(new ApiResponse(200, memory, "Memory updated successfully."));
 });
 
 /*
@@ -248,37 +94,15 @@ export const updateMemory = asyncHandler(async (req, res) => {
 */
 
 export const addMedia = asyncHandler(async (req, res) => {
-  const { memoryId } = req.params;
-
-  const memory = await getAuthorizedMemory(memoryId, req.user._id);
-
-  if (!req.files || req.files.length === 0) {
-    throw new ApiError(400, "Please upload at least one photo or video.");
-  }
-
-  if (memory.media.length + req.files.length > 50) {
-    throw new ApiError(400, "Maximum 50 media files allowed.");
-  }
-
-  const uploadedMedia = await uploadMemoryMedia(req.files);
-
-  memory.media.push(...uploadedMedia);
-
-  await memory.save();
-
-  const updatedMemory = await Memory.findById(memory._id)
-    .populate({
-      path: "listing",
-      select: "title city state country image",
-    })
-    .populate({
-      path: "booking",
-      select: "checkIn checkOut bookingStatus",
-    });
+  const memory = await memoryService.addMedia(
+    req.params.memoryId,
+    req.user._id,
+    req.files,
+  );
 
   return res
     .status(200)
-    .json(new ApiResponse(200, updatedMemory, "Media added successfully."));
+    .json(new ApiResponse(200, memory, "Media added successfully."));
 });
 
 /*
@@ -288,43 +112,15 @@ export const addMedia = asyncHandler(async (req, res) => {
 */
 
 export const deleteMedia = asyncHandler(async (req, res) => {
-  const { memoryId, mediaId } = req.params;
-
-  const memory = await getAuthorizedMemory(memoryId, req.user._id);
-
-  const media = memory.media.id(mediaId);
-
-  if (!media) {
-    throw new ApiError(404, "Media not found.");
-  }
-
-  if (memory.media.length === 1) {
-    throw new ApiError(400, "A memory must contain at least one media file.");
-  }
-
-  await deleteMemoryMedia([media]);
-
-  memory.media.pull(mediaId);
-
-  if (memory.coverMedia && memory.coverMedia.toString() === mediaId) {
-    memory.coverMedia = memory.media[0]?._id || null;
-  }
-
-  await memory.save();
-
-  const updatedMemory = await Memory.findById(memory._id)
-    .populate({
-      path: "listing",
-      select: "title city state country image",
-    })
-    .populate({
-      path: "booking",
-      select: "checkIn checkOut bookingStatus",
-    });
+  const memory = await memoryService.deleteMedia(
+    req.params.memoryId,
+    req.params.mediaId,
+    req.user._id,
+  );
 
   return res
     .status(200)
-    .json(new ApiResponse(200, updatedMemory, "Media deleted successfully."));
+    .json(new ApiResponse(200, memory, "Media deleted successfully."));
 });
 
 /*
@@ -334,35 +130,15 @@ export const deleteMedia = asyncHandler(async (req, res) => {
 */
 
 export const updateCover = asyncHandler(async (req, res) => {
-  const { memoryId } = req.params;
-
-  const { mediaId } = req.body;
-
-  const memory = await getAuthorizedMemory(memoryId, req.user._id);
-
-  const exists = memory.media.some((item) => item._id.toString() === mediaId);
-
-  if (!exists) {
-    throw new ApiError(404, "Selected media not found.");
-  }
-
-  memory.coverMedia = mediaId;
-
-  await memory.save();
-
-  const updatedMemory = await Memory.findById(memory._id)
-    .populate({
-      path: "listing",
-      select: "title city state country image",
-    })
-    .populate({
-      path: "booking",
-      select: "checkIn checkOut bookingStatus",
-    });
+  const memory = await memoryService.updateCover(
+    req.params.memoryId,
+    req.body.mediaId,
+    req.user._id,
+  );
 
   return res
     .status(200)
-    .json(new ApiResponse(200, updatedMemory, "Cover updated successfully."));
+    .json(new ApiResponse(200, memory, "Cover updated successfully."));
 });
 
 /*
@@ -372,13 +148,7 @@ export const updateCover = asyncHandler(async (req, res) => {
 */
 
 export const deleteMemory = asyncHandler(async (req, res) => {
-  const { memoryId } = req.params;
-
-  const memory = await getAuthorizedMemory(memoryId, req.user._id);
-
-  await deleteMemoryMedia(memory.media);
-
-  await Memory.findByIdAndDelete(memory._id);
+  await memoryService.deleteMemory(req.params.memoryId, req.user._id);
 
   return res
     .status(200)

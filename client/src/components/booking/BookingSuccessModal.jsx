@@ -11,7 +11,7 @@ function BookingSuccessModal({ booking, onClose }) {
   if (!booking) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+    <div className=" inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
       <div className="relative w-full max-w-[420px] rounded-3xl bg-surface shadow-2xl animate-[fadeIn_.25s_ease] overflow-hidden">
         {/* Close */}
         <button

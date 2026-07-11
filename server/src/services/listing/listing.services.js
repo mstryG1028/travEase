@@ -1,6 +1,8 @@
 import slugify from "slugify";
 import listingRepository from "../../repositories/listing.repository.js";
-
+import favoriteRepository from "../../repositories/favorite.repository.js";
+import cleanupService from "../cleanup/cleanup.service.js";
+import bookingRepository from "../../repositories/booking.repository.js";
 import {
   Listing,
   ListingAnalytics,
@@ -19,13 +21,14 @@ import {
 
 class ListingService {
   // ==========================
-  // CREATE LISTING
+  // PREPARE LISTING DATA
   // ==========================
-  async createListing(body, file, ownerId) {
+  async prepareListingData(body, file, ownerId) {
     let image = null;
 
     if (file) {
       const uploaded = await uploadOnCloudinary(file.path);
+
       if (uploaded) {
         image = {
           url: uploaded.secure_url,
@@ -34,55 +37,74 @@ class ListingService {
       }
     }
 
-    // Generate unique slug
-    const slug = `${slugify(body.title, {
-      lower: true,
-      strict: true,
-    })}-${Date.now()}`;
-
     let contactPerson = body.contactPerson;
 
     if (typeof contactPerson === "string") {
       contactPerson = JSON.parse(contactPerson);
     }
 
-    const listing = await listingRepository.create({
+    const slug = `${slugify(body.title, {
+      lower: true,
+      strict: true,
+    })}-${Date.now()}`;
+
+    return {
       ...body,
-      contactPerson,
       owner: ownerId,
+      contactPerson,
       slug,
       image,
       views: 0,
       favorites: 0,
       trendingScore: 0,
-    });
+    };
+  }
 
-    // Create Analytics
+  // ==========================
+  // CREATE DEFAULT RESOURCES
+  // ==========================
+  async createListingResources(listing) {
     await ListingAnalytics.create({
       listing: listing._id,
     });
 
-    // Create Pricing
     await ListingPricing.create({
       listing: listing._id,
       basePrice: listing.basePrice,
       currentPrice: listing.currentPrice,
     });
 
-    // Create AI
     await ListingAI.create({
       listing: listing._id,
     });
 
-    // Create Weather
-    await ListingWeather.create({
+    // Uncomment if ListingWeather exists
+    /*
+  await ListingWeather.create({
       listing: listing._id,
-    });
+  });
+  */
+  }
+
+  // ==========================
+  // CREATE LISTING
+  // ==========================
+  async createListing(body, file, ownerId) {
+    const listingData = await this.prepareListingData(body, file, ownerId);
+
+    const listing = await listingRepository.create(listingData);
+
+    await this.createListingResources(listing);
 
     return listing;
   }
+
   // ==========================
   // BECOME HOST (First Listing)
+  // ==========================
+
+  // ==========================
+  // BECOME HOST
   // ==========================
   async createFirstListing(body, file, userId) {
     const user = await User.findById(userId);
@@ -91,58 +113,7 @@ class ListingService {
       throw new ApiError(404, "User not found");
     }
 
-    let image = null;
-
-    if (file) {
-      const uploaded = await uploadOnCloudinary(file.path);
-
-      if (uploaded) {
-        image = {
-          url: uploaded.secure_url,
-          public_id: uploaded.public_id,
-        };
-      }
-    }
-
-    const slug = `${slugify(body.title, {
-      lower: true,
-      strict: true,
-    })}-${Date.now()}`;
-
-    let contactPerson = body.contactPerson;
-
-    if (typeof contactPerson === "string") {
-      contactPerson = JSON.parse(contactPerson);
-    }
-
-    const listing = await listingRepository.create({
-      ...body,
-      contactPerson,
-      owner: userId,
-      slug,
-      image,
-      views: 0,
-      favorites: 0,
-      trendingScore: 0,
-    });
-
-    await ListingAnalytics.create({
-      listing: listing._id,
-    });
-
-    await ListingPricing.create({
-      listing: listing._id,
-      basePrice: listing.basePrice,
-      currentPrice: listing.currentPrice,
-    });
-
-    await ListingAI.create({
-      listing: listing._id,
-    });
-
-    await ListingWeather.create({
-      listing: listing._id,
-    });
+    const listing = await this.createListing(body, file, userId);
 
     if (user.role === "user") {
       user.role = "owner";
@@ -168,15 +139,6 @@ class ListingService {
       .pagination(resultPerPage);
 
     return await apiFeature.query;
-  }
-
-  // ==========================
-  // GET MY LISTING
-  // ==========================
-  async getMyListings(ownerId) {
-    return await Listing.find({ owner: ownerId })
-      .populate("owner", "fullName avatar")
-      .sort({ createdAt: -1 });
   }
 
   // ==========================
@@ -263,26 +225,36 @@ class ListingService {
     if (listing.owner._id.toString() !== userId.toString()) {
       throw new ApiError(403, "Unauthorized");
     }
+    const hasBookings = await bookingRepository.hasActiveBookings(id);
 
+    if (hasBookings) {
+      throw new ApiError(
+        400,
+        `Listing cannot be deleted. Booking ${booking.bookingId} starts on ${booking.checkIn.toDateString()}.`,
+      );
+    }
+
+    // Delete image from Cloudinary
     if (listing.image?.public_id) {
       await deleteFromCloudinary(listing.image.public_id);
     }
 
-    await ListingAnalytics.deleteOne({
-      listing: listing._id,
-    });
+    // Delete all related data
+    const activeBooking = await bookingRepository.findActiveBooking(id);
 
-    await ListingPricing.deleteOne({
-      listing: listing._id,
-    });
+    if (activeBooking) {
+      throw new ApiError(
+        409,
+        `This listing cannot be deleted because booking ${activeBooking.bookingId} for ${activeBooking.guest.fullName} is still active. Please wait until the booking is completed or cancel the booking first.`,
+      );
+    }
 
-    await ListingAI.deleteOne({
-      listing: listing._id,
-    });
-
+    await cleanupService.deleteListingRelations(listing);
+    // Finally delete listing
     await listing.deleteOne();
-  }
 
+    return true;
+  }
   // ===================================
   // Increment Views
   // ===================================
@@ -373,6 +345,19 @@ class ListingService {
         trendingScore: -1,
       })
       .limit(10);
+  }
+  async findActiveBooking(listingId) {
+    return await Booking.findOne({
+      listing: listingId,
+      bookingStatus: {
+        $in: ["Pending", "Confirmed"],
+      },
+      checkOut: {
+        $gte: new Date(),
+      },
+    })
+      .select("bookingId checkIn checkOut guest")
+      .populate("guest", "fullName");
   }
 
   // ==========================

@@ -5,35 +5,50 @@ import toolRegistry from "./ai.tool.registry.js";
 
 class AIChatService {
   async chat(user, listingId, question) {
-    // 1. Detect intent + parameters
-    const { intent, parameters } = await aiIntentService.detect(question);
+    // 1. Detect intent
+    const intentResult = await aiIntentService.detect(question);
 
-    // 2. Get listing context
+    const { intent, parameters = {}, confidence = 0 } = intentResult;
+
+    // 2. Load listing context
     const listing = await aiContextService.getListingContext(listingId);
 
-    // 3. Execute tool if available
+    // 3. Execute tool (if registered)
+    const tool = toolRegistry[intent];
+
     let toolData = null;
 
-    if (toolRegistry[intent]) {
-      toolData = await toolRegistry[intent].execute(listing, parameters);
+    if (tool) {
+      toolData = await tool.execute({
+        user,
+        listing,
+        parameters,
+        question,
+      });
     }
 
-    // 4. Generate final AI response
+    console.log("Question:", question);
+console.log("Intent:", intent);
+console.log("Parameters:", parameters);
+console.log("Listing:", listing);
+console.log("Tool:", toolData);
+    // 4. Generate AI response
     const answer = await aiResponseService.generate({
+      user,
       question,
       listing,
       intent,
+      confidence,
       parameters,
       toolData,
     });
 
-    // 5. Return response
     return {
-      intent,
-      parameters,
-      listing,
-      toolData,
       answer,
+      intent,
+      confidence,
+      parameters,
+      toolData,
     };
   }
 }

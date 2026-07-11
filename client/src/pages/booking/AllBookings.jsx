@@ -4,7 +4,7 @@ import useAllBookings from "../../hooks/useAllBookings";
 
 function AllBookings() {
   const { bookings, loading } = useAllBookings();
-console.log("ALL BOOKINGS:", bookings);
+
   if (loading) {
     return <Loader />;
   }

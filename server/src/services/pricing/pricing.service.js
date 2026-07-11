@@ -1,34 +1,36 @@
 import { Listing } from "../../models/index.js";
 import ApiError from "../../utils/ApiError.js";
 
-// =======================================
+class PricingService {
+  // =======================================
+  async calculatePrice(listingId) {
+    const listing = await Listing.findById(listingId);
 
-export async function calculatePrice(listingId) {
-  const listing = await Listing.findById(listingId);
+    if (!listing) {
+      throw new ApiError(404, "Listing not found");
+    }
 
-  if (!listing) {
-    throw new ApiError(404, "Listing not found");
+    return {
+      basePrice: listing.basePrice,
+      finalPrice: listing.currentPrice,
+    };
   }
 
-  return {
-    basePrice: listing.basePrice,
-    finalPrice: listing.currentPrice,
-  };
-}
+  // =======================================
+  async updatePricing(listingId, body) {
+    const listing = await Listing.findById(listingId);
 
-// =======================================
+    if (!listing) {
+      throw new ApiError(404, "Listing not found");
+    }
 
-export async function updatePricing(listingId, body) {
-  const listing = await Listing.findById(listingId);
+    listing.basePrice = body.basePrice ?? listing.basePrice;
+    listing.currentPrice = body.currentPrice ?? listing.currentPrice;
 
-  if (!listing) {
-    throw new ApiError(404, "Listing not found");
+    await listing.save();
+
+    return listing;
   }
-
-  listing.basePrice = body.basePrice ?? listing.basePrice;
-  listing.currentPrice = body.currentPrice ?? listing.currentPrice;
-
-  await listing.save();
-
-  return listing;
 }
+
+export default new PricingService();

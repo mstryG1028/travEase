@@ -1,45 +1,43 @@
-import { Listing } from "../../models/Listing.model.js";
+import listingRepository from "../../repositories/listing.repository.js";
+import reviewRepository from "../../repositories/review.repository.js";
+import availabilityRepository from "../../repositories/availability.repository.js";
+
+import PricingService from "../pricing/pricing.service.js";
+import weatherService from "../weather/weather.service.js";
+
+import ApiError from "../../utils/ApiError.js";
 
 class AIContextService {
+  // =====================================
+  // Get Complete Listing Context
+  // =====================================
   async getListingContext(listingId) {
-    const listing = await Listing.findById(listingId);
+    const listing = await listingRepository.findById(listingId);
 
     if (!listing) {
-      throw new Error("Listing not found");
+      throw new ApiError(404, "Listing not found");
     }
 
+    const [reviews, availability, pricing, weather] = await Promise.all([
+      reviewRepository.find({
+        listing: listingId,
+      }),
+
+      availabilityRepository.find({
+        listing: listingId,
+      }),
+
+      pricingService.getPricing(listingId),
+
+      weatherService.getWeatherForListing(listing),
+    ]);
+
     return {
-      id: listing._id,
-
-      title: listing.title,
-
-      description: listing.description,
-
-      propertyType: listing.propertyType,
-
-      city: listing.city,
-
-      state: listing.state,
-
-      country: listing.country,
-
-      currentPrice: listing.currentPrice,
-
-      averageRating: listing.averageRating,
-
-      totalReviews: listing.totalReviews,
-
-      amenities: listing.amenities,
-
-      guests: listing.guests,
-
-      bedrooms: listing.bedrooms,
-
-      beds: listing.beds,
-
-      bathrooms: listing.bathrooms,
-
-      weather: listing.weather,
+      listing,
+      reviews,
+      availability,
+      pricing,
+      weather,
     };
   }
 }

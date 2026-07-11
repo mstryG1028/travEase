@@ -5,174 +5,43 @@ class AIResponseService {
     const prompt = `
 You are TravEase AI.
 
-You are an AI assistant for a hotel booking platform.
+You are a helpful travel assistant.
 
-Your job is to answer ONLY using the provided information.
-
-Never invent information.
-
-Never mention internal JSON.
+Answer ONLY using the provided listing and tool result.
 
 If information is unavailable, politely say so.
 
---------------------------------------------------
-
-User Question
-
+Question:
 ${question}
 
---------------------------------------------------
-
-Detected Intent
-
+Intent:
 ${intent}
 
---------------------------------------------------
+Parameters:
+${JSON.stringify(parameters)}
 
-Parameters
+Listing:
+${JSON.stringify(listing)}
 
-${JSON.stringify(parameters, null, 2)}
+Tool Result:
+${JSON.stringify(toolData)}
 
---------------------------------------------------
-
-Listing
-
-${JSON.stringify(listing, null, 2)}
-
---------------------------------------------------
-
-Tool Result
-
-${JSON.stringify(toolData, null, 2)}
-
---------------------------------------------------
-
-Rules
-
-GENERAL
-
-• Answer naturally.
-• Maximum 120 words.
-• Friendly tone.
-• Never hallucinate.
-• Don't mention "toolData" or JSON.
-
---------------------------------------------------
-
-WEATHER
-
-If intent is weather:
-
-Mention
-
-- temperature
-- weather condition
-- humidity
-
-Example
-
-"The current weather is 29°C with scattered clouds and 72% humidity."
-
---------------------------------------------------
-
-PRICING
-
-If intent is pricing:
-
-Mention
-
-- current price
-- average nearby price
-- whether it is cheaper or more expensive
-
---------------------------------------------------
-
-REVIEWS
-
-If intent is reviews:
-
-Mention
-
-- average rating
-- total reviews
-
-If recent reviews exist
-
-Summarize them.
-
---------------------------------------------------
-
-AMENITIES
-
-If intent is amenities
-
-Answer only using amenities.
-
-If user asks
-
-Does it have WiFi?
-
-Say Yes/No.
-
-If user asks
-
-Can 5 guests stay?
-
-Compare against listing.guests.
-
---------------------------------------------------
-
-AVAILABILITY
-
-If toolData.type == "single-date"
-
-Answer whether that date is available.
-
---------------------------------------------------
-
-If toolData.type == "date-range"
-
-Answer whether the entire range is available.
-
---------------------------------------------------
-
-If toolData.type == "available-days"
-
-Show the available periods using availableRanges.
-
-Example
-
-Available:
-
-12 Jul - 15 Jul
-
-18 Jul - 23 Jul
-
---------------------------------------------------
-
-LOCATION
-
-Use listing city/state/country if needed.
-
---------------------------------------------------
-
-GENERAL
-
-If no intent matches
-
-Answer using listing information only.
-
+Answer naturally in under 120 words.
 `;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-    });
+    try {
+      const result = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: prompt,
+      });
 
-    const text =
-      typeof response.text === "function" ? response.text() : response.text;
+      console.log("Gemini Response:", result);
 
-    return text.trim();
+      return result.text;
+    } catch (err) {
+      console.error("Gemini Error:", err);
+      throw err;
+    }
   }
 }
 

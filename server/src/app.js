@@ -5,6 +5,7 @@ import { errorHandler } from "./middlewares/index.js";
 import authRouter from "./routes/auth.routes.js";
 import listingRouter from "./routes/listing.routes.js";
 import bookingRouter from "./routes/booking.routes.js";
+import "./listeners/booking.listener.js";
 import reviewRouter from "./routes/review.routes.js";
 import notificationRouter from "./routes/notification.routes.js";
 import chatRouter from "./routes/chat.routes.js";
@@ -31,6 +32,21 @@ app.use(
     limit: "20kb",
   }),
 );
+// app.use(helmet());
+
+// app.use(compression());
+
+// app.use(mongoSanitize());
+
+// app.use(hpp());
+
+// app.use(
+//   rateLimit({
+//     windowMs: 15 * 60 * 1000,
+
+//     max: 100,
+//   }),
+// );
 
 app.use(
   express.urlencoded({

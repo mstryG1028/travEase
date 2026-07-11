@@ -1,5 +1,16 @@
-export const FAVORITE_ALREADY_EXISTS = "Already in wishlist";
+export default {
+  OK: 200,
+  CREATED: 201,
 
-export const FAVORITE_REMOVED = "Removed From Wishlist";
+  BAD_REQUEST: 400,
 
-export const FAVORITE_ADDED = "Added To Wishlist";
+  UNAUTHORIZED: 401,
+
+  FORBIDDEN: 403,
+
+  NOT_FOUND: 404,
+
+  CONFLICT: 409,
+
+  INTERNAL_SERVER_ERROR: 500,
+};

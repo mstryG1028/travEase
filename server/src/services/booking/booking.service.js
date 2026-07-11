@@ -6,19 +6,18 @@ import listingRepository from "../../repositories/listing.repository.js";
 import eventBus from "../../events/eventBus.js";
 import { BOOKING_CREATED } from "../../events/booking.event.js";
 
-import { Booking, ListingAnalytics } from "../../models/index.js";
-import { Chat } from "../../models/index.js";
-import ApiError from "../../utils/ApiError.js";
+import listingAnalyticsRepository from "../../repositories/listingAnalytics.repository.js";
+import chatRepository from "../../repositories/chat.repository.js";
 
 import { checkAchievements } from "../achievement/achievement.service.js";
-import { calculatePrice } from "../pricing/pricing.service.js";
+import PricingService from "../pricing/pricing.service.js";
+// import { calculatePrice } from "../../utils/calculatePrice.js";
 import {
   blockDates,
   unblockDates,
 } from "../availability/availability.service.js";
-
-import * as notificationService from "../notification/notification.service.js";
-
+import ApiError from "../../utils/ApiError.js";
+import notificationService from "../notification/notification.service.js";
 import {
   BOOKING_STATUS,
   PAYMENT_STATUS,
@@ -48,7 +47,7 @@ export async function createBooking(data, user) {
     // Prevent Self Booking
     // ==========================================
 
-    if (listing.owner.toString() === user._id.toString()) {
+    if (listing.owner._id.toString() === user._id.toString()) {
       throw new ApiError(400, "You cannot book your own listing.");
     }
 
@@ -85,26 +84,11 @@ export async function createBooking(data, user) {
     // ==========================================
     // Check Availability
     // ==========================================
-
-    const overlap = await bookingRepository.exists({
-      listing: listing._id,
-
-      bookingStatus: {
-        $in: [
-          BOOKING_STATUS.PENDING,
-          BOOKING_STATUS.CONFIRMED,
-          BOOKING_STATUS.ACTIVE,
-        ],
-      },
-
-      checkIn: {
-        $lt: checkOut,
-      },
-
-      checkOut: {
-        $gt: checkIn,
-      },
-    });
+    const overlap = await bookingRepository.isDateBooked(
+      listing._id,
+      checkIn,
+      checkOut,
+    );
 
     if (overlap) {
       throw new ApiError(400, "Selected dates are already booked.");
@@ -114,7 +98,7 @@ export async function createBooking(data, user) {
     // Pricing
     // ==========================================
 
-    const pricing = await calculatePrice(listing._id);
+    const pricing = await PricingService.calculatePrice(listing._id);
 
     const totalNights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
 
@@ -137,7 +121,7 @@ export async function createBooking(data, user) {
       {
         guest: user._id,
 
-        owner: listing.owner,
+        owner: listing.owner._id,
 
         listing: listing._id,
 
@@ -168,7 +152,7 @@ export async function createBooking(data, user) {
       session,
     );
 
-    await Chat.create({
+    await chatRepository.create({
       booking: booking._id,
       listing: listing._id,
       guest: user._id,
@@ -179,15 +163,15 @@ export async function createBooking(data, user) {
     // Analytics
     // ==========================================
 
-    const analytics = await ListingAnalytics.findOne({
+    const analytics = await listingAnalyticsRepository.findOne({
       listing: listing._id,
-    }).session(session);
+    });
 
     if (analytics) {
       analytics.totalBookings += 1;
       analytics.revenue += booking.totalAmount;
 
-      await analytics.save({ session });
+      await listingAnalyticsRepository.save(analytics);
     }
 
     // ==========================================
@@ -267,14 +251,7 @@ function updateBookingStatus(booking) {
 // ===================================================
 
 export async function myBookings(userId) {
-  const bookings = await Booking.find({
-    guest: userId,
-  })
-    .populate("listing", "title image city state currentPrice contactPerson")
-    .populate("owner", "fullName phone email")
-    .sort({
-      createdAt: -1,
-    });
+  const bookings = await bookingRepository.findByGuest(userId);
 
   let changed = false;
 
@@ -289,7 +266,9 @@ export async function myBookings(userId) {
   });
 
   if (changed) {
-    await Promise.all(bookings.map((booking) => booking.save()));
+    await Promise.all(
+      bookings.map((booking) => bookingRepository.save(booking)),
+    );
   }
 
   return bookings;
@@ -299,15 +278,12 @@ export async function myBookings(userId) {
 // Bookings Details
 // ===================================================
 
+// ===================================================
+// Booking Details
+// ===================================================
+
 export async function bookingDetails(id) {
-  const booking = await Booking.findById(id)
-    .populate(
-      "listing",
-      "title image address city state currentPrice contactPerson",
-    )
-    .populate("guest", "fullName email phone")
-    .populate("owner", "fullName email phone")
-    .lean();
+  const booking = await bookingRepository.findById(id);
 
   if (!booking) {
     throw new ApiError(404, "Booking not found");
@@ -321,9 +297,7 @@ export async function bookingDetails(id) {
 // ===================================================
 
 export async function ownerBookings(ownerId) {
-  const bookings = await bookingRepository.find({
-    owner: ownerId,
-  });
+  const bookings = await bookingRepository.findByOwner(ownerId);
 
   let changed = false;
 
@@ -338,7 +312,9 @@ export async function ownerBookings(ownerId) {
   });
 
   if (changed) {
-    await Promise.all(bookings.map((booking) => booking.save()));
+    await Promise.all(
+      bookings.map((booking) => bookingRepository.save(booking)),
+    );
   }
 
   return bookings;

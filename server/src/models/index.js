@@ -12,3 +12,4 @@ export { Memory } from "./memory.model.js";
 export { ListingAI } from "./ListingAI.model.js";
 export { Favorite } from "./favorite.model.js";
 export { Availability } from "./Availability.model.js";
+

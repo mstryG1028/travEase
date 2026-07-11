@@ -2,32 +2,46 @@ import { Chat } from "../models/index.js";
 
 class ChatRepository {
   async create(data) {
-    return await Chat.create(data);
+    return Chat.create(data);
   }
 
-  async find(query = {}) {
-    return await Chat.find(query)
-      .populate("guest", "fullName avatar")
-      .populate("owner", "fullName avatar")
-      .populate("listing", "title image")
-      .sort({ lastMessageAt: -1 });
+  async find(filter = {}) {
+    return Chat.find(filter);
+  }
+
+  async findOne(filter) {
+    return Chat.findOne(filter);
   }
 
   async findById(id) {
-    return await Chat.findById(id)
-      .populate("guest", "fullName avatar")
-      .populate("owner", "fullName avatar")
-      .populate("listing", "title image");
+    return Chat.findById(id);
   }
 
-  async findByBooking(bookingId) {
-    return await Chat.findOne({
-      booking: bookingId,
+  async update(id, data) {
+    return Chat.findByIdAndUpdate(id, data, {
+      new: true,
+      runValidators: true,
     });
   }
 
-  async save(chat) {
-    return await chat.save();
+  async save(doc) {
+    return doc.save();
+  }
+
+  async delete(id) {
+    return Chat.findByIdAndDelete(id);
+  }
+
+  async deleteMany(filter) {
+    return Chat.deleteMany(filter);
+  }
+
+  async exists(filter) {
+    return Chat.exists(filter);
+  }
+
+  async count(filter = {}) {
+    return Chat.countDocuments(filter);
   }
 }
 
