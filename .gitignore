@@ -1,19 +1,30 @@
-# Dependencies
+# Node Modules
 client/node_modules/
 server/node_modules/
 
-# Environment files
+# Environment Files
 client/.env
 server/.env
-server/src/images
 
 # Logs
 *.log
+npm-debug.log*
 
-# Build folders
-client/dist/
-client/build/
-
-# OS files
+# OS Files
 .DS_Store
 Thumbs.db
+
+# VS Code
+.vscode/
+
+# Build
+client/dist/
+
+# Temp
+server/public/temp/
+
+# Coverage
+coverage/
+
+# Cache
+.cache/
