@@ -4,7 +4,7 @@ import Home from "../pages/home/Home";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import ListingDetails from "../pages/listing/ListingDetails";
-import Wishlist from "../pages/favorite/Wishlist";
+import Wishlist from "../pages/favorite/WishList";
 import Profile from "../pages/profile/Profile";
 import EditProfile from "../pages/profile/EditProfile";
 import ChangePassword from "../pages/profile/ChangePassword";
