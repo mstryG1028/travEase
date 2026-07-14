@@ -1,30 +1,60 @@
-# Node Modules
+# ==========================
+# Dependencies
+# ==========================
 client/node_modules/
 server/node_modules/
 
-# Environment Files
+# ==========================
+# Environment Variables
+# ==========================
 client/.env
 server/.env
 
+# ==========================
+# Build Files
+# ==========================
+client/dist/
+server/dist/
+
+# ==========================
+# Temporary Uploads
+# ==========================
+server/public/temp/
+
+# ==========================
 # Logs
+# ==========================
 *.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
+# ==========================
 # OS Files
+# ==========================
 .DS_Store
 Thumbs.db
 
-# VS Code
+# ==========================
+# IDE Files
+# ==========================
 .vscode/
+.idea/
 
-# Build
-client/dist/
+# ==========================
+# Cache
+# ==========================
+.cache/
+.eslintcache
 
-# Temp
-server/public/temp/
-
+# ==========================
 # Coverage
+# ==========================
 coverage/
 
-# Cache
-.cache/
+# ==========================
+# Misc
+# ==========================
+*.pid
+*.seed
+*.pid.lock

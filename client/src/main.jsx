@@ -6,7 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 
-import { WishlistProvider } from "./context/WishlistContext";
+import { WishlistProvider } from "./context/WishListContext";
 import App from "./App";
 
 import "./styles/globals.css";
