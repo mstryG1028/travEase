@@ -1,6 +1,6 @@
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 
-import useWishlist from "../../hooks/useWishList";
+import useWishlist from "../../hooks/useWishlist";
 
 function WishlistButton({ listingId }) {
   const { isWishlisted, toggleWishlist } = useWishlist();
