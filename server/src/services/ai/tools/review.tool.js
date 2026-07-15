@@ -1,9 +1,9 @@
 import { Review } from "../../../models/index.js";
 
 class ReviewTool {
-  async execute(listing) {
+  async execute({ listing }) {
     const reviews = await Review.find({
-      listing: listing.id,
+      listing: listing._id,
     }).select("rating comment");
 
     if (!reviews.length) {

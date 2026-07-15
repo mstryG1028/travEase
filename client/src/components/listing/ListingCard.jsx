@@ -5,7 +5,7 @@ import { FaMapMarkerAlt, FaStar } from "react-icons/fa";
 
 import Button from "../ui/Button";
 import ListingImage from "./ListingImage";
-import WishlistButton from "./WishlistButton";
+import WishlistButton from "./WishListButton";
 import ConfirmModal from "../ui/ConfirmModal";
 import { deleteListing } from "../../services/listing.service";
 import { successToast, errorToast } from "../../utils/toast";

@@ -5,7 +5,7 @@ const appConfig = {
 
   copyright: "© 2026 TravEase",
 
-  apiUrl: "http://localhost:8000/api/v1",
+  apiUrl: import.meta.env.VITE_API_URL,
 };
 
 export default appConfig;

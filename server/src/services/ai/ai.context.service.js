@@ -2,15 +2,12 @@ import listingRepository from "../../repositories/listing.repository.js";
 import reviewRepository from "../../repositories/review.repository.js";
 import availabilityRepository from "../../repositories/availability.repository.js";
 
-import PricingService from "../pricing/pricing.service.js";
+import pricingService from "../pricing/pricing.service.js";
 import weatherService from "../weather/weather.service.js";
 
 import ApiError from "../../utils/ApiError.js";
 
 class AIContextService {
-  // =====================================
-  // Get Complete Listing Context
-  // =====================================
   async getListingContext(listingId) {
     const listing = await listingRepository.findById(listingId);
 
@@ -23,13 +20,11 @@ class AIContextService {
         listing: listingId,
       }),
 
-      availabilityRepository.find({
-        listing: listingId,
-      }),
+      availabilityRepository.findByListing(listingId),
 
-      pricingService.getPricing(listingId),
+      pricingService.calculatePrice(listingId),
 
-      weatherService.getWeatherForListing(listing),
+      weatherService.getWeatherForListing(listingId),
     ]);
 
     return {

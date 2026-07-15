@@ -32,21 +32,7 @@ app.use(
     limit: "20kb",
   }),
 );
-// app.use(helmet());
 
-// app.use(compression());
-
-// app.use(mongoSanitize());
-
-// app.use(hpp());
-
-// app.use(
-//   rateLimit({
-//     windowMs: 15 * 60 * 1000,
-
-//     max: 100,
-//   }),
-// );
 
 app.use(
   express.urlencoded({

@@ -1,8 +1,8 @@
 class AmenitiesTool {
-  async execute(listing) {
+  async execute({ listing }) {
     return {
       amenities: listing.amenities,
-      guests: listing.guests,
+      guests: listing.maxGuests,
       bedrooms: listing.bedrooms,
       beds: listing.beds,
       bathrooms: listing.bathrooms,
