@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-import useWishlist from "../../hooks/useWishlist";
+import useWishlist from "../../hooks/useWishList";
 import Loader from "../../components/ui/Loader";
 import ListingCard from "../../components/listing/ListingCard";
 import EmptyState from "../../components/ui/EmptyState";
