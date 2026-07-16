@@ -1,13 +1,17 @@
-import availabilityTool from "./tools/availability.tool.js";
-import pricingTool from "./tools/pricing.tool.js";
 import weatherTool from "./tools/weather.tool.js";
-import amenitiesTool from "./tools/amenities.tool.js";
+import pricingTool from "./tools/pricing.tool.js";
 import reviewTool from "./tools/review.tool.js";
+import amenitiesTool from "./tools/amenities.tool.js";
+import availabilityTool from "./tools/availability.tool.js";
+import recommendationTool from "./tools/recommendation.tool.js";
 
-export default {
-  availability: availabilityTool,
-  pricing: pricingTool,
+const tools = {
   weather: weatherTool,
+  pricing: pricingTool,
+  review: reviewTool,
   amenities: amenitiesTool,
-  reviews: reviewTool,
+  availability: availabilityTool,
+  recommendation: recommendationTool,
 };
+
+export default tools;

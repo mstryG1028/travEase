@@ -1,6 +1,7 @@
 import { Bot, User } from "lucide-react";
+import RecommendationCards from "./RecommendationCards";
 
-function AIMessage({ role, text }) {
+function AIMessage({ role, text, type = "text", recommendations = [] }) {
   const isUser = role === "user";
 
   return (
@@ -12,11 +13,15 @@ function AIMessage({ role, text }) {
       )}
 
       <div
-        className={`max-w-[75%] rounded-2xl px-4 py-3 text-sm leading-7 ${
+        className={`max-w-[80%] rounded-2xl px-4 py-3 ${
           isUser ? "bg-emerald-500 text-white" : "bg-slate-800 text-slate-100"
         }`}
       >
-        {text}
+        {type === "recommendation" ? (
+          <RecommendationCards recommendations={recommendations} />
+        ) : (
+          <div className="text-sm leading-7 whitespace-pre-line">{text}</div>
+        )}
       </div>
 
       {isUser && (

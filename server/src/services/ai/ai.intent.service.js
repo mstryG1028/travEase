@@ -2,6 +2,55 @@ class AIIntentService {
   detect(question) {
     const q = question.toLowerCase();
 
+    // ===========================
+    // Recommendation Intent
+    // ===========================
+
+    const recommendationKeywords = [
+      "recommend",
+      "suggest",
+      "find",
+      "search",
+      "looking for",
+      "looking",
+      "need",
+      "show me",
+      "best",
+      "cheap",
+      "cheapest",
+      "budget",
+      "luxury",
+      "villa",
+      "hotel",
+      "resort",
+      "hostel",
+      "homestay",
+      "apartment",
+      "cottage",
+      "stay",
+      "trip",
+      "vacation",
+      "holiday",
+      "honeymoon",
+      "family",
+      "beach",
+      "mountain",
+      "pool",
+    ];
+
+    if (recommendationKeywords.some((word) => q.includes(word))) {
+      return {
+        intent: "recommendation",
+        scope: "global",
+        confidence: 1,
+        parameters: {},
+      };
+    }
+
+    // ===========================
+    // Availability
+    // ===========================
+
     if (
       q.includes("available") ||
       q.includes("availability") ||
@@ -9,18 +58,28 @@ class AIIntentService {
     ) {
       return {
         intent: "availability",
+        scope: "listing",
         confidence: 1,
         parameters: {},
       };
     }
 
+    // ===========================
+    // Pricing
+    // ===========================
+
     if (q.includes("price") || q.includes("cost") || q.includes("expensive")) {
       return {
         intent: "pricing",
         confidence: 1,
+        scope: "listing",
         parameters: {},
       };
     }
+
+    // ===========================
+    // Weather
+    // ===========================
 
     if (
       q.includes("weather") ||
@@ -30,9 +89,14 @@ class AIIntentService {
       return {
         intent: "weather",
         confidence: 1,
+        scope: "listing",
         parameters: {},
       };
     }
+
+    // ===========================
+    // Amenities
+    // ===========================
 
     if (
       q.includes("wifi") ||
@@ -43,14 +107,20 @@ class AIIntentService {
       return {
         intent: "amenities",
         confidence: 1,
+        scope: "listing",
         parameters: {},
       };
     }
+
+    // ===========================
+    // Reviews
+    // ===========================
 
     if (q.includes("review") || q.includes("rating")) {
       return {
         intent: "reviews",
         confidence: 1,
+        scope: "listing",
         parameters: {},
       };
     }
@@ -58,6 +128,7 @@ class AIIntentService {
     return {
       intent: "general",
       confidence: 1,
+      scope: "listing",
       parameters: {},
     };
   }

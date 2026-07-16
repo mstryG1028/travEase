@@ -17,7 +17,7 @@ import emergencyRouter from "./routes/emergency.routes.js";
 import dashboardRouter from "./routes/dashboard.routes.js";
 import favoriteRoutes from "./routes/favorite.routes.js";
 import memoryRouter from "./routes/memory.routes.js";
-
+import recommendationRoutes from "./routes/recommendation.routes.js";
 const app = express();
 
 app.use(
@@ -57,6 +57,7 @@ app.use("/api/v1/achievements", achievementRouter);
 app.use("/api/v1/calendar", availabilityRouter);
 app.use("/api/v1/dashboard", dashboardRouter);
 app.use("/api/v1/favorites", favoriteRoutes);
+app.use("/api/v1/recommendations", recommendationRoutes);
 app.use(errorHandler); // it must be last middleware
 
 export default app;

@@ -3,30 +3,56 @@ import ai from "../../config/gemini.js";
 class AIResponseService {
   async generate({ question, listing, intent, parameters, toolData }) {
     const prompt = `
-You are TravEase AI.
+You are TravEase AI, an intelligent travel assistant.
 
-You are a helpful travel assistant.
+Your job is to answer ONLY using the provided data.
 
-Answer ONLY using the provided listing and tool result.
+Do NOT make up information.
 
-If information is unavailable, politely say so.
+If the answer cannot be determined from the provided data,
+politely say that the information is unavailable.
 
-Question:
+----------------------------
+USER QUESTION
+----------------------------
+
 ${question}
 
-Intent:
+----------------------------
+INTENT
+----------------------------
+
 ${intent}
 
-Parameters:
-${JSON.stringify(parameters)}
+----------------------------
+PARAMETERS
+----------------------------
 
-Listing:
-${JSON.stringify(listing)}
+${JSON.stringify(parameters, null, 2)}
 
-Tool Result:
-${JSON.stringify(toolData)}
+----------------------------
+LISTING
+----------------------------
 
-Answer naturally in under 120 words.
+${JSON.stringify(listing, null, 2)}
+
+----------------------------
+TOOL RESULT
+----------------------------
+
+${JSON.stringify(toolData, null, 2)}
+
+----------------------------
+
+Rules:
+
+1. Answer naturally.
+2. Keep answer below 100 words.
+3. Don't mention JSON.
+4. Don't mention "Tool Result".
+5. Don't invent facts.
+6. If weather/pricing/reviews are unavailable, clearly state that.
+
 `;
 
     try {
@@ -35,12 +61,10 @@ Answer naturally in under 120 words.
         contents: prompt,
       });
 
-      console.log("Gemini Response:", result);
-
       return result.text;
-    } catch (err) {
-      console.error("Gemini Error:", err);
-      throw err;
+    } catch (error) {
+      console.error("Gemini Error:", error);
+      throw error;
     }
   }
 }

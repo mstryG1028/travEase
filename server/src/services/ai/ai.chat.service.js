@@ -7,37 +7,63 @@ class AIChatService {
   async chat(user, listingId, question) {
     console.log("Question:", question);
 
-    // 1. Detect intent
+    // ===========================
+    // Detect Intent
+    // ===========================
+
     const intentResult = await aiIntentService.detect(question);
-    console.log("Intent:", intentResult);
 
-    const { intent, parameters = {}, confidence = 0 } = intentResult;
+    const {
+      intent,
+      scope = "listing",
+      parameters = {},
+      confidence = 0,
+    } = intentResult;
 
-    // 2. Load listing context
-    const context = await aiContextService.getListingContext(listingId);
-    console.log("Context Loaded");
+    console.log("Intent:", intent);
 
-    // 3. Execute tool
-    const tool = toolRegistry[intent];
+    // ===========================
+    // Listing Context
+    // ===========================
+
+    let context = null;
+
+    if (scope === "listing") {
+      context = await aiContextService.getListingContext(listingId);
+    }
+    // ===========================
+    // Tool
+    // ===========================
 
     let toolData = null;
 
-    if (tool) {
-      console.log("Executing Tool:", intent);
+    const tool = toolRegistry[intent];
 
+    if (tool) {
       toolData = await tool.execute({
         user,
-        listing: context.listing,
+        listing: context?.listing || null,
         context,
         parameters,
         question,
       });
-
-      console.log("Tool Finished");
     }
 
-    // 4. Generate AI response
-    console.log("Calling Gemini");
+    // ===================================
+    // Recommendation Response
+    // ===================================
+
+    if (intent === "recommendation") {
+      return {
+        type: "recommendation",
+        recommendations: toolData.recommendations,
+        filters: toolData.filters,
+      };
+    }
+
+    // ===================================
+    // Normal AI Response
+    // ===================================
 
     const answer = await aiResponseService.generate({
       user,
@@ -49,9 +75,8 @@ class AIChatService {
       toolData,
     });
 
-    console.log("Gemini Finished");
-
     return {
+      type: "text",
       answer,
       intent,
       confidence,

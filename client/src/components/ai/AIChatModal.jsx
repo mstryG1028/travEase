@@ -10,16 +10,12 @@ import SuggestedQuestions from "./SuggestedQuestions";
 
 import { askAI } from "../../services/ai.service";
 
-function AIChatModal({
-  open,
-  onClose,
-  listingId,
-}) {
+function AIChatModal({ open, onClose, listingId }) {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      text:
-        "👋 Hi! I'm TravEase AI.\n\nAsk me anything about this property.\n\n• Weather\n• Pricing\n• Reviews\n• Amenities\n• Availability",
+      type: "text",
+      text: "👋 Hi! I'm TravEase AI.\n\nI can help you with:\n\n• Weather\n• Pricing\n• Reviews\n• Amenities\n• Availability\n• Find similar stays\n• Recommend hotels & villas",
     },
   ]);
 
@@ -43,21 +39,24 @@ function AIChatModal({
 
     setMessages((prev) => [
       ...prev,
-      userMessage,
+      {
+        role: "assistant",
+        type: response.type || "text",
+        text: response.answer || "",
+        recommendations: response.recommendations || [],
+      },
     ]);
 
     setLoading(true);
 
     try {
-      const response = await askAI(
-        listingId,
-        question
-      );
+      const response = await askAI(listingId, question);
 
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
+          type: "text",
           text: response.answer,
         },
       ]);
@@ -68,8 +67,7 @@ function AIChatModal({
         ...prev,
         {
           role: "assistant",
-          text:
-            "Sorry, I couldn't answer your question right now.",
+          text: "Sorry, I couldn't answer your question right now.",
         },
       ]);
     }
@@ -78,10 +76,7 @@ function AIChatModal({
   }
 
   return (
-    <Modal
-      open={open}
-      onClose={onClose}
-    >
+    <Modal open={open} onClose={onClose}>
       <div
         className="
         w-[450px]
@@ -113,6 +108,8 @@ function AIChatModal({
               key={index}
               role={msg.role}
               text={msg.text}
+              type={msg.type}
+              recommendations={msg.recommendations}
             />
           ))}
 
@@ -122,15 +119,10 @@ function AIChatModal({
         </div>
 
         <div className="border-t border-slate-700 px-4 py-3">
-          <SuggestedQuestions
-            onSelect={send}
-          />
+          <SuggestedQuestions onSelect={send} />
         </div>
 
-        <AIInput
-          onSend={send}
-          loading={loading}
-        />
+        <AIInput onSend={send} loading={loading} />
       </div>
     </Modal>
   );

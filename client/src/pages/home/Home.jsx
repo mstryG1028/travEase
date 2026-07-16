@@ -4,12 +4,13 @@ import { useSearchParams } from "react-router-dom";
 import CategorySection from "../../components/home/CategorySection";
 import ListingCard from "../../components/listing/ListingCard";
 import Loader from "../../components/ui/Loader";
-
+import AIRecommendationModal from "../../components/ai/AIRecommendationModal";
+import AIFloatingButton from "../../components/ai/AIFloatingButton";
 import * as listingService from "../../services/listing.service";
 
 function Home() {
   const [searchParams] = useSearchParams();
-
+  const [openAI, setOpenAI] = useState(false);
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -71,6 +72,9 @@ function Home() {
           </section>
         )}
       </div>
+      <AIRecommendationModal open={openAI} onClose={() => setOpenAI(false)} />
+
+      <AIFloatingButton onClick={() => setOpenAI(true)} />
     </div>
   );
 }
