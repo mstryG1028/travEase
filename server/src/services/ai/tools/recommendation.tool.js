@@ -3,14 +3,11 @@ import recommendationService from "../../recommendation/recommendation.service.j
 class RecommendationTool {
   name = "recommendation";
 
-  async execute({
-    question,
+  async execute({ question, user }) {
+    console.log("========== RECOMMENDATION TOOL ==========");
 
-    user,
-  }) {
     return await recommendationService.getRecommendations({
       question,
-
       user,
     });
   }

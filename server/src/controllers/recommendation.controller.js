@@ -1,6 +1,6 @@
 import recommendationService from "../services/recommendation/recommendation.service.js";
-import  ApiResponse  from "../utils/ApiResponse.js";
-import ApiError  from "../utils/ApiError.js";
+import ApiResponse from "../utils/ApiResponse.js";
+import ApiError from "../utils/ApiError.js";
 
 class RecommendationController {
   async getRecommendations(req, res, next) {
@@ -15,7 +15,17 @@ class RecommendationController {
         question,
         user: req.user,
       });
-
+      console.log(
+        "RETURNING FROM SERVICE",
+        JSON.stringify(
+          {
+           
+            recommendations,
+          },
+          null,
+          2,
+        ),
+      );
       return res
         .status(200)
         .json(

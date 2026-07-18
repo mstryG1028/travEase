@@ -40,7 +40,7 @@ export default function AIRecommendation() {
       </div>
 
       <div className="grid md:grid-cols-3 gap-6 mt-10">
-        {recommendations.map((recommendation) => (
+        {(recommendations || []).map((recommendation) => (
           <RecommendationCard
             key={recommendation.listing._id}
             recommendation={recommendation}

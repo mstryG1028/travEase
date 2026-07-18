@@ -18,9 +18,10 @@ export default function useRecommendation() {
 
       const response = await recommendationService.getRecommendations(question);
 
-      setRecommendations(response.recommendations);
+      console.log("response is:::",response)
+      setRecommendations(response.data?.recommendations || []);
 
-      setFilters(response.filters);
+      setFilters(response.data?.filters || {});
 
       return response;
     } catch (err) {

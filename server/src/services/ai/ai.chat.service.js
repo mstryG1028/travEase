@@ -46,8 +46,14 @@ class AIChatService {
     if (intent === "recommendation") {
       return {
         type: "recommendation",
-        recommendations: toolResult?.recommendations || [],
-        filters: toolResult?.filters || {},
+
+        success: toolResult?.success,
+
+        message: toolResult?.message,
+
+        recommendations: toolResult?.data?.recommendations || [],
+
+        filters: toolResult?.data?.filters || {},
       };
     }
 

@@ -7,6 +7,10 @@ class SearchService {
       isAvailable: true,
     };
 
+    // -----------------------
+    // Location
+    // -----------------------
+
     if (filters.location) {
       query.$or = [
         {
@@ -30,35 +34,25 @@ class SearchService {
       ];
     }
 
+    // -----------------------
+    // Property Type
+    // -----------------------
+
     if (filters.propertyType) {
       query.propertyType = filters.propertyType;
     }
 
-    if (filters.budget) {
-      query.currentPrice = {
-        $lte: filters.budget,
-      };
-    }
-
-    if (filters.guests) {
-      query.guests = {
-        $gte: filters.guests,
-      };
-    }
-
-    if (filters.amenities.length) {
-      query.amenities = {
-        $all: filters.amenities,
-      };
-    }
-
     let listings = await Listing.find(query)
-      .populate("owner", "fullname avatar")
+      .populate("owner", "fullName avatar")
       .lean();
 
-    if (filters.keywords.length) {
+    // -----------------------
+    // Keyword Search
+    // -----------------------
+
+    if (filters.keywords?.length) {
       listings = listings.filter((listing) => {
-        const searchable = `
+        const text = `
           ${listing.title}
           ${listing.description}
           ${listing.aiSummary}
@@ -66,10 +60,12 @@ class SearchService {
         `.toLowerCase();
 
         return filters.keywords.some((keyword) =>
-          searchable.includes(keyword.toLowerCase()),
+          text.includes(keyword.toLowerCase()),
         );
       });
     }
+
+    console.log("Listings Found:", listings.length);
 
     return listings;
   }

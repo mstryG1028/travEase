@@ -4,21 +4,23 @@ class RankingService {
       let score = 0;
 
       // ==========================
-      // Budget Match (30 Points)
+      // Budget (30)
       // ==========================
 
       if (filters.budget) {
-        const difference = Math.abs(filters.budget - listing.currentPrice);
+        const difference = Math.abs(listing.currentPrice - filters.budget);
 
         const percentage = difference / filters.budget;
 
-        score += Math.max(0, 30 - percentage * 30);
+        const budgetScore = Math.max(0, 30 - percentage * 30);
+
+        score += budgetScore;
       } else {
-        score += 20;
+        score += 15;
       }
 
       // ==========================
-      // Property Type (20 Points)
+      // Property Type (20)
       // ==========================
 
       if (
@@ -30,7 +32,23 @@ class RankingService {
       }
 
       // ==========================
-      // Amenities (20 Points)
+      // Location (15)
+      // ==========================
+
+      if (filters.location) {
+        const location = filters.location.toLowerCase();
+
+        if (
+          listing.city.toLowerCase().includes(location) ||
+          listing.state.toLowerCase().includes(location) ||
+          listing.country.toLowerCase().includes(location)
+        ) {
+          score += 15;
+        }
+      }
+
+      // ==========================
+      // Amenities (20)
       // ==========================
 
       if (filters.amenities.length) {
@@ -44,30 +62,54 @@ class RankingService {
       }
 
       // ==========================
-      // Guests (10 Points)
+      // Guests (10)
       // ==========================
 
-      if (filters.guests && listing.guests >= filters.guests) {
-        score += 10;
+      if (filters.guests) {
+        if (listing.guests >= filters.guests) {
+          score += 10;
+        } else {
+          score += Math.max(0, 10 - (filters.guests - listing.guests) * 2);
+        }
       }
 
       // ==========================
-      // Rating (10 Points)
+      // Rating (15)
       // ==========================
 
-      score += listing.averageRating * 2;
+      score += listing.averageRating * 3;
 
       // ==========================
-      // Reviews (5 Points)
+      // Reviews (5)
       // ==========================
 
       score += Math.min(listing.totalReviews / 20, 5);
 
       // ==========================
-      // Trending (5 Points)
+      // Trending (5)
       // ==========================
 
       score += Math.min(listing.trendingScore / 20, 5);
+
+      // ==========================
+      // Discount (10)
+      // ==========================
+
+      if (listing.basePrice && listing.currentPrice) {
+        const discount =
+          ((listing.basePrice - listing.currentPrice) / listing.basePrice) *
+          100;
+
+        score += Math.min(discount / 2, 10);
+      }
+
+      // ==========================
+      // Available Bonus
+      // ==========================
+
+      if (listing.isAvailable) {
+        score += 5;
+      }
 
       return {
         listing,
@@ -77,7 +119,7 @@ class RankingService {
 
     scoredListings.sort((a, b) => b.score - a.score);
 
-    return scoredListings.slice(0, 3);
+    return scoredListings.slice(0, 5);
   }
 }
 
