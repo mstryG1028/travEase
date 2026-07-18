@@ -1,21 +1,51 @@
-import { Listing } from "../../../models/index.js";
+import listingRepository from "../../../repositories/listing.repository.js";
+import { success, failure } from "../ai.helper.js";
 
 class PricingTool {
-  async execute({ listing }) {
-    const listings = await Listing.find({
-      city: listing.city,
-      propertyType: listing.propertyType,
-    }).select("currentPrice");
+  async execute({ listingId }) {
+    console.log("========== PRICING TOOL ==========");
 
-    const average =
-      listings.reduce((sum, item) => sum + item.currentPrice, 0) /
-      (listings.length || 1);
+    try {
+      const listing = await listingRepository.findById(listingId);
 
-    return {
-      currentPrice: listing.currentPrice,
-      averageCityPrice: Math.round(average),
-      difference: listing.currentPrice - Math.round(average),
-    };
+      if (!listing) {
+        return failure("pricing", "Listing not found.");
+      }
+
+      const { title, basePrice, currentPrice, currency } = listing;
+
+      if (!basePrice || !currentPrice) {
+        return failure(
+          "pricing",
+          "Pricing information is not available for this property.",
+        );
+      }
+
+      return success(
+        "pricing",
+
+        `The price of ${title} is ${currentPrice} ${currency} per night. Original price was ${basePrice} ${currency}.`,
+
+        {
+          title,
+
+          currency,
+
+          pricing: {
+            basePrice,
+
+            currentPrice,
+          },
+        },
+      );
+    } catch (err) {
+      console.error("PRICING TOOL ERROR", err);
+
+      return failure(
+        "pricing",
+        "Pricing information is currently unavailable.",
+      );
+    }
   }
 }
 

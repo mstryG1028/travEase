@@ -12,30 +12,8 @@ class AIIntentService {
       "find",
       "search",
       "looking for",
-      "looking",
-      "need",
       "show me",
       "best",
-      "cheap",
-      "cheapest",
-      "budget",
-      "luxury",
-      "villa",
-      "hotel",
-      "resort",
-      "hostel",
-      "homestay",
-      "apartment",
-      "cottage",
-      "stay",
-      "trip",
-      "vacation",
-      "holiday",
-      "honeymoon",
-      "family",
-      "beach",
-      "mountain",
-      "pool",
     ];
 
     if (recommendationKeywords.some((word) => q.includes(word))) {
@@ -52,8 +30,10 @@ class AIIntentService {
     // ===========================
 
     if (
-      q.includes("available") ||
       q.includes("availability") ||
+      q.includes("available dates") ||
+      q.includes("booked") ||
+      q.includes("booking") ||
       q.includes("book")
     ) {
       return {
@@ -68,11 +48,17 @@ class AIIntentService {
     // Pricing
     // ===========================
 
-    if (q.includes("price") || q.includes("cost") || q.includes("expensive")) {
+    if (
+      q.includes("price") ||
+      q.includes("cost") ||
+      q.includes("expensive") ||
+      q.includes("cheap") ||
+      q.includes("rate")
+    ) {
       return {
         intent: "pricing",
-        confidence: 1,
         scope: "listing",
+        confidence: 1,
         parameters: {},
       };
     }
@@ -83,13 +69,18 @@ class AIIntentService {
 
     if (
       q.includes("weather") ||
+      q.includes("temperature") ||
+      q.includes("climate") ||
       q.includes("rain") ||
-      q.includes("temperature")
+      q.includes("forecast") ||
+      q.includes("sunny") ||
+      q.includes("cold") ||
+      q.includes("hot")
     ) {
       return {
         intent: "weather",
-        confidence: 1,
         scope: "listing",
+        confidence: 1,
         parameters: {},
       };
     }
@@ -99,15 +90,19 @@ class AIIntentService {
     // ===========================
 
     if (
+      q.includes("amenities") ||
+      q.includes("facility") ||
+      q.includes("facilities") ||
       q.includes("wifi") ||
-      q.includes("pool") ||
       q.includes("parking") ||
-      q.includes("amenities")
+      q.includes("pool") ||
+      q.includes("gym") ||
+      q.includes("kitchen")
     ) {
       return {
         intent: "amenities",
-        confidence: 1,
         scope: "listing",
+        confidence: 1,
         parameters: {},
       };
     }
@@ -116,19 +111,32 @@ class AIIntentService {
     // Reviews
     // ===========================
 
-    if (q.includes("review") || q.includes("rating")) {
+    if (
+      q.includes("review") ||
+      q.includes("reviews") ||
+      q.includes("rating") ||
+      q.includes("guest") ||
+      q.includes("guests") ||
+      q.includes("feedback") ||
+      q.includes("experience") ||
+      q.includes("people say")
+    ) {
       return {
         intent: "reviews",
-        confidence: 1,
         scope: "listing",
+        confidence: 1,
         parameters: {},
       };
     }
 
+    // ===========================
+    // Default fallback
+    // ===========================
+
     return {
       intent: "general",
-      confidence: 1,
       scope: "listing",
+      confidence: 0,
       parameters: {},
     };
   }

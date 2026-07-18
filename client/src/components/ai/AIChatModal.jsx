@@ -32,18 +32,12 @@ function AIChatModal({ open, onClose, listingId }) {
   async function send(question) {
     if (!question.trim()) return;
 
-    const userMessage = {
-      role: "user",
-      text: question,
-    };
-
+    // Add user message
     setMessages((prev) => [
       ...prev,
       {
-        role: "assistant",
-        type: response.type || "text",
-        text: response.answer || "",
-        recommendations: response.recommendations || [],
+        role: "user",
+        text: question,
       },
     ]);
 
@@ -56,8 +50,9 @@ function AIChatModal({ open, onClose, listingId }) {
         ...prev,
         {
           role: "assistant",
-          type: "text",
-          text: response.answer,
+          type: response.type || "text",
+          text: response.answer || "",
+          recommendations: response.recommendations || [],
         },
       ]);
     } catch (err) {
@@ -67,12 +62,13 @@ function AIChatModal({ open, onClose, listingId }) {
         ...prev,
         {
           role: "assistant",
+          type: "text",
           text: "Sorry, I couldn't answer your question right now.",
         },
       ]);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }
 
   return (

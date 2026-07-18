@@ -1,35 +1,64 @@
-import { Booking } from "../../../models/index.js";
+import bookingRepository from "../../../repositories/booking.repository.js";
+import listingRepository from "../../../repositories/listing.repository.js";
+import { success, failure } from "../ai.helper.js";
 
 class AvailabilityTool {
-  async execute({ listing, parameters = {} }) {
-    const { checkIn, checkOut, days } = parameters;
+  async execute({ listingId }) {
+    console.log("========== AVAILABILITY TOOL ==========");
 
-    const listingId = listing._id;
+    try {
+      const listing = await listingRepository.findById(listingId);
 
-    if (days) {
-      return this.getAvailableDates(listingId, Number(days));
-    }
+      if (!listing) {
+        return failure("availability", "Listing not found.");
+      }
 
-    if (checkIn && checkOut) {
-      return this.checkDateRange(
-        listingId,
-        new Date(checkIn),
-        new Date(checkOut),
+      const today = new Date();
+
+      const availableDates = [];
+
+      // check next 15 days
+      for (let i = 0; i < 15; i++) {
+        const checkIn = new Date(today);
+
+        checkIn.setDate(today.getDate() + i);
+
+        const checkOut = new Date(checkIn);
+
+        checkOut.setDate(checkIn.getDate() + 1);
+
+        const isBooked = await bookingRepository.isDateBooked(
+          listingId,
+          checkIn,
+          checkOut,
+        );
+
+        if (!isBooked) {
+          availableDates.push(checkIn.toISOString().split("T")[0]);
+        }
+      }
+
+      return success(
+        "availability",
+
+        availableDates.length
+          ? `This property is available on these dates: ${availableDates.join(", ")}.`
+          : "This property is not available for the next 15 days.",
+
+        {
+          title: listing.title,
+          availableDates,
+        },
+      );
+    } catch (err) {
+      console.error("AVAILABILITY TOOL ERROR", err);
+
+      return failure(
+        "availability",
+        "Availability information is currently unavailable.",
       );
     }
-
-    if (checkIn) {
-      return this.checkSingleDate(listingId, new Date(checkIn));
-    }
-
-    return {
-      requiresInput: true,
-      message:
-        "Please provide booking dates. Example: Can I book on 15 August?",
-    };
   }
-
-  // Keep the rest of your methods exactly the same.
 }
 
 export default new AvailabilityTool();

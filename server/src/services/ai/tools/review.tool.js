@@ -1,30 +1,45 @@
-import { Review } from "../../../models/index.js";
+import reviewRepository from "../../../repositories/review.repository.js";
+import listingRepository from "../../../repositories/listing.repository.js";
+import { success, failure } from "../ai.helper.js";
 
 class ReviewTool {
-  async execute({ listing }) {
-    const reviews = await Review.find({
-      listing: listing._id,
-    }).select("rating comment");
+  async execute({ listingId }) {
+    try {
+      const listing = await listingRepository.findById(listingId);
 
-    if (!reviews.length) {
-      return {
-        averageRating: 0,
-        totalReviews: 0,
-        recentReviews: [],
-      };
+      if (!listing) {
+        return failure("reviews", "Listing not found.");
+      }
+
+      const reviews = await reviewRepository.find({
+        listing: listingId,
+      });
+
+      const averageRating =
+        reviews.length === 0
+          ? 0
+          : (
+              reviews.reduce((sum, review) => sum + review.rating, 0) /
+              reviews.length
+            ).toFixed(1);
+
+      const message =
+        reviews.length === 0
+          ? "This property has no reviews yet."
+          : `Guests have given this property an average rating of ${averageRating}/5 based on ${reviews.length} reviews.`;
+
+      return success("reviews", message, {
+        title: listing.title,
+        totalReviews: reviews.length,
+        averageRating,
+        reviews: reviews.slice(0, 5),
+      });
+    } catch (err) {
+      console.error("REVIEW TOOL ERROR");
+      console.error(err);
+
+      return failure("reviews", "Reviews are currently unavailable.");
     }
-
-    const average =
-      reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length;
-
-    return {
-      averageRating: Number(average.toFixed(1)),
-      totalReviews: reviews.length,
-      recentReviews: reviews
-        .slice(-5)
-        .map((review) => review.comment)
-        .filter(Boolean),
-    };
   }
 }
 

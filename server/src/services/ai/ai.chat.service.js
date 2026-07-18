@@ -1,78 +1,62 @@
 import aiIntentService from "./ai.intent.service.js";
-import aiContextService from "./ai.context.service.js";
 import aiResponseService from "./ai.response.service.js";
 import toolRegistry from "./ai.tool.registry.js";
 
 class AIChatService {
   async chat(user, listingId, question) {
+    console.log("\n========== AI CHAT ==========");
     console.log("Question:", question);
 
-    // ===========================
-    // Detect Intent
-    // ===========================
-
+    // 1. Detect intent
     const intentResult = await aiIntentService.detect(question);
 
     const {
-      intent,
+      intent = "general",
       scope = "listing",
+      confidence = 0.5,
       parameters = {},
-      confidence = 0,
     } = intentResult;
 
     console.log("Intent:", intent);
 
-    // ===========================
-    // Listing Context
-    // ===========================
-
-    let context = null;
-
-    if (scope === "listing") {
-      context = await aiContextService.getListingContext(listingId);
-    }
-    // ===========================
-    // Tool
-    // ===========================
-
-    let toolData = null;
-
+    // 2. Find tool
     const tool = toolRegistry[intent];
 
+    let toolResult = null;
+
     if (tool) {
-      toolData = await tool.execute({
-        user,
-        listing: context?.listing || null,
-        context,
-        parameters,
-        question,
-      });
+      try {
+        toolResult = await tool.execute({
+          user,
+          listingId,
+          question,
+          parameters,
+        });
+      } catch (err) {
+        console.error(`Tool Error (${intent})`, err);
+
+        toolResult = {
+          success: false,
+          error: err.message,
+        };
+      }
     }
 
-    // ===================================
-    // Recommendation Response
-    // ===================================
-
+    // 3. Recommendation response
     if (intent === "recommendation") {
       return {
         type: "recommendation",
-        recommendations: toolData.recommendations,
-        filters: toolData.filters,
+        recommendations: toolResult?.recommendations || [],
+        filters: toolResult?.filters || {},
       };
     }
 
-    // ===================================
-    // Normal AI Response
-    // ===================================
-
+    // 4. Generate natural language response
     const answer = await aiResponseService.generate({
-      user,
       question,
-      listing: context,
       intent,
-      confidence,
       parameters,
-      toolData,
+      toolData: toolResult,
     });
 
     return {
@@ -81,7 +65,7 @@ class AIChatService {
       intent,
       confidence,
       parameters,
-      toolData,
+      toolData: toolResult,
     };
   }
 }

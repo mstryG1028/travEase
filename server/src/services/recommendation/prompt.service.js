@@ -1,5 +1,4 @@
-import ai from "../../config/gemini.js";
-
+import ai, { GEMINI_MODEL } from "../../config/gemini.js";
 class PromptService {
   async extractFilters(question) {
     const prompt = `
@@ -56,7 +55,7 @@ ${question}
 
     try {
       const result = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
+         model: GEMINI_MODEL,
         contents: prompt,
       });
 

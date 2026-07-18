@@ -1,8 +1,41 @@
 import weatherService from "../../weather/weather.service.js";
+import listingRepository from "../../../repositories/listing.repository.js";
+import { success, failure } from "../ai.helper.js";
 
 class WeatherTool {
-  async execute({ listing }) {
-    return await weatherService.getWeatherForListing(listing._id);
+  async execute({ listingId }) {
+    console.log("========== WEATHER TOOL ==========");
+
+    try {
+      const listing = await listingRepository.findById(listingId);
+
+      if (!listing) {
+        return failure("weather", "Listing not found.");
+      }
+
+      console.log("WEATHER LISTING:", {
+        title: listing.title,
+        city: listing.city,
+      });
+
+      const weather = await weatherService.getWeatherForListing(listingId);
+
+      return success(
+        "weather",
+
+        `Current weather in ${listing.city} is ${weather.condition}. Temperature is ${weather.temperature}°C with humidity of ${weather.humidity}%.`,
+
+        {
+          title: listing.title,
+          city: listing.city,
+          weather,
+        },
+      );
+    } catch (err) {
+      console.error("WEATHER TOOL ERROR:", err);
+
+      return failure("weather", err.message);
+    }
   }
 }
 

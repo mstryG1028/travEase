@@ -9,6 +9,7 @@ const tools = {
   weather: weatherTool,
   pricing: pricingTool,
   review: reviewTool,
+  reviews: reviewTool,
   amenities: amenitiesTool,
   availability: availabilityTool,
   recommendation: recommendationTool,

@@ -51,32 +51,35 @@ export const generateTags = AsyncHandler(async (req, res) => {
 // ======================================================
 
 export const chatWithAI = AsyncHandler(async (req, res) => {
-  console.log("\n========== AI REQUEST ==========");
-  console.log("User:", req.user?._id);
-  console.log("Listing:", req.body.listingId);
-  console.log("Question:", req.body.question);
+  try {
+    console.log("\n========== AI REQUEST ==========");
+    console.log("User:", req.user?._id);
+    console.log("Listing:", req.body.listingId);
+    console.log("Question:", req.body.question);
 
-  const { listingId, question } = req.body;
+    const { listingId, question } = req.body;
 
-  if (!question || !question.trim()) {
-    return res.status(400).json({
+    const response = await aiChatService.chat(
+      req.user,
+      listingId,
+      question.trim(),
+    );
+
+    return sendResponse(
+      res,
+      200,
+      response,
+      "AI Response Generated Successfully",
+    );
+  } catch (err) {
+    console.error("============== AI ERROR ==============");
+  
+    console.error(err.stack);
+
+    return res.status(500).json({
       success: false,
-      message: "Question is required.",
+      message: err.message,
+      stack: err.stack, // remove after debugging
     });
   }
-
-  const response = await aiChatService.chat(
-    req.user,
-    listingId,
-    question.trim(),
-  );
-
-  console.log("========== AI RESPONSE ==========");
-  console.log("Response Type:", response.type);
-
-  if (response.type === "recommendation") {
-    console.log("Recommendations:", response.recommendations.length);
-  }
-
-  return sendResponse(res, 200, response, "AI Response Generated Successfully");
 });

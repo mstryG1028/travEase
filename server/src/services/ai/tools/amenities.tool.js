@@ -1,13 +1,35 @@
+import listingRepository from "../../../repositories/listing.repository.js";
+import { success, failure } from "../ai.helper.js";
+
 class AmenitiesTool {
-  async execute({ listing }) {
-    return {
-      amenities: listing.amenities,
-      guests: listing.maxGuests,
-      bedrooms: listing.bedrooms,
-      beds: listing.beds,
-      bathrooms: listing.bathrooms,
-      propertyType: listing.propertyType,
-    };
+  async execute({ listingId }) {
+    try {
+      const listing = await listingRepository.findById(listingId);
+
+      if (!listing) {
+        return failure("amenities", "Listing not found.");
+      }
+
+      const amenities = listing.amenities || [];
+
+      const message =
+        amenities.length > 0
+          ? `This property offers ${amenities.join(", ")}.`
+          : "No amenities information is available.";
+
+      return success("amenities", message, {
+        title: listing.title,
+        amenities,
+      });
+    } catch (err) {
+      console.error("AMENITIES TOOL ERROR");
+      console.error(err);
+
+      return failure(
+        "amenities",
+        "Amenities information is currently unavailable.",
+      );
+    }
   }
 }
 
