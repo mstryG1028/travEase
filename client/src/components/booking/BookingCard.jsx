@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+
 import {
   FaCalendarAlt,
   FaUsers,
@@ -9,14 +10,18 @@ import {
 } from "react-icons/fa";
 
 import Button from "../ui/Button";
-import { cancelBooking, completeBooking } from "../../services/booking.service";
+
+import { cancelBooking } from "../../services/booking.service";
+
 import { successToast, errorToast } from "../../utils/toast";
 
 function BookingCard({ booking, onUpdate }) {
   const [loading, setLoading] = useState(false);
+
   const statusClass = {
     COMPLETED: "bg-[var(--success)]",
     PENDING: "bg-[var(--warning)]",
+    CONFIRMED: "bg-[var(--info)]",
     CANCELLED: "bg-[var(--danger)]",
   };
 
@@ -30,27 +35,9 @@ function BookingCard({ booking, onUpdate }) {
 
       successToast("Booking cancelled.");
 
-      onUpdated?.();
+      onUpdate?.();
     } catch (err) {
       errorToast(err.response?.data?.message || "Unable to cancel booking.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleCheckout() {
-    if (!window.confirm("Complete this booking?")) return;
-
-    try {
-      setLoading(true);
-
-      await completeBooking(booking._id);
-
-      successToast("Checkout successful.");
-
-      onUpdated?.();
-    } catch (err) {
-      errorToast(err.response?.data?.message || "Checkout failed.");
     } finally {
       setLoading(false);
     }
@@ -63,17 +50,30 @@ function BookingCard({ booking, onUpdate }) {
       <div className="relative">
         <img
           src={
-            booking.listing.image?.url ||
+            booking.listing?.image?.url ||
             "https://placehold.co/600x400?text=No+Image"
           }
-          alt={booking.listing.title}
-          className="h-60 w-full object-cover"
+          alt={booking.listing?.title}
+          className="
+h-60
+w-full
+object-cover
+"
         />
 
         <span
-          className={`absolute right-4 top-4 rounded-full px-4 py-2 text-sm font-semibold text-white ${
-            statusClass[booking.bookingStatus] || "bg-[var(--text-secondary)]"
-          }`}
+          className={`
+absolute
+right-4
+top-4
+rounded-full
+px-4
+py-2
+text-sm
+font-semibold
+text-white
+${statusClass[booking.bookingStatus] || "bg-gray-500"}
+`}
         >
           {booking.bookingStatus}
         </span>
@@ -82,22 +82,25 @@ function BookingCard({ booking, onUpdate }) {
       {/* Content */}
 
       <div className="card-padding space-y-5">
-        {/* Title */}
-
         <div>
           <h2 className="text-2xl font-bold text-theme">
-            {booking.listing.title}
+            {booking.listing?.title}
           </h2>
 
           <p className="mt-2 flex items-center gap-2 text-muted">
             <FaMapMarkerAlt className="text-brand" />
-            {booking.listing.city}, {booking.listing.state}
+            {booking.listing?.city},{booking.listing?.state}
           </p>
         </div>
 
-        {/* Booking Details */}
-
-        <div className="grid grid-cols-2 gap-4 text-sm">
+        <div
+          className="
+grid
+grid-cols-2
+gap-4
+text-sm
+"
+        >
           <InfoBox
             icon={<FaCalendarAlt />}
             title="Check In"
@@ -121,18 +124,28 @@ function BookingCard({ booking, onUpdate }) {
 
         {/* Contact */}
 
-        <div className="rounded-theme border border-theme bg-theme p-4">
+        <div
+          className="
+rounded-theme
+border
+border-theme
+bg-surface-2
+p-4
+"
+        >
           <h3 className="mb-3 font-semibold text-theme">Host Contact</h3>
 
           <div className="space-y-2 text-sm">
             <p className="flex items-center gap-2 text-theme">
               <FaUser className="text-brand" />
-              {booking.contactPerson?.name}
+
+              {booking.contactPerson?.name || "N/A"}
             </p>
 
             <p className="flex items-center gap-2 text-theme">
               <FaPhone className="text-brand" />
-              {booking.contactPerson?.phone}
+
+              {booking.contactPerson?.phone || "N/A"}
             </p>
           </div>
         </div>
@@ -140,7 +153,11 @@ function BookingCard({ booking, onUpdate }) {
         <div className="space-y-3">
           <Link
             to={`/bookings/${booking._id}`}
-            className="btn-primary w-full text-center"
+            className="
+btn-primary
+w-full
+text-center
+"
           >
             View Booking
           </Link>
@@ -168,9 +185,24 @@ function InfoBox({
   valueClass = "text-theme font-semibold",
 }) {
   return (
-    <div className="rounded-theme bg-surface-2 p-3">
-      <p className="flex items-center gap-2 text-sm text-muted">
+    <div
+      className="
+rounded-theme
+bg-surface-2
+p-3
+"
+    >
+      <p
+        className="
+flex
+items-center
+gap-2
+text-sm
+text-muted
+"
+      >
         {icon}
+
         {title}
       </p>
 

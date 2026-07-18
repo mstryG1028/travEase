@@ -12,7 +12,7 @@ function Wishlist() {
     return <Loader />;
   }
 
-  if (!wishlist.length) {
+  if (!wishlist?.length) { 
     return (
       <EmptyState
         title="Wishlist is empty"
@@ -26,9 +26,11 @@ function Wishlist() {
       <h1 className="text-3xl font-bold mb-8">My Wishlist</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {wishlist.map(({ listing }) => (
-          <ListingCard key={listing._id} listing={listing} />
-        ))}
+        {wishlist
+          .filter((item) => item.listing)
+          .map(({ listing }) => (
+            <ListingCard key={listing._id} listing={listing} />
+          ))}
       </div>
     </div>
   );

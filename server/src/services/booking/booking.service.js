@@ -271,10 +271,11 @@ export async function myBookings(userId) {
     );
   }
 
-  return bookings;
+  return bookings.filter(
+    // remove all falsy values
+    (booking) => booking.listing,
+  );
 }
-
-
 
 // ===================================================
 // Booking Details
@@ -315,7 +316,7 @@ export async function ownerBookings(ownerId) {
     );
   }
 
-  return bookings;
+  return bookings.filter((booking) => booking.listing);
 }
 
 // ===================================================

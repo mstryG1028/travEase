@@ -32,7 +32,6 @@ function AIChatModal({ open, onClose, listingId }) {
   async function send(question) {
     if (!question.trim()) return;
 
-    // Add user message
     setMessages((prev) => [
       ...prev,
       {
@@ -78,13 +77,19 @@ function AIChatModal({ open, onClose, listingId }) {
         w-[450px]
         max-w-[95vw]
         h-[650px]
+
         rounded-3xl
-        bg-slate-900
-        shadow-2xl
+
+        bg-surface
+
+        shadow-theme-lg
+
         border
-        border-slate-700
+        border-theme
+
         flex
         flex-col
+
         overflow-hidden
         "
       >
@@ -114,7 +119,15 @@ function AIChatModal({ open, onClose, listingId }) {
           <div ref={bottomRef} />
         </div>
 
-        <div className="border-t border-slate-700 px-4 py-3">
+        <div
+          className="
+          border-t
+          border-theme
+          px-4
+          py-3
+          bg-surface
+          "
+        >
           <SuggestedQuestions onSelect={send} />
         </div>
 

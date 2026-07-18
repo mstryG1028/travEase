@@ -51,7 +51,7 @@ class AuthService {
       email: email.toLowerCase(),
       phone,
       password,
-      role,
+      role:"user",
       avatar,
     });
 

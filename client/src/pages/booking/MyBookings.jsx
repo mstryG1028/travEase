@@ -7,7 +7,7 @@ import Button from "../../components/ui/Button";
 import useBookings from "../../hooks/useBookings";
 
 function MyBookings() {
-  const { bookings, loading, loadBookings } = useBookings();
+  const { bookings = [], loading, loadBookings } = useBookings();
 
   if (loading) {
     return <Loader />;
@@ -15,48 +15,112 @@ function MyBookings() {
 
   return (
     <section className="bg-theme min-h-screen">
-      <div className="max-w-7xl mx-auto px-6 py-10">
+      <div className="page-container py-8 sm:py-10">
         {/* Header */}
 
-        <div className="flex items-center justify-between mb-8">
+        <div
+          className="
+          flex 
+          flex-col 
+          sm:flex-row 
+          sm:items-center 
+          justify-between 
+          gap-4
+          mb-8
+        "
+        >
           <div>
-            <h1 className="text-3xl font-bold text-primary">My Bookings</h1>
+            <h1
+              className="
+              text-2xl 
+              sm:text-3xl 
+              font-bold 
+              text-brand
+            "
+            >
+              My Bookings
+            </h1>
 
-            <p className="text-secondary mt-1">
-              {bookings.length} Booking{bookings.length !== 1 && "s"}
+            <p className="text-muted mt-1 text-sm sm:text-base">
+              {bookings.length} Booking
+              {bookings.length !== 1 && "s"}
             </p>
           </div>
 
-          <Button variant="outline" onClick={loadBookings}>
+          <Button
+            variant="outline"
+            onClick={loadBookings}
+            className="w-full sm:w-auto"
+          >
             Refresh
           </Button>
         </div>
 
-        {/* Empty */}
+        {/* Empty State */}
 
         {bookings.length === 0 ? (
-          <div className="card-theme text-center py-20">
-            <h2 className="text-2xl font-semibold text-theme">
+          <div
+            className="
+            card-theme 
+            text-center 
+            py-14 
+            sm:py-20
+            px-5
+          "
+          >
+            <h2
+              className="
+              text-xl 
+              sm:text-2xl 
+              font-semibold 
+              text-theme
+            "
+            >
               No Bookings Yet
             </h2>
 
-            <p className="text-muted mt-3">
+            <p
+              className="
+              text-muted 
+              mt-3
+              max-w-md
+              mx-auto
+            "
+            >
               Book your first stay and it will appear here.
             </p>
 
-            <Link to="/" className="btn-primary inline-block mt-6">
+            <Link
+              to="/"
+              className="
+                btn-primary 
+                inline-flex 
+                mt-6
+              "
+            >
               Explore Listings
             </Link>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
-            {bookings.map((booking) => (
-              <BookingCard
-                key={booking._id}
-                booking={booking}
-                onUpdated={loadBookings}
-              />
-            ))}
+          <div
+            className="
+            grid 
+            grid-cols-1
+            sm:grid-cols-2
+            xl:grid-cols-3
+            gap-6
+            sm:gap-8
+          "
+          >
+            {bookings
+              .filter((booking) => booking?.listing)
+              .map((booking) => (
+                <BookingCard
+                  key={booking._id}
+                  booking={booking}
+                  onUpdated={loadBookings}
+                />
+              ))}
           </div>
         )}
       </div>
