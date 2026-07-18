@@ -1,4 +1,5 @@
 import { FaStar, FaUsers, FaMapMarkerAlt } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 export default function RecommendationCard({ recommendation }) {
   const { listing, reason, score } = recommendation;
@@ -55,10 +56,12 @@ export default function RecommendationCard({ recommendation }) {
           <p className="text-sm text-gray-700">🤖 {reason}</p>
         </div>
 
-        <div className="mt-3 text-sm">
-          Relevance Score
-          <span className="font-bold ml-2">{score}</span>
-        </div>
+        <Link
+          to={`/listings/${listing._id}`}
+          className="inline-block mt-4 bg-emerald-500 hover:bg-emerald-600 px-4 py-2 rounded-lg text-white text-sm"
+        >
+          View Listing
+        </Link>
       </div>
     </div>
   );

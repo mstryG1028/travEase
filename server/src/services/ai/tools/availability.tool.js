@@ -4,8 +4,7 @@ import { success, failure } from "../ai.helper.js";
 
 class AvailabilityTool {
   async execute({ listingId }) {
-    console.log("========== AVAILABILITY TOOL ==========");
-
+    
     try {
       const listing = await listingRepository.findById(listingId);
 
@@ -51,8 +50,7 @@ class AvailabilityTool {
         },
       );
     } catch (err) {
-      console.error("AVAILABILITY TOOL ERROR", err);
-
+      
       return failure(
         "availability",
         "Availability information is currently unavailable.",

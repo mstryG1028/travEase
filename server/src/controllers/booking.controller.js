@@ -35,10 +35,8 @@ export const myBookings = AsyncHandler(async (req, res) => {
 });
 
 export const bookingDetails = AsyncHandler(async (req, res) => {
-  // console.log("Controller Hit"); // used to check req is coming or not
-  // console.log("ID:", req.params.id);
+ 
   const booking = await bookingService.bookingDetails(req.params.id);
- // console.log("Booking Found:", booking);  // weather booking contains all Details or not
   return sendResponse(res, 200, booking, "Booking Details");
 });
 

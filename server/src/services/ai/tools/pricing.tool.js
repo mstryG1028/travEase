@@ -3,8 +3,7 @@ import { success, failure } from "../ai.helper.js";
 
 class PricingTool {
   async execute({ listingId }) {
-    console.log("========== PRICING TOOL ==========");
-
+    
     try {
       const listing = await listingRepository.findById(listingId);
 
@@ -39,8 +38,7 @@ class PricingTool {
         },
       );
     } catch (err) {
-      console.error("PRICING TOOL ERROR", err);
-
+     
       return failure(
         "pricing",
         "Pricing information is currently unavailable.",

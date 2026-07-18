@@ -4,127 +4,175 @@ import rankingService from "./ranking.service.js";
 import reasonService from "./reason.service.js";
 import { success, failure } from "../ai/ai.helper.js";
 import availabilityFilterService from "./availability.filter.service.js";
+import userProfileService from "./user.profile.service.js";
+import searchHistoryService from "./search-history.service.js";
+
 class RecommendationService {
   async getRecommendations({ question, user }) {
     console.log("========== RECOMMENDATION SERVICE ==========");
 
     try {
-      // ===========================================
-      // 1. Extract filters using Gemini
-      // ===========================================
+      /*
+======================================
+1. Extract AI Filters
+======================================
+*/
 
       const filters = await promptService.extractFilters(question);
 
-      console.log("Extracted Filters:");
-      console.log(filters);
+      console.log("Extracted Filters:", filters);
 
-      // ===========================================
-      // 2. Search Listings
-      // ===========================================
+      /*
+======================================
+2. Save Search History
+======================================
+*/
 
-      const listings = await searchService.search(filters);
+      if (user?._id) {
+        await searchHistoryService.saveSearch({
+          userId: user._id,
 
-      console.log(`Listings Found: ${listings.length}`);
+          question,
 
-      // ===========================================
-      // 3. No Listings Found
-      // ===========================================
+          filters,
+        });
+      }
+
+      /*
+======================================
+3. Get User Profile
+======================================
+*/
+
+      const userProfile = await userProfileService.getUserProfile(user?._id);
+
+      console.log("User Profile:", userProfile);
+
+      /*
+======================================
+4. Merge Personal Preferences
+======================================
+*/
+
+      const finalFilters = {
+        ...filters,
+
+        // User did not mention location
+        // use previous preference
+
+        location:
+          filters.location || userProfile?.preferredLocations?.[0] || "",
+
+        propertyType:
+          filters.propertyType ||
+          userProfile?.preferredPropertyTypes?.[0] ||
+          "",
+
+        amenities: [
+          ...new Set([
+            ...(filters.amenities || []),
+
+            ...(userProfile?.preferredAmenities || []),
+          ]),
+        ],
+      };
+
+      console.log("Final Recommendation Filters:", finalFilters);
+
+      /*
+======================================
+5. Search Listings
+======================================
+*/
+
+      const listings = await searchService.search(finalFilters);
+
+      console.log("Listings Found:", listings.length);
 
       if (!listings.length) {
         return failure(
           "recommendation",
-          "Sorry, I couldn't find any properties matching your requirements.",
+
+          "Sorry, I couldn't find properties matching your preferences.",
+
           {
-            filters,
+            filters: finalFilters,
+
             recommendations: [],
           },
         );
       }
 
-      // ===========================================
-      //  Available Listings
-      // ===========================================
+      /*
+======================================
+6. Availability Check
+======================================
+*/
 
       const availableListings = await availabilityFilterService.filter(
         listings,
-        filters,
+
+        finalFilters,
       );
 
-      // ===========================================
-      // 4. Rank Listings
-      // ===========================================
+      console.log("Available Listings:", availableListings.length);
 
-      const rankedListings = rankingService.rank(availableListings, filters);
+      /*
+======================================
+7. Personalized Ranking
+======================================
+*/
 
-      // ===========================================
-      // 5. Build Recommendation Objects
-      // ===========================================
+      const rankedListings = rankingService.rank(
+        availableListings,
+
+        finalFilters,
+
+        userProfile,
+      );
+
+      /*
+======================================
+8. Response Builder
+======================================
+*/
 
       const recommendations = rankedListings.map(({ listing, score }) => ({
-        listing: {
-          _id: listing._id,
-
-          title: listing.title,
-
-          city: listing.city,
-
-          state: listing.state,
-
-          country: listing.country,
-
-          propertyType: listing.propertyType,
-
-          image: listing.image,
-
-          guests: listing.guests,
-
-          bedrooms: listing.bedrooms,
-
-          bathrooms: listing.bathrooms,
-
-          amenities: listing.amenities,
-
-          currentPrice: listing.currentPrice,
-
-          basePrice: listing.basePrice,
-
-          currency: listing.currency,
-
-          averageRating: listing.averageRating,
-
-          totalReviews: listing.totalReviews,
-
-          trendingScore: listing.trendingScore,
-
-          owner: listing.owner,
-        },
+        listing,
 
         score,
 
-        reason: reasonService.generate(listing, filters),
+        reason: reasonService.generate(
+          listing,
+
+          finalFilters,
+
+          userProfile,
+        ),
       }));
 
       console.log(`Returning ${recommendations.length} recommendations`);
 
-      // ===========================================
-      // 6. Success Response
-      // ===========================================
-
       return success(
         "recommendation",
-        `Found ${recommendations.length} properties matching your preferences.`,
+
+        `Found ${recommendations.length} personalized properties.`,
+
         {
-          filters,
+          filters: finalFilters,
+
+          userProfile,
+
           recommendations,
         },
       );
-    } catch (err) {
-      console.error("RECOMMENDATION SERVICE ERROR");
-      console.error(err);
+    } catch (error) {
+      console.error("RECOMMENDATION ERROR", error);
 
       return failure(
         "recommendation",
-        "Unable to generate recommendations at the moment.",
+
+        "Unable to generate recommendations.",
       );
     }
   }

@@ -35,9 +35,7 @@ class ReviewTool {
         reviews: reviews.slice(0, 5),
       });
     } catch (err) {
-      console.error("REVIEW TOOL ERROR");
-      console.error(err);
-
+     
       return failure("reviews", "Reviews are currently unavailable.");
     }
   }

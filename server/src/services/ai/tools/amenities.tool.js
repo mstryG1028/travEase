@@ -22,9 +22,7 @@ class AmenitiesTool {
         amenities,
       });
     } catch (err) {
-      console.error("AMENITIES TOOL ERROR");
-      console.error(err);
-
+      
       return failure(
         "amenities",
         "Amenities information is currently unavailable.",

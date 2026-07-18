@@ -4,8 +4,7 @@ import { success, failure } from "../ai.helper.js";
 
 class WeatherTool {
   async execute({ listingId }) {
-    console.log("========== WEATHER TOOL ==========");
-
+  
     try {
       const listing = await listingRepository.findById(listingId);
 
@@ -13,11 +12,7 @@ class WeatherTool {
         return failure("weather", "Listing not found.");
       }
 
-      console.log("WEATHER LISTING:", {
-        title: listing.title,
-        city: listing.city,
-      });
-
+      
       const weather = await weatherService.getWeatherForListing(listingId);
 
       return success(
@@ -32,8 +27,7 @@ class WeatherTool {
         },
       );
     } catch (err) {
-      console.error("WEATHER TOOL ERROR:", err);
-
+     
       return failure("weather", err.message);
     }
   }

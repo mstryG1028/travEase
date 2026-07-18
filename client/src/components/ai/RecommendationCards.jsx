@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { Star, MapPin } from "lucide-react";
 
 function RecommendationCards({ recommendations }) {
@@ -43,12 +42,7 @@ function RecommendationCards({ recommendations }) {
 
               <p className="mt-4 text-slate-300 text-sm">🤖 {item.reason}</p>
 
-              <Link
-                to={`/listing/${listing._id}`}
-                className="inline-block mt-4 bg-emerald-500 hover:bg-emerald-600 px-4 py-2 rounded-lg text-white text-sm"
-              >
-                View Listing
-              </Link>
+
             </div>
           </div>
         );

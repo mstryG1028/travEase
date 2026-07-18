@@ -1,118 +1,133 @@
 class RankingService {
-  rank(listings, filters) {
+  rank(listings, filters, userProfile = {}) {
     const scoredListings = listings.map((listing) => {
       let score = 0;
 
-      // ==========================
-      // Budget (30)
-      // ==========================
+      // =====================================
+      // 1. Current Search Budget Match
+      // =====================================
 
       if (filters.budget) {
-        const difference = Math.abs(listing.currentPrice - filters.budget);
+        const difference = Math.abs(filters.budget - listing.currentPrice);
 
         const percentage = difference / filters.budget;
 
-        const budgetScore = Math.max(0, 30 - percentage * 30);
-
-        score += budgetScore;
+        score += Math.max(0, 25 - percentage * 25);
       } else {
         score += 15;
       }
 
-      // ==========================
-      // Property Type (20)
-      // ==========================
+      // =====================================
+      // 2. Property Type Match
+      // =====================================
 
       if (
         filters.propertyType &&
-        listing.propertyType.toLowerCase() ===
+        listing.propertyType?.toLowerCase() ===
           filters.propertyType.toLowerCase()
       ) {
-        score += 20;
+        score += 15;
       }
 
-      // ==========================
-      // Location (15)
-      // ==========================
+      // =====================================
+      // 3. Amenities Match
+      // =====================================
 
-      if (filters.location) {
-        const location = filters.location.toLowerCase();
-
-        if (
-          listing.city.toLowerCase().includes(location) ||
-          listing.state.toLowerCase().includes(location) ||
-          listing.country.toLowerCase().includes(location)
-        ) {
-          score += 15;
-        }
-      }
-
-      // ==========================
-      // Amenities (20)
-      // ==========================
-
-      if (filters.amenities.length) {
+      if (filters.amenities && filters.amenities.length) {
         const matched = filters.amenities.filter((amenity) =>
-          listing.amenities.some(
+          listing.amenities?.some(
             (item) => item.toLowerCase() === amenity.toLowerCase(),
           ),
         ).length;
 
-        score += (matched / filters.amenities.length) * 20;
+        score += (matched / filters.amenities.length) * 15;
       }
 
-      // ==========================
-      // Guests (10)
-      // ==========================
+      // =====================================
+      // 4. Guest Capacity
+      // =====================================
 
-      if (filters.guests) {
-        if (listing.guests >= filters.guests) {
-          score += 10;
-        } else {
-          score += Math.max(0, 10 - (filters.guests - listing.guests) * 2);
+      if (filters.guests && listing.guests >= filters.guests) {
+        score += 10;
+      }
+
+      // =====================================
+      // 5. Rating
+      // =====================================
+
+      score += (listing.averageRating || 0) * 2;
+
+      // =====================================
+      // 6. Reviews
+      // =====================================
+
+      score += Math.min((listing.totalReviews || 0) / 20, 5);
+
+      // =====================================
+      // 7. Trending
+      // =====================================
+
+      score += Math.min((listing.trendingScore || 0) / 20, 5);
+
+      // =====================================
+      // PERSONALIZATION
+      // =====================================
+
+      if (userProfile) {
+        // User liked this location before
+
+        if (
+          userProfile.locations?.some(
+            (location) =>
+              location.toLowerCase() === listing.city?.toLowerCase(),
+          )
+        ) {
+          score += 5;
         }
-      }
 
-      // ==========================
-      // Rating (15)
-      // ==========================
+        // User booked similar property before
 
-      score += listing.averageRating * 3;
+        if (
+          userProfile.propertyTypes?.some(
+            (type) =>
+              type.toLowerCase() === listing.propertyType?.toLowerCase(),
+          )
+        ) {
+          score += 5;
+        }
 
-      // ==========================
-      // Reviews (5)
-      // ==========================
+        // User liked similar amenities
 
-      score += Math.min(listing.totalReviews / 20, 5);
+        const userAmenities = userProfile.amenities || [];
 
-      // ==========================
-      // Trending (5)
-      // ==========================
+        const listingAmenities = listing.amenities || [];
 
-      score += Math.min(listing.trendingScore / 20, 5);
+        const matchedUserAmenities = listingAmenities.filter((item) =>
+          userAmenities.some(
+            (userItem) => userItem.toLowerCase() === item.toLowerCase(),
+          ),
+        ).length;
 
-      // ==========================
-      // Discount (10)
-      // ==========================
+        if (matchedUserAmenities) {
+          score += Math.min(matchedUserAmenities, 5);
+        }
 
-      if (listing.basePrice && listing.currentPrice) {
-        const discount =
-          ((listing.basePrice - listing.currentPrice) / listing.basePrice) *
-          100;
+        // Budget similarity
 
-        score += Math.min(discount / 2, 10);
-      }
+        if (userProfile.averageBudget && listing.currentPrice) {
+          const diff = Math.abs(
+            userProfile.averageBudget - listing.currentPrice,
+          );
 
-      // ==========================
-      // Available Bonus
-      // ==========================
-
-      if (listing.isAvailable) {
-        score += 5;
+          if (diff < userProfile.averageBudget * 0.3) {
+            score += 5;
+          }
+        }
       }
 
       return {
         listing,
+
         score: Number(score.toFixed(2)),
       };
     });

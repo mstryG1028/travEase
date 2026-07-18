@@ -4,8 +4,7 @@ class RecommendationTool {
   name = "recommendation";
 
   async execute({ question, user }) {
-    console.log("========== RECOMMENDATION TOOL ==========");
-
+    
     return await recommendationService.getRecommendations({
       question,
       user,

@@ -52,11 +52,7 @@ export const generateTags = AsyncHandler(async (req, res) => {
 
 export const chatWithAI = AsyncHandler(async (req, res) => {
   try {
-    console.log("\n========== AI REQUEST ==========");
-    console.log("User:", req.user?._id);
-    console.log("Listing:", req.body.listingId);
-    console.log("Question:", req.body.question);
-
+   
     const { listingId, question } = req.body;
 
     const response = await aiChatService.chat(

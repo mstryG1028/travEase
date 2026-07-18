@@ -1,134 +1,109 @@
 class ReasonService {
-  generate(listing, filters) {
+  generate(listing, filters, userProfile = {}) {
     const reasons = [];
 
-    // ==========================
-    // Location
-    // ==========================
+    // =====================================
+    // Current Search Match
+    // =====================================
 
-    if (filters.location) {
-      const location = filters.location.toLowerCase();
-
-      if (
-        listing.city.toLowerCase().includes(location) ||
-        listing.state.toLowerCase().includes(location) ||
-        listing.country.toLowerCase().includes(location)
-      ) {
-        reasons.push(`located in ${listing.city}`);
-      }
+    if (
+      filters.location &&
+      listing.city?.toLowerCase().includes(filters.location.toLowerCase())
+    ) {
+      reasons.push(`located in ${listing.city}`);
     }
-
-    // ==========================
-    // Property Type
-    // ==========================
 
     if (
       filters.propertyType &&
-      listing.propertyType.toLowerCase() === filters.propertyType.toLowerCase()
+      listing.propertyType?.toLowerCase() === filters.propertyType.toLowerCase()
     ) {
-      reasons.push(
-        `matches your preferred ${listing.propertyType.toLowerCase()}`,
-      );
+      reasons.push(`matches your preferred ${listing.propertyType}`);
     }
 
-    // ==========================
-    // Budget
-    // ==========================
-
-    if (filters.budget) {
-      if (listing.currentPrice <= filters.budget) {
-        reasons.push("fits your budget");
-      } else {
-        const difference = listing.currentPrice - filters.budget;
-
-        if (difference <= 1000) {
-          reasons.push(`only ₹${difference} above your budget`);
-        }
-      }
+    if (filters.budget && listing.currentPrice <= filters.budget) {
+      reasons.push("fits your budget");
     }
-
-    // ==========================
-    // Guests
-    // ==========================
 
     if (filters.guests && listing.guests >= filters.guests) {
       reasons.push(`accommodates ${filters.guests} guests`);
     }
 
-    // ==========================
-    // Amenities
-    // ==========================
+    // =====================================
+    // Rating
+    // =====================================
 
-    if (filters.amenities.length) {
-      const matchedAmenities = listing.amenities.filter((amenity) =>
-        filters.amenities.some(
-          (item) => item.toLowerCase() === amenity.toLowerCase(),
+    if (listing.averageRating >= 4.5) {
+      reasons.push("has excellent ratings");
+    }
+
+    // =====================================
+    // Search Amenities Match
+    // =====================================
+
+    const matchedAmenities = (listing.amenities || []).filter((item) =>
+      (filters.amenities || []).some(
+        (a) => a.toLowerCase() === item.toLowerCase(),
+      ),
+    );
+
+    if (matchedAmenities.length) {
+      reasons.push(`includes ${matchedAmenities.join(", ")}`);
+    }
+
+    // =====================================
+    // PERSONALIZATION REASONS
+    // =====================================
+
+    if (userProfile) {
+      // Previous location interest
+
+      if (
+        userProfile.locations?.some(
+          (location) => location.toLowerCase() === listing.city?.toLowerCase(),
+        )
+      ) {
+        reasons.push("matches places you explored before");
+      }
+
+      // Previous property preference
+
+      if (
+        userProfile.propertyTypes?.some(
+          (type) => type.toLowerCase() === listing.propertyType?.toLowerCase(),
+        )
+      ) {
+        reasons.push("matches your previous stay preferences");
+      }
+
+      // Previous amenities
+
+      const likedAmenities = (listing.amenities || []).filter((item) =>
+        (userProfile.amenities || []).some(
+          (userAmenity) => userAmenity.toLowerCase() === item.toLowerCase(),
         ),
       );
 
-      if (matchedAmenities.length) {
-        reasons.push(`includes ${matchedAmenities.join(", ")}`);
+      if (likedAmenities.length) {
+        reasons.push(
+          `has amenities you liked before: ${likedAmenities.join(", ")}`,
+        );
+      }
+
+      // Budget preference
+
+      if (userProfile.averageBudget && listing.currentPrice) {
+        const difference = Math.abs(
+          userProfile.averageBudget - listing.currentPrice,
+        );
+
+        if (difference < userProfile.averageBudget * 0.25) {
+          reasons.push("matches your usual travel budget");
+        }
       }
     }
-
-    // ==========================
-    // Rating
-    // ==========================
-
-    if (listing.averageRating >= 4.7) {
-      reasons.push("has exceptional guest ratings");
-    } else if (listing.averageRating >= 4.3) {
-      reasons.push("has excellent guest ratings");
-    }
-
-    // ==========================
-    // Reviews
-    // ==========================
-
-    if (listing.totalReviews >= 50) {
-      reasons.push(`trusted by ${listing.totalReviews}+ guests`);
-    }
-
-    // ==========================
-    // Trending
-    // ==========================
-
-    if (listing.trendingScore >= 80) {
-      reasons.push("currently trending");
-    }
-
-    // ==========================
-    // Discount
-    // ==========================
-
-    if (
-      listing.basePrice &&
-      listing.currentPrice &&
-      listing.basePrice > listing.currentPrice
-    ) {
-      const discount = Math.round(
-        ((listing.basePrice - listing.currentPrice) / listing.basePrice) * 100,
-      );
-
-      if (discount >= 10) {
-        reasons.push(`${discount}% discounted`);
-      }
-    }
-
-    // ==========================
-    // Availability
-    // ==========================
-
-    if (listing.isAvailable) {
-      reasons.push("currently available");
-    }
-
-    // ==========================
-    // Default
-    // ==========================
 
     if (!reasons.length) {
-      return "A good overall match based on your preferences.";
+      return "A good overall match based on your requirements.";
     }
 
     return reasons.join(", ");

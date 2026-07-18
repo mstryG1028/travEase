@@ -86,7 +86,7 @@ const mapping = [
 for (const item of mapping) {
   const imagePath = path.join(__dirname, "../images", item.file);
 
-  console.log("Uploading", item.file);
+ 
 
   const result = await cloudinary.v2.uploader.upload(imagePath, {
     folder: "travEase",
@@ -104,9 +104,8 @@ for (const item of mapping) {
     },
   );
 
-  console.log("Updated", item.slug);
 }
 
-console.log("Done ");
+
 
 process.exit();

@@ -775,12 +775,12 @@ const listings = [
   },
 ];
 
-async function initDB() {
-  await Listing.deleteMany();
-  await Listing.insertMany(listings);
+// async function initDB() {
+//   await Listing.deleteMany();
+//   await Listing.insertMany(listings);
 
-  console.log("Listings Added");
-  process.exit();
-}
+//   console.log("Listings Added");
+//   process.exit();
+// }
 
-initDB();
+// initDB();

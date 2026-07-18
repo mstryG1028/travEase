@@ -2,10 +2,7 @@ import ai, { GEMINI_MODEL } from "../../config/gemini.js";
 
 class AIResponseService {
   async generate({ question, intent, parameters, toolData }) {
-    console.log("========== AI RESPONSE ==========");
-    console.log("Intent:", intent);
-    console.log("Tool Data:", JSON.stringify(toolData, null, 2));
-
+  
     // If tool already has a proper response, return it directly
     if (toolData?.success && toolData?.message) {
       return toolData.message;

@@ -11,30 +11,22 @@ class RecommendationController {
         throw new ApiError(400, "Question is required.");
       }
 
+     
       const recommendations = await recommendationService.getRecommendations({
         question,
+
         user: req.user,
       });
-      console.log(
-        "RETURNING FROM SERVICE",
-        JSON.stringify(
-          {
-           
-            recommendations,
-          },
-          null,
-          2,
+
+      return res.status(200).json(
+        new ApiResponse(
+          200,
+
+          recommendations,
+
+          "Recommendations fetched successfully.",
         ),
       );
-      return res
-        .status(200)
-        .json(
-          new ApiResponse(
-            200,
-            recommendations,
-            "Recommendations fetched successfully.",
-          ),
-        );
     } catch (error) {
       next(error);
     }

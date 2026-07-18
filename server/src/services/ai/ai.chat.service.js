@@ -4,9 +4,7 @@ import toolRegistry from "./ai.tool.registry.js";
 
 class AIChatService {
   async chat(user, listingId, question) {
-    console.log("\n========== AI CHAT ==========");
-    console.log("Question:", question);
-
+ 
     // 1. Detect intent
     const intentResult = await aiIntentService.detect(question);
 
@@ -17,7 +15,6 @@ class AIChatService {
       parameters = {},
     } = intentResult;
 
-    console.log("Intent:", intent);
 
     // 2. Find tool
     const tool = toolRegistry[intent];
